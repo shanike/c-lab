@@ -67,5 +67,8 @@ int main()
     partial_sums_array = partialSums(array_pointer, length);
     printf("The partial-sums array is: ");
     printArray(partial_sums_array, length);
+
+    free(array_pointer);
+    free(partial_sums_array);
     return 0;
 }
