@@ -33,17 +33,23 @@ void fillIntsStdio(int *array, int length)
     {
         printf("Enter integer number %d: ", i + 1);
         scanf("%d", (array + i));
+        printf("(Got %d)\n", *(array + i));
     }
 }
 
 void printArray(int *array, int length)
 {
     int i;
+    printf("[");
     for (i = 0; i < length; i++)
     {
-        printf("%d ", *(array + i));
+        printf("%d", *(array + i));
+        if (i != length - 1)
+        {
+            printf(", ");
+        }
     }
-    printf("\n");
+    printf("]\n");
 }
 
 int main()
@@ -52,6 +58,7 @@ int main()
 
     printf("The size of the array is: ");
     scanf("%d", &length);
+    printf("(Got %d)\n", length);
 
     array_pointer = mallocInts(length);
     fillIntsStdio(array_pointer, length);
