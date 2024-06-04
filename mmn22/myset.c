@@ -277,7 +277,6 @@ int get_next_args(char **args, char *line, int arg1_end_ndx, int expected /* dis
         printf("%s\n", ERROR_PARAM_MISSING);
         return ARG_ERROR;
     }
-    printf("get_next_args: returning %d\n", args_len);
     return args_len;
 }
 
@@ -356,8 +355,6 @@ int main(int argc, char const *argv[])
         }
         strncpy(command_str, line, command_end_ndx + 1);
         command_str = append_char(command_str, command_end_ndx + 1, '\0');
-        printf("Command end index: %d\n", command_end_ndx);
-        printf("Command: %s\n", command_str);
 
         command = get_command(command_str);
         free(command_str);
