@@ -18,6 +18,7 @@
 #define ERROR_MEMBER_NOT_TERMINATED "\nList of set members is not terminated correctly"
 #define ERROR_PARAM_MISSING "\nMissing parameter"
 #define ERROR_PARAM_EXTRA "\nExtraneous text after end of command"
+#define ERROR_PARAM_MISSING "\nMissing parameter"
 #define ERROR_ALLOC_MEM "\nError allocating memory"
 
 Command get_command(char *command);
@@ -204,7 +205,6 @@ int get_next_args(char **args, char *line, int arg1_end_ndx, int expected /* dis
     char c, next_c,
         *arg = NULL;
 
-    printf("get_next_args: line=%s, arg1_end_ndx=%d, expected=%d\n", line, arg1_end_ndx, expected);
     for (i = arg1_end_ndx + 1; line[i] != '\0'; i++)
     {
         c = line[i];
@@ -273,7 +273,7 @@ int get_next_args(char **args, char *line, int arg1_end_ndx, int expected /* dis
     if (expected != -1 && args_len < expected)
     {
         /* Never found but expected to -> ERROR*/
-        printf("%s\n", ERROR_PARAM_EXTRA);
+        printf("%s\n", ERROR_PARAM_MISSING);
         return ARG_ERROR;
     }
     printf("get_next_args: returning %d\n", args_len);
