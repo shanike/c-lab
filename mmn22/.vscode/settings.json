@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "set.h": "c",
+        "stdio.h": "c"
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "/home/shani/תואר/מעבדה בתכנות מערכות/mmns/mmn22",
+            "binaryPath": "/home/shani/תואר/מעבדה בתכנות מערכות/mmns/mmn22/myset",
+            "binaryArgs": []
+        }
+    ]
+}

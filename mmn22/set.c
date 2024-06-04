@@ -30,6 +30,21 @@ void reset_set(Set *set)
     }
 }
 
+int is_bit_on(Set *set, int byte_index, int bit_index)
+{
+    return ((*set).members[byte_index] & (1 << bit_index));
+}
+
+int is_bit_off(Set *set, int byte_index, int bit_index)
+{
+    return !is_bit_on(set, byte_index, bit_index);
+}
+
+void turn_bit_on(Set *set, int byte_index, int bit_index)
+{
+    (*set).members[byte_index] |= 1 << bit_index;
+}
+
 /*
 Override the set set set`ith `members`,
 where `members` is an array of integers,
@@ -42,14 +57,13 @@ void read_set(Set *set, int *members)
     printf("Adding to set...\n");
 
     reset_set(set);
-    print_set(set);
 
     /* Register members into set */
     while ((member = members[++i]) != -1)
     {
         byte_index = members[i] / BYTE_SIZE;
         bit_index = members[i] % BYTE_SIZE;
-        (*set).members[byte_index] |= 1 << bit_index;
+        turn_bit_on(set, byte_index, bit_index);
     }
 }
 
@@ -65,12 +79,12 @@ void print_set(Set *set)
     {
         for (bit_j = 0; bit_j < BYTE_SIZE; bit_j++)
         {
-            if (((*set).members[byte_i] & (1 << bit_j)))
+            if (is_bit_on(set, byte_i, bit_j))
             {
                 if (is_empty == 0)
                 {
                     is_empty = 1;
-                    printf("{ ");
+                    printf("Set { ");
                 }
                 printf("%d ", byte_i * BYTE_SIZE + bit_j);
             }
@@ -87,25 +101,65 @@ void print_set(Set *set)
 }
 
 /* Unites sets 1 and 2 into set 3 */
-void union_set(Set set1, Set set2, Set set3)
+void union_set(Set *set1, Set *set2, Set *set3)
 {
-    /* TODO */
+    int byte_i, bit_j;
+    for (byte_i = 0; byte_i < NUM_OF_BYTES; byte_i++)
+    {
+        for (bit_j = 0; bit_j < BYTE_SIZE; bit_j++)
+        {
+            if (is_bit_on(set1, byte_i, bit_j) || is_bit_on(set2, byte_i, bit_j))
+            {
+                turn_bit_on(set3, byte_i, bit_j);
+            }
+        }
+    }
 }
 
 /* Intersects sets 1 and 2 into set 3 */
-void intersect_set(Set set1, Set set2, Set set3)
+void intersect_set(Set *set1, Set *set2, Set *set3)
 {
-    /* TODO */
+    int byte_i, bit_j;
+    for (byte_i = 0; byte_i < NUM_OF_BYTES; byte_i++)
+    {
+        for (bit_j = 0; bit_j < BYTE_SIZE; bit_j++)
+        {
+            if (is_bit_on(set1, byte_i, bit_j) && is_bit_on(set2, byte_i, bit_j))
+            {
+                turn_bit_on(set3, byte_i, bit_j);
+            }
+        }
+    }
 }
 
 /* Subtracts set 2 from 1 into set 3 */
-void sub_set(Set set1, Set set2, Set set3)
+void sub_set(Set *set1, Set *set2, Set *set3)
 {
-    /* TODO */
+    int byte_i, bit_j;
+    for (byte_i = 0; byte_i < NUM_OF_BYTES; byte_i++)
+    {
+        for (bit_j = 0; bit_j < BYTE_SIZE; bit_j++)
+        {
+            if (is_bit_on(set1, byte_i, bit_j) && is_bit_off(set2, byte_i, bit_j))
+            {
+                turn_bit_on(set3, byte_i, bit_j);
+            }
+        }
+    }
 }
 
 /* Symetric diff between set 1 and 2 into set 3 */
-void symdiff_set(Set set1, Set set2, Set set3)
+void symdiff_set(Set *set1, Set *set2, Set *set3)
 {
-    /* TODO */
+    int byte_i, bit_j;
+    for (byte_i = 0; byte_i < NUM_OF_BYTES; byte_i++)
+    {
+        for (bit_j = 0; bit_j < BYTE_SIZE; bit_j++)
+        {
+            if (is_bit_on(set1, byte_i, bit_j) != is_bit_on(set2, byte_i, bit_j))
+            {
+                turn_bit_on(set3, byte_i, bit_j);
+            }
+        }
+    }
 }

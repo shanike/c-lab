@@ -5,26 +5,36 @@
 #include "set.h"
 
 #define NUM_OF_SETS 6
-#define ERROR_UNDEF_COMMAND_NAME "Undefined command name"
-#define ERROR_UNDEF_SET_NAME "Undefined set name"
-#define ERROR_MISSING_COMMA "Missing comma"
-#define ERROR_ILLEGAL_COMMA "Illegal comma"
-#define ERROR_MEMBER_NOT_INT "Invalid set member - not an integer"
-#define ERROR_MEMBER_OUT_OF_RANGE "Invalid set member - value out of range"
-#define ERROR_ALLOC_MEM "Error allocating memory"
+#define INVALID_MEMBER -999
+#define ARG_ERROR -999
+#define SCAN_ERROR -999
+
+#define ERROR_UNDEF_COMMAND_NAME "\nUndefined command name"
+#define ERROR_UNDEF_SET_NAME "\nUndefined set name"
+#define ERROR_MISSING_COMMA "\nMissing comma"
+#define ERROR_ILLEGAL_COMMA "\nIllegal comma"
+#define ERROR_MEMBER_NOT_INT "\nInvalid set member - not an integer"
+#define ERROR_MEMBER_OUT_OF_RANGE "\nInvalid set member - value out of range"
+#define ERROR_MEMBER_NOT_TERMINATED "\nList of set members is not terminated correctly"
+#define ERROR_PARAM_MISSING "\nMissing parameter"
+#define ERROR_PARAM_EXTRA "\nExtraneous text after end of command"
+#define ERROR_ALLOC_MEM "\nError allocating memory"
 
 Command get_command(char *command);
 int is_whitespace(int c);
 int is_comma(int c);
 int is_digit(int c);
+int is_valid_int(char *str);
+int has_only_zeroes(char *str);
+int has_only_whitespaces(char *str, int from);
 void trim_str(char *str);
 int get_command_end(char *line);
-char *scan_line();
+int scan_line(char **line);
+Set *set_by_name(Set *sets, char *name);
 
-int get_arg1(char *arg1, char *line, int command_end_ndx)
+int get_arg1_ndx(char *arg1, char *line, int command_end_ndx)
 {
     int i, j;
-    printf(">get_arg1: command_end_ndx=%d\n", command_end_ndx);
     /* i = first non-whitespace */
     i = command_end_ndx + 1;
     while (line[i] != '\0' && is_whitespace(line[i]))
@@ -42,18 +52,47 @@ int get_arg1(char *arg1, char *line, int command_end_ndx)
     return j - 1;
 }
 
-int add_member(char *member_str, int *members, int members_len)
+char *append_char(char *str, int str_len, char c)
 {
-    printf(">add_member: member_str=%s\n", member_str);
-    int num = atoi(member_str);
-    if (num < 0 || num > 127)
+    str = realloc(str, (str_len + 1) * sizeof(char));
+    if (str == NULL)
     {
-        printf("%s\n", ERROR_MEMBER_OUT_OF_RANGE);
+        printf("%s\n", ERROR_ALLOC_MEM);
+        return NULL;
+    }
+    str[str_len] = c;
+    return str;
+}
+
+/*
+Returns a valid in-range (0-127) int, or INVALID_MEMBER (-999) if invalid.
+Handles error messages.
+*/
+int convert_member(char *member_str)
+{
+    int member;
+
+    if (!is_valid_int(member_str))
+    {
+        printf("%s\n", ERROR_MEMBER_NOT_INT);
         return 0;
     }
-    members = realloc(members, (strlen(member_str) + 1) * sizeof(int));
-    members[members_len] = num;
-    return 1;
+    member = atoi(member_str);
+    if (member == 0)
+    {
+        /* atoi will return 0 also for 0 and also for invalid */
+        if (!has_only_zeroes(member_str))
+        {
+            printf("%s\n", ERROR_MEMBER_NOT_INT);
+            return 0;
+        }
+    }
+    if ((member < 0 || member > 127) && member != -1)
+    {
+        printf("%s\n", ERROR_MEMBER_OUT_OF_RANGE);
+        return INVALID_MEMBER;
+    }
+    return member;
 }
 
 /*
@@ -64,25 +103,21 @@ Handles the error messages.
 int *get_members(char *line, int arg1_end_ndx)
 {
     int i,
-        /* Start by searching for comma before 1sh member */
+        /* Start by searching for comma before 1st member */
         is_searching_for_comma = 1,
         *members = NULL,
         members_len = 0,
-        member_begin_ndx = -1,
-        member_end_ndx = -1,
+        member,
         member_len = 0;
-    char c,
-        *member_str = NULL;
 
-    printf(">get_members: arg1_end_ndx=%d\n", arg1_end_ndx);
+    char c, next_c,
+        *member_str = NULL;
 
     for (i = arg1_end_ndx + 1; line[i] != '\0'; i++)
     {
         c = line[i];
-        printf(">i=%d, c=%c\n", i, c);
         if (is_searching_for_comma)
         {
-            printf(">searching for comma");
             if (is_comma(c))
             {
                 is_searching_for_comma = 0;
@@ -98,59 +133,151 @@ int *get_members(char *line, int arg1_end_ndx)
         }
         else
         {
-            printf(">searching for member");
-            if (member_begin_ndx > -1)
+            /* Ignore whitespace */
+            if (is_whitespace(c))
             {
-                if (!is_digit(c))
-                {
-                    /* Found end of member */
-                    member_end_ndx = i - 1;
-                    printf("member_begin_ndx=%d, member_end_ndx=%d\n", member_begin_ndx, member_end_ndx);
-                    member_len = member_end_ndx - member_begin_ndx + 1;
-                    add_member(strcpy(member_str, line + member_begin_ndx), members, members_len);
-                    members_len++;
-                }
+                continue;
             }
-            else
+            if (is_comma(c))
             {
-                /* Ignore whitespace */
-                if (is_whitespace(c))
+                printf("%s\n", ERROR_ILLEGAL_COMMA);
+                return NULL;
+            }
 
+            /* Not whitespace and not comma -> add to member_str */
+            member_str = append_char(member_str, member_len, c);
+            member_len++;
+
+            /* If next character is whitespace or comma, add member_str */
+            next_c = line[i + 1];
+            if (is_comma(next_c) || is_whitespace(next_c) || next_c == '\0')
+            {
+                member_str = append_char(member_str, member_len, '\0');
+                member_len++;
+
+                member = convert_member(member_str);
+                if (member == -999)
                 {
-                    continue;
-                }
-                /* Search for members */
-                if (!is_digit(c))
-                {
-                    printf("%s\n", ERROR_MEMBER_NOT_INT);
                     return NULL;
                 }
-                member_begin_ndx = i;
+                if (member == -1 && !has_only_whitespaces(line, i + 1))
+                {
+                    printf("%s\n", ERROR_MEMBER_NOT_TERMINATED);
+                    return NULL;
+                }
+
+                members = realloc(members, (members_len + 1) * sizeof(int));
+                if (members == NULL)
+                {
+                    printf("%s\n", ERROR_ALLOC_MEM);
+                    return NULL;
+                }
+                members_len++;
+                members[members_len - 1] = member;
+
+                /* Reset for next member */
+                member_len = 0;
+                member_str = NULL;
+                member = INVALID_MEMBER;
+                is_searching_for_comma = 1;
             }
         }
     }
 
-    /* Add the last member */
-    if (member_begin_ndx > -1)
+    if (members[members_len - 1] != -1)
     {
-        add_member(strcpy(member_str, line + member_begin_ndx), members, members_len);
-        members_len++;
+        printf("%s\n", ERROR_MEMBER_NOT_TERMINATED);
+        return NULL;
     }
 
-    return (int[]){1, 2, 3, 4, 5, -1};
+    return members;
 }
 
-Set *set_by_name(Set *sets, char *name)
+int get_next_args(char **args, char *line, int arg1_end_ndx, int expected /* disable using -1 */)
 {
-    int i;
-    for (i = 0; i < NUM_OF_SETS; i++)
+    int i,
+        /* Start by searching for comma before 1st arg */
+        is_searching_for_comma = 1,
+        args_len = 0,
+        arg_len = 0;
+
+    char c, next_c,
+        *arg = NULL;
+
+    printf("get_next_args: line=%s, arg1_end_ndx=%d, expected=%d\n", line, arg1_end_ndx, expected);
+    for (i = arg1_end_ndx + 1; line[i] != '\0'; i++)
     {
-        if (strcmp((sets[i]).name, name) == 0)
+        c = line[i];
+        if (is_searching_for_comma)
         {
-            return &(sets[i]);
+            if (is_comma(c))
+            {
+                is_searching_for_comma = 0;
+                continue;
+            }
+
+            /* Not comma and not whitespace -> ERROR */
+            if (!is_whitespace(c))
+            {
+                printf("%s\n", ERROR_MISSING_COMMA);
+                return ARG_ERROR;
+            }
+        }
+        else
+        {
+            /* Ignore whitespace */
+            if (is_whitespace(c))
+            {
+                continue;
+            }
+            if (is_comma(c))
+            {
+                printf("%s\n", ERROR_ILLEGAL_COMMA);
+                return ARG_ERROR;
+            }
+
+            /* Not whitespace and not comma -> add to arg */
+            arg = append_char(arg, arg_len, c);
+            arg_len++;
+
+            /* If next character is whitespace or comma, add arg */
+            next_c = line[i + 1];
+            if (is_comma(next_c) || is_whitespace(next_c) || next_c == '\0')
+            {
+                if (expected != -1 && args_len + 1 > expected)
+                {
+                    /* Don't add & ERROR */
+                    printf("%s\n", ERROR_PARAM_EXTRA);
+                    return ARG_ERROR;
+                }
+
+                arg = append_char(arg, arg_len, '\0');
+                arg_len++;
+
+                args = realloc(args, (args_len + 1) * sizeof(int));
+                if (args == NULL)
+                {
+                    printf("%s\n", ERROR_ALLOC_MEM);
+                    return ARG_ERROR;
+                }
+                args_len++;
+                args[args_len - 1] = arg;
+
+                /* Reset for next member */
+                arg_len = 0;
+                arg = NULL;
+                is_searching_for_comma = 1;
+            }
         }
     }
-    return NULL;
+    if (expected != -1 && args_len < expected)
+    {
+        /* Never found but expected to -> ERROR*/
+        printf("%s\n", ERROR_PARAM_EXTRA);
+        return ARG_ERROR;
+    }
+    printf("get_next_args: returning %d\n", args_len);
+    return args_len;
 }
 
 int main(int argc, char const *argv[])
@@ -163,13 +290,19 @@ int main(int argc, char const *argv[])
     Set SETF = {0};
     Set *set1;
     Set sets[NUM_OF_SETS];
-    char *line, *command_str;
-    int command_end_ndx, arg1_end_ndx;
-    int *members;
+    char
+        *line = malloc(0),
+        *command_str,
+        arg1[MAX_SET_NAME],
+        **next_args_str = malloc(0);
+    int scan_result,
+        command_end_ndx,
+        arg1_end_ndx,
+        next_args_count = 0,
+        *members;
     Command command;
-    char arg1[MAX_SET_NAME];
+    Set **args_set = malloc(2 * sizeof(Command));
 
-    /* TODO: try adding the strings "" to init {0} */
     strcpy(SETA.name, "SETA");
     strcpy(SETB.name, "SETB");
     strcpy(SETC.name, "SETC");
@@ -185,12 +318,16 @@ int main(int argc, char const *argv[])
 
     while (1)
     {
-        printf("\nEnter command: \n");
+        if (line == NULL || args_set == NULL || next_args_str == NULL)
+        {
+            printf("%s\n", ERROR_ALLOC_MEM);
+            break;
+        }
 
-        line = scan_line();
-        /* printf("line=%s;\n", line); */
+        printf("\nEnter command and arguments: \n");
 
-        if (strcmp(line, "stop") == 0)
+        scan_result = scan_line(&line);
+        if (scan_result == EOF || strcmp(line, "stop") == 0 || scan_result == SCAN_ERROR)
         {
             break;
         }
@@ -202,6 +339,8 @@ int main(int argc, char const *argv[])
             continue;
         }
 
+        printf("Received: %s\n", line);
+
         command_end_ndx = get_command_end(line);
         if (command_end_ndx < 0)
         {
@@ -212,7 +351,7 @@ int main(int argc, char const *argv[])
         if (command_str == NULL)
         {
             printf("%s\n", ERROR_ALLOC_MEM);
-            return 1;
+            continue;
         }
         strncpy(command_str, line, command_end_ndx + 1);
 
@@ -225,75 +364,76 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        switch (command)
+        arg1_end_ndx = get_arg1_ndx(arg1, line, command_end_ndx);
+        if (arg1 == NULL)
         {
-        case READ_SET:
-            arg1_end_ndx = get_arg1(arg1, line, command_end_ndx);
-            if (arg1 == NULL)
-            {
-                printf("Error getting arg1\n");
-            }
-            printf(">arg1=%s\n", arg1);
-            set1 = set_by_name(sets, arg1);
-            if (set1 == NULL)
-            {
-                printf("%s\n", ERROR_UNDEF_SET_NAME);
-                continue;
-            }
+            printf("Error getting arg1\n");
+            continue;
+        }
+
+        set1 = set_by_name(sets, arg1);
+        if (set1 == NULL)
+        {
+            printf("%s\n", ERROR_UNDEF_SET_NAME);
+            continue;
+        }
+
+        if (command == READ_SET)
+        {
+            /* TODO: use next_args_str instead */
             members = get_members(line, arg1_end_ndx);
             if (members == NULL)
             {
                 continue;
             }
-            read_set(set1, (int[]){1, 2, 3, 4, 5, -1});
+            read_set(set1, members);
+        }
+        else if (command == PRINT_SET)
+        {
+            if (!has_only_whitespaces(line, arg1_end_ndx + 1))
+            {
+                printf("%s\n", ERROR_PARAM_EXTRA);
+                continue;
+            }
             print_set(set1);
-            break;
-        default:
-            break;
+        }
+        else
+        {
+            next_args_count = get_next_args(next_args_str, line, arg1_end_ndx, 2);
+            if (next_args_count == ARG_ERROR || next_args_str == NULL)
+            {
+                continue;
+            }
+            args_set[0] = set_by_name(sets, next_args_str[0]);
+            args_set[1] = set_by_name(sets, next_args_str[1]);
+
+            switch (command)
+            {
+            case UNION_SET:
+                union_set(set1, args_set[0], args_set[1]);
+                break;
+            case INTERSECT_SET:
+                intersect_set(set1, args_set[0], args_set[1]);
+                break;
+            case SUB_SET:
+                sub_set(set1, args_set[0], args_set[1]);
+                break;
+            case SYMDIFF_SET:
+                symdiff_set(set1, args_set[0], args_set[1]);
+                break;
+            default:
+                break;
+            }
         }
     }
 
-    /* TODO: input */
-    /*      Might be an empty line (only white characters) */
-    /*      \t and/or \s separate the command-name from the arguments */
-    /*      Arguments are separated by a single comma */
-    /*      Between arguments and commas can be any number of white characters */
-    /*      No comma after last argument */
-    /*      \t or \s can be preset before the command-name or after the last argument */
-    /*      No characters (except white characters) after the last argument */
-    /*      Command-name is lower-cased only */
-    /*      Group names are upper-cased only */
-    /* TODO: call functions */
-    /* NOTICE: a set can be passed as multiple arguments to the same function */
+    free(line);
+    free(next_args_str);
+    free(args_set);
+
     return 0;
 }
 
-/*
-Returns an array of pointers to the sets.
-Set *init_sets()
-{
-    Set SETA = {0};
-    Set SETB = {0};
-    Set SETC = {0};
-    Set SETD = {0};
-    Set SETE = {0};
-    Set SETF = {0};
-    // Init an array of sets
-    Set *sets = malloc(NUM_OF_SETS * sizeof(Set));
-    if (sets == NULL)
-    {
-        printf("%s\n",ERROR_ALLOC_MEM);
-        return NULL;
-    }
-    sets[0] = {0};
-    sets[1] = {0};
-    sets[2] = {0};
-    sets[3] = {0};
-    sets[4] = {0};
-    sets[5] = {0};
-    return sets;
-}
- */
 int is_whitespace(int c)
 {
     return c == ' ' || c == '\t';
@@ -307,6 +447,45 @@ int is_comma(int c)
 int is_digit(int c)
 {
     return c >= '0' && c <= '9';
+}
+
+int is_valid_int(char *str)
+{
+    int i;
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (!is_digit(str[i]) && str[i] != '-')
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int has_only_zeroes(char *str)
+{
+    int i;
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (str[i] != '0')
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
+
+int has_only_whitespaces(char *str, int from)
+{
+    int i;
+    for (i = from; i < strlen(str); i++)
+    {
+        if (!is_whitespace(str[i]))
+        {
+            return 0;
+        }
+    }
+    return 1;
 }
 
 void trim_str(char *str)
@@ -351,37 +530,40 @@ int get_command_end(char *line)
     return -1;
 }
 
-char *scan_line()
+int scan_line(char **line)
 {
     char c;
-    int i = 0;
-    char *line = malloc(1);
+    int i = 0, is_eof = 0;
 
-    if (line == NULL)
+    if (*line == NULL)
     {
-        printf("%s\n", ERROR_ALLOC_MEM);
-        return NULL;
+        return SCAN_ERROR;
     }
 
     while (1)
     {
         c = getchar();
-        if (c == EOF || c == '\n')
+        if (c == '\n')
         {
+            break;
+        }
+        if (c == EOF)
+        {
+            is_eof = 1;
             break;
         }
 
         i++;
-        line = (char *)realloc(line, (i + 1) * sizeof(char));
-        if (line == NULL)
+        *line = (char *)realloc(*line, (i + 1) * sizeof(char));
+        if (*line == NULL)
         {
             printf("%s\n", ERROR_ALLOC_MEM);
-            return NULL;
+            return SCAN_ERROR;
         }
-        line[i - 1] = c;
+        (*line)[i - 1] = c;
     }
-    line[i] = '\0';
-    return line;
+    (*line)[i] = '\0';
+    return is_eof ? EOF : 1;
 }
 
 /*
@@ -418,4 +600,17 @@ Command get_command(char *command)
         /* Invalid command */
         return -1;
     }
+}
+
+Set *set_by_name(Set *sets, char *name)
+{
+    int i;
+    for (i = 0; i < NUM_OF_SETS; i++)
+    {
+        if (strcmp((sets[i]).name, name) == 0)
+        {
+            return &(sets[i]);
+        }
+    }
+    return NULL;
 }

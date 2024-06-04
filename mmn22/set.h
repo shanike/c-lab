@@ -13,10 +13,10 @@ typedef struct
 
 void read_set(Set *, int *);
 void print_set(Set *);
-void union_set(Set, Set, Set);
-void intersect_set(Set, Set, Set);
-void sub_set(Set, Set, Set);
-void symdiff_set(Set, Set, Set);
+void union_set(Set *, Set *, Set *);
+void intersect_set(Set *, Set *, Set *);
+void sub_set(Set *, Set *, Set *);
+void symdiff_set(Set *, Set *, Set *);
 
 typedef enum
 {
