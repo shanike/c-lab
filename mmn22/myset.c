@@ -354,6 +354,9 @@ int main(int argc, char const *argv[])
             continue;
         }
         strncpy(command_str, line, command_end_ndx + 1);
+        command_str = append_char(command_str, command_end_ndx + 1, '\0');
+        printf("Command end index: %d\n", command_end_ndx);
+        printf("Command: %s\n", command_str);
 
         command = get_command(command_str);
         free(command_str);
