@@ -1,0 +1,55 @@
+Enter command and arguments: 
+read_set SETA 1,2,3,-1
+Received: read_set SETA 1,2,3,-1
+
+Missing comma
+
+Enter command and arguments: 
+read_set SETa, 1,2,3,-1           
+Received: read_set SETa, 1,2,3,-1
+
+Undefined set name
+
+Enter command and arguments: 
+read_set SETA,1,2,3,-1
+Received: read_set SETA,1,2,3,-1
+Adding to set...
+
+Enter command and arguments: 
+read_set SETB, 3,4,5,-1   
+Received: read_set SETB, 3,4,5,-1
+Adding to set...
+
+Enter command and arguments: 
+print_set SETA
+Received: print_set SETA
+Set { 1 2 3 }
+
+Enter command and arguments: 
+print_set SETB
+Received: print_set SETB
+Set { 3 4 5 }
+
+Enter command and arguments: 
+symdiff_set SETA SETB SETC
+Received: symdiff_set SETA SETB SETC
+
+Missing comma
+
+Enter command and arguments: 
+symdiff_set SETA,SETB,SETC
+Received: symdiff_set SETA,SETB,SETC
+
+Enter command and arguments: 
+print_set SETC
+Received: print_set SETC
+Set { 1 2 4 5 }
+
+Enter command and arguments: 
+sub_set SETA,SETB,SETD
+Received: sub_set SETA,SETB,SETD
+
+Enter command and arguments: 
+print_set SETD
+Received: print_set SETD
+Set { 1 2 }
