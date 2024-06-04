@@ -33,7 +33,7 @@ int get_command_end(char *line);
 int scan_line(char **line);
 Set *set_by_name(Set *sets, char *name);
 
-int get_arg1_ndx(char *arg1, char *line, int command_end_ndx)
+int get_arg1(char *arg1, char *line, int command_end_ndx)
 {
     int i, j;
     /* i = first non-whitespace */
@@ -50,6 +50,7 @@ int get_arg1_ndx(char *arg1, char *line, int command_end_ndx)
         j++;
     }
     strncpy(arg1, line + i, j - i);
+    arg1[j - i] = '\0';
     return j - 1;
 }
 
@@ -367,7 +368,7 @@ int main(int argc, char const *argv[])
             continue;
         }
 
-        arg1_end_ndx = get_arg1_ndx(arg1, line, command_end_ndx);
+        arg1_end_ndx = get_arg1(arg1, line, command_end_ndx);
         if (arg1 == NULL)
         {
             printf("Error getting arg1\n");
