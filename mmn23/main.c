@@ -44,15 +44,15 @@ void insert_number(int number, char *filename, PNodeType *arr)
 
 void read_file(char *filename, PNodeType *arr)
 {
+    char word[2];
     FILE *file = fopen(filename, "r");
     if (file == NULL)
     {
-        printf("Error opening file %s\n", filename);
+        printf("Error opening file \"%s\"\n", filename);
         perror("Error opening file");
         exit(1);
     }
 
-    char word[2];
     while (fscanf(file, "%s", word) != EOF)
     {
         insert_number(atoi(word), filename, arr);
@@ -78,6 +78,10 @@ void print_nodelist(int number, PNodeType node)
         node = node->next;
         node_index++;
     }
+    if (node_index > 0)
+    {
+        printf("\n");
+    }
 }
 
 void print_array(PNodeType *arr)
@@ -85,8 +89,7 @@ void print_array(PNodeType *arr)
     int num = 0;
     for (num = 0; num < MAX; num++)
     {
-        print_nodelist(arr[num], num);
-        printf("\n");
+        print_nodelist(num, arr[num]);
     }
 }
 
@@ -94,6 +97,13 @@ int main(int argc, char *argv[])
 {
     PNodeType arr[MAX];
     int i;
+
+    if (argc < 2)
+    {
+        perror("Error: No files provided\n");
+        exit(1);
+    }
+
     /* Initialize array to `NULL`s */
     for (i = 0; i < MAX; i++)
     {
