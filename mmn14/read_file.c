@@ -4,10 +4,10 @@
 
 #define MAX_LINE_LENGTH 80
 
-void read_file(char filename[])
+void read_file_lines(char filename[])
 {
     FILE *file = fopen(filename, "r");
-    char *line = NULL;
+    char line[MAX_LINE_LENGTH];
     int i = 0;
 
     printf("DEBUG: filename = %s\n", filename);
@@ -18,11 +18,11 @@ void read_file(char filename[])
         return;
     }
 
+    printf("DEBUG: file = %p\n", (void *)file);
     while (fgets(line, MAX_LINE_LENGTH, file))
     {
         printf("line %d: %s", i, line);
         i++;
     }
-    free(line);
     fclose(file);
 }

@@ -1,1 +1,1 @@
-void read_file(char[]);
+void read_file_lines(char[]);
