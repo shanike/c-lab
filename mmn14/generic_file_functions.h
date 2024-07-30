@@ -1,0 +1,51 @@
+
+#ifndef UTILS_H
+#define UTILS_H
+
+#include <stdio.h>
+#include "./global_variables.h"
+
+/* Function prototypes */
+
+/* Function to open the file for reading and handle errors */
+int open_file_for_reading(const char *file_name, FILE **fp);
+
+/* Function to open the file for writing and handle errors */
+int open_file_for_writing(const char *file_name, FILE **fp_out);
+
+/* Function to create a new file name with the specified extension */
+char *create_new_file(const char *base_file_name, const char *extension);
+
+/* Function to copy the contents of one file to another */
+int copy_file(const char *destination_file_name, const char *source_file_name);
+
+/**
+ * Cleans up resources by removing files and closing file pointers as specified by the arguments.
+ * Arguments are processed in pairs: a format specifier and a corresponding value.
+ * Supported format specifiers:
+ *   - "%s" for strings (file paths to remove)
+ *   - "%f" for file pointers (to close)
+ * 
+ * @param num_args Number of arguments provided.
+ * @param ... Variable arguments (format specifier and value pairs).
+ */
+void cleanup_resources(int num_args, ...);
+
+/**
+ * Allocates memory and checks if the allocation was successful.
+ *
+ * @param size The size of the memory to allocate.
+ * @return Pointer to the allocated memory if successful, or NULL if the allocation fails.
+ */
+void *allocate_memory_with_check(long size);
+
+/* Function to remove extra spaces in a given line */
+void remove_extra_spaces_in_line(char line[]);
+
+/* Function to remove extra spaces from a file and save the result to a new file */
+char *remove_extra_spaces_in_file(char file_name[]);
+
+/* Function to copy text from a file starting at a given position up to a specified length */
+char *copy_text(FILE *fp, fpos_t *start_pos, int text_length);
+
+#endif /* UTILS_H */
