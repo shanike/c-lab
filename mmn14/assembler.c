@@ -1,8 +1,9 @@
 #include <stdio.h>
 
-#include "read_file.h"
+#include "pre_assembler.h"
 
-int assemble(int argc, char *argv[])
+
+int main(int argc, char *argv[])
 {
     int i;
     if (argc < 2)
@@ -13,7 +14,7 @@ int assemble(int argc, char *argv[])
     }
     for (i = 1; i < argc; i++)
     {
-        read_file_lines(argv[i]);
+        process_macros(argv[i]);
     }
     return 0;
 }
