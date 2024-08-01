@@ -24,7 +24,7 @@ $(BUILD_DIR)/%.c.o: %.c
 	$(CC) $(CFLAGS) -c $< -o $@
 
 
-
+# About .PHONY see https://stackoverflow.com/a/2145605/12056841
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
