@@ -1,1 +1,0 @@
-void read_file_lines(char[]);

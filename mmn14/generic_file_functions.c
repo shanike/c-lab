@@ -5,8 +5,12 @@
 #include "./generic_file_functions.h"
 #include "./text_functions.h"
 #include "./error_handling.h"
+#include "./global_variables.h"
 
-/* Function to open the file for reading and handle errors */
+/*
+Function to open the file for reading and handle errors.
+Returns success/failure code
+*/
 int open_file_for_reading(const char *file_name, FILE **fp)
 {
     *fp = fopen(file_name, "r");
@@ -184,7 +188,7 @@ void remove_extra_spaces_in_line(char line[])
 char *remove_extra_spaces_in_file(char file_name[])
 {
     char *new_file_name;
-    char line[10000];
+    char line[MAX_LINE_LENGTH];
     int line_number = 0;
     FILE *fp, *fp_temp;
 

@@ -1,2 +1,3 @@
-objs/*.o
-assembler
+build
+./.vscode
+!./.vscode/extensions.json
