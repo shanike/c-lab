@@ -4,6 +4,8 @@ TARGET_EXEC := assembler
 BUILD_DIR := ./build
 SRC_DIRS := ./
 
+CFLAGS = -g -Wall -pedantic
+
 # Find all the C files we want to compile
 # Note the single quotes around the * expressions. The shell will incorrectly expand these otherwise, but we want to send the * directly to the find command.
 SRCS := $(shell find $(SRC_DIRS) -name '*.c')
