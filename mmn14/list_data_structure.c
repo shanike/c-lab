@@ -25,9 +25,8 @@ void add_node_to_list(node **head, char *name, char *content, int line_number)
     node *new_node, *current;
 
     new_node = create_new_node(name, content, line_number);
-
     /* If the list is empty, add the new node to the head of the list */
-    if (head == NULL)
+    if (*head == NULL)
     {
         *head = new_node;
     }

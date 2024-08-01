@@ -147,7 +147,7 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
 }
 
 /* Remove the declaration of the macros from the input file and save the result in the same temp file */
-char *filter_macro_declarations(char file_name[])
+int filter_macro_declarations(char file_name[])
 {
     char *line_token, *filtered_file_name;
     char line[MAX_LINE_LENGTH];
@@ -165,7 +165,7 @@ char *filter_macro_declarations(char file_name[])
     if (!open_file_for_writing(filtered_file_name, &output_file))
     {
         cleanup_resources(4, "file", input_file, "%s", output_file);
-        return NULL;
+        return FAILURE;
     }
 
     /* Process the input file line by line and don't write related lines to macros */
@@ -188,7 +188,6 @@ char *filter_macro_declarations(char file_name[])
             /* Skip lines until we find "endmacr" which indicates we are at the end of the macro */
             while (strcmp(line_token, MACRO_END) != 0)
             {
-                fprintf(output_file, "\n");
                 if (!fgets(line, MAX_LINE_LENGTH, input_file))
                     break;
                 line_token = strtok(line, " \n");
@@ -202,7 +201,6 @@ char *filter_macro_declarations(char file_name[])
                     line_token = strtok(line, " \n");
                 }
             }
-            fprintf(output_file, "\n");
         }
         else
         {
@@ -214,8 +212,9 @@ char *filter_macro_declarations(char file_name[])
     fclose(input_file);
     fclose(output_file);
 
-    /* Return the name of the new file without the macros */
-    return filtered_file_name;
+    copy_file(file_name, filtered_file_name);
+
+    return SUCCESS;
 }
 
 void extract_line_parts(const char *line, const char *macro_name, char *start_part, char *end_part)
@@ -353,7 +352,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
 
 int process_macros(char file_name[])
 {
-    node *macro_list_head; /* A linked list of macros */
+    node *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
 
     /* Remove unnecessary white spaces in the file and save the result in a new temp file */
@@ -361,12 +360,7 @@ int process_macros(char file_name[])
 
     /* If file is empty -> return 0 */
     if (temp_file == NULL)
-    {
         return FAILURE;
-    }
-
-    /* Initialize the macro linked list */
-    macro_list_head = NULL;
 
     /* Scan and save all the macros in the temp_file in a linked list of macros */
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
@@ -376,7 +370,7 @@ int process_macros(char file_name[])
         cleanup_resources(2, "%s", temp_file);
         return FAILURE;
     }
-
+    
     if (!filter_macro_declarations(temp_file))
     {
         free_list(macro_list_head);

@@ -53,7 +53,7 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
  * @param file_name Name of the file to filter macros from.
  * @return Name of the new file without the macros, or NULL on failure.
  */
-char *filter_macro_declarations(char file_name[]);
+int filter_macro_declarations(char file_name[]);
 
 /**
  * Extracts parts of a line before and after a macro name.
