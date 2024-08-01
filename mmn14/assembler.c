@@ -2,7 +2,7 @@
 
 #include "read_file.h"
 
-int main(int argc, char *argv[])
+int assemble(int argc, char *argv[])
 {
     int i;
     if (argc < 2)

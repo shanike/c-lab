@@ -407,3 +407,9 @@ int process_macros(char file_name[])
     /* Successfully processed the macros in the given file*/
     return SUCCESS;
 }
+
+int main()
+{
+    process_macros("example_inputs/short.txt");
+    return 0;
+}
