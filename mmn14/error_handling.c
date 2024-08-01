@@ -14,7 +14,7 @@ Error errors[] = {
     {ERROR_STATUS_CODE_103, "Error - macro without name definition"},
     {ERROR_STATUS_CODE_104, "Error - extra text after macro name definition"},
     {ERROR_STATUS_CODE_105, "Setting a position in a file failed"},
-    {ERROR_STATUS_CODE_106, "'endmcro' with extra text"},
+    {ERROR_STATUS_CODE_106, "'endmacr' with extra text"},
     {ERROR_STATUS_CODE_107, "Failed to copy file during macros expansion"},
     {ERROR_STATUS_CODE_108, "Macros expansion in an .as file failed"},
     {ERROR_STATUS_CODE_109, "Illegal name for a macro"},

@@ -24,7 +24,7 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_103, /* Macro without name definition */
     ERROR_STATUS_CODE_104, /* Extra text after macro name definition*/
     ERROR_STATUS_CODE_105, /* Failed to set a position in a file */
-    ERROR_STATUS_CODE_106, /* Extra text in "endmcro" line */
+    ERROR_STATUS_CODE_106, /* Extra text in "endmacr" line */
     ERROR_STATUS_CODE_107, /* Failed to copy file during macros expansion */
     ERROR_STATUS_CODE_108, /* Macros expansion in an .as file failed */
     ERROR_STATUS_CODE_109, /* Illegal name for macro */

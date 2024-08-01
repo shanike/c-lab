@@ -24,10 +24,10 @@ char *extract_macro_content(FILE *fp, fpos_t *position, int *line_count)
 
     str[0] = '\0';
 
-    /* Read lines from the file until "endmcro" is encountered which signifies the end of the macro*/
-    while (fgets(str, MAX_LINE_LENGTH, fp) && (strcmp(str, "endmcro\n")) != 0)
+    /* Read lines from the file until "endmacr" is encountered which signifies the end of the macro*/
+    while (fgets(str, MAX_LINE_LENGTH, fp) && (strcmp(str, "endmacr\n")) != 0)
     {
-        /* Validation - Check for a line with "endmcro" and extra text with it, and if so, print error */
+        /* Validation - Check for a line with "endmacr" and extra text with it, and if so, print error */
         if ((strstr(str, MACRO_END) != NULL) && strlen(str) != strlen(MACRO_END))
         {
             print_system_error(ERROR_STATUS_CODE_106);
@@ -185,7 +185,7 @@ char *filter_macro_declarations(char file_name[])
         /* A macro was found, now skip the lines belongs to the macro */
         if (strcmp(line_token, MACRO_DECLARATION) == 0)
         {
-            /* Skip lines until we find "endmcro" which indicates we are at the end of the macro */
+            /* Skip lines until we find "endmacr" which indicates we are at the end of the macro */
             while (strcmp(line_token, MACRO_END) != 0)
             {
                 fprintf(output_file, "\n");

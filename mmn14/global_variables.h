@@ -2,8 +2,8 @@
 #define GLOBAL_VARIABLES_H
 
 /* Macro declarations */
-#define MACRO_DECLARATION "mcro"
-#define MACRO_END "endmcro"
+#define MACRO_DECLARATION "macr"
+#define MACRO_END "endmacr"
 
 /* TODO: why is 81 and not 80? */
 /* Maximum length of a single command line */
