@@ -5,6 +5,7 @@
 #define MACRO_DECLARATION "mcro"
 #define MACRO_END "endmcro"
 
+/* TODO: why is 81 and not 80? */
 /* Maximum length of a single command line */
 #define MAX_LINE_LENGTH 81
 
