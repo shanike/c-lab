@@ -6,7 +6,10 @@
 #include "./text_functions.h"
 #include "./error_handling.h"
 
-/* Function to open the file for reading and handle errors */
+/* 
+Function to open the file for reading and handle errors.
+Returns success/failure code
+*/
 int open_file_for_reading(const char *file_name, FILE **fp)
 {
     *fp = fopen(file_name, "r");
