@@ -5,6 +5,31 @@
 
 int main(int argc, char *argv[])
 {
+    char *input_file;
+    int result;
+
+    if (argc != 2)
+    {
+        fprintf(stderr, "Usage: %s <input_file.asm>\n", argv[0]);
+        return 0;
+    }
+
+    input_file = argv[1];
+
+    result = process_macros(input_file); 
+
+    if (result == 1)
+    {
+        printf("Pre-assembly completed successfully.\n");
+    }
+    else
+    {
+        printf("Pre-assembly failed.\n");
+    }
+
+    return 1;
+
+/*
     int i;
     if (argc < 2)
     {
@@ -17,4 +42,5 @@ int main(int argc, char *argv[])
         process_macros(argv[i]);
     }
     return 0;
+*/
 }
