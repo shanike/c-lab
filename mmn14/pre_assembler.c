@@ -99,7 +99,7 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
         line_counter++;
 
         /* Extract the macro name from the declaration line and validate it */
-        /* Check if the line starts with "mcro" which is a macro declaration */
+        /* Check if the line starts with the `MACRO_DECLARATION` */
         if (strcmp(strtok(str, " "), MACRO_DECLARATION) == 0)
         {
 
@@ -367,7 +367,7 @@ int process_macros(char file_name[])
     /* Scan and save all the macros in the temp_file in a linked list of macros */
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
-        /* If something went wrong or one of the macros is not valid -> return -*/
+        /* If something went wrong or one of the macros is not valid -> return 0 */
         free_list(macro_list_head);
         cleanup_resources(2, "%s", temp_file);
         return FAILURE;

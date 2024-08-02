@@ -55,7 +55,7 @@ void free_node(node *node1)
 
 void free_list(node *head)
 {
-    /* Go through the linked list and free memory allocated fot each node in the list*/
+    /* Go through the linked list and free memory allocated fot each node in the list */
     while (head != NULL)
     {
         node *temp = head;
