@@ -106,7 +106,7 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
             if (process_macro_declaration(fp, &line_counter, macro_list_head, file_name) == FAILURE)
             {
                 is_successful = FAILURE;
-                /* TODO: should we add a `break` here? */
+                break;
             }
         }
     }
@@ -165,7 +165,9 @@ int filter_macro_declarations(char file_name[])
     /* Open the new file for writing */
     if (!open_file_for_writing(filtered_file_name, &output_file))
     {
-        cleanup_resources(4, "file", input_file, "%s", output_file);
+        fclose(input_file);
+        cleanup_file(filtered_file_name);
+
         return FAILURE;
     }
 
@@ -214,6 +216,8 @@ int filter_macro_declarations(char file_name[])
     fclose(output_file);
 
     copy_file(file_name, filtered_file_name);
+
+    cleanup_file(filtered_file_name);
 
     return SUCCESS;
 }
@@ -304,7 +308,10 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     {
         /* Copying file failed - closing open files and freeing allocated memory */
         print_system_error(ERROR_STATUS_CODE_107);
-        cleanup_resources(4, "%s", temp_file_name, "%s", final_file_name);
+
+        cleanup_file(temp_file_name);
+        cleanup_file(final_file_name);
+
         return NULL;
     }
 
@@ -314,22 +321,33 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     {
         if (open_file_for_reading(temp_file_name, &input_temp_file) == FAILURE)
         {
-            cleanup_resources(4, "%s", temp_file_name, "%s", final_file_name);
+            cleanup_file(temp_file_name);
+            cleanup_file(final_file_name);
+
             return FAILURE;
         }
 
         /* Open the final modified file for writing */
         if (!open_file_for_writing(final_file_name, &output_file))
         {
-            cleanup_resources(6, "file", input_temp_file, "%s", temp_file_name, "%s", output_file);
+            fclose(input_temp_file);
+
+            cleanup_file(temp_file_name);
+            cleanup_file(final_file_name);
+
             return FAILURE;
         }
 
         /* Process each line of the temporary file and change each macro declaration to the macro's content*/
         if (!process_macros_in_file(input_temp_file, output_file, current_macro))
         {
-            cleanup_resources(8, "file", output_file, "file", input_temp_file, "%s", temp_file_name, "%s", final_file_name);
-            return NULL;
+            fclose(output_file);
+            fclose(input_temp_file);
+
+            cleanup_file(temp_file_name);
+            cleanup_file(final_file_name);
+
+            return FAILURE;
         }
 
         /* Close the temporary and final modified files */
@@ -344,8 +362,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
         }
     }
 
-    remove(temp_file_name);
-    free(temp_file_name);
+    cleanup_file(temp_file_name);
 
     /* Return the name of the final modified file */
     return final_file_name;
@@ -368,18 +385,18 @@ int process_macros(char file_name[])
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
         /* If something went wrong or one of the macros is not valid -> return 0 */
-        printf("DEBUG: happens\n");
         free_list(macro_list_head);
-        printf("DEBUG: happens\n");
-        cleanup_resources(2, "%s", temp_file);
-        printf("DEBUG: 2 not happening!\n");
+
+        cleanup_file(temp_file);
         return FAILURE;
     }
 
     if (!filter_macro_declarations(temp_file))
     {
         free_list(macro_list_head);
-        cleanup_resources(2, "%s", temp_file);
+
+        cleanup_file(temp_file);
+
         print_system_error(ERROR_STATUS_CODE_108);
         return FAILURE;
     }
@@ -389,14 +406,16 @@ int process_macros(char file_name[])
     if (final_file == NULL)
     {
         free_list(macro_list_head);
-        cleanup_resources(4, "%s", temp_file);
+
+        cleanup_file(temp_file);
+
         print_system_error(ERROR_STATUS_CODE_108);
         return FAILURE;
     }
 
     temp_file_name = create_new_file(file_name, ".temp1");
-    remove(temp_file_name);
-    free(temp_file_name);
+    
+    cleanup_file(temp_file_name);
 
     /* Free allocated memory */
     free(temp_file);

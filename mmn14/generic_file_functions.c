@@ -93,41 +93,22 @@ int copy_file(const char *destination_file_name, const char *source_file_name)
     return SUCCESS;
 }
 
-/* Cleans up resources by removing files and closing file pointers as specified by the arguments. */
-void cleanup_resources(int num_args, ...)
+/* Remove a given file */
+void cleanup_file(char *file_path)
 {
-    int index;
-    char *file_path;
-    FILE *file_pointer;
-    va_list args;
-
-    va_start(args, num_args);
-
-    for (index = 0; index < num_args; index++)
+    /* Check if file path is not NULL */
+    if (file_path != NULL)
     {
-        if (strcmp(va_arg(args, char *), "%s") == 0)
-        {
-            /* Process a file path to be removed, remove the file and free the allocated memory for the file path */
-            file_path = va_arg(args, char *);
-            remove(file_path);
-            free(file_path);
-        }
-        else if (strcmp(va_arg(args, char *), "%f") == 0)
-        {
-            /* Process a file pointer to be closed and close the file*/
-            file_pointer = va_arg(args, FILE *);
-            fclose(file_pointer);
-        }
-        else
-        {
-            /* Handle unexpected format specifiers */
-            fprintf(stderr, "Unsupported format specifier: %s\n", va_arg(args, char *));
-            va_end(args);
-            return;
-        }
+        /* Remove the file */
+        remove(file_path);
+        
+        /* Free the allocated memory for the file path */
+        free(file_path);
     }
-
-    va_end(args);
+    else
+    {
+        fprintf(stderr, "Invalid file path.\n");
+    }
 }
 
 /* Allocates memory and checks if the allocation was successful */
@@ -150,14 +131,14 @@ void remove_extra_spaces_in_line(char line[])
     char temp_line[MAX_LINE_LENGTH];
     i = j = 0;
     /* eliminating white-spaces in the beginning of the line */
-    while (is_space_or_tab(*(line + i)))
+    while (is_white_space_or_tab(*(line + i)))
     {
         i++;
     }
     while (*(line + i) != '\0')
     {
         /* copying character */
-        while (!is_space_or_tab(*(line + i)) && *(line + i) != '\0')
+        while (!is_white_space_or_tab(*(line + i)) && *(line + i) != '\0')
         {
             *(temp_line + j) = *(line + i);
             i++;
@@ -169,7 +150,7 @@ void remove_extra_spaces_in_line(char line[])
             break;
         }
         /* if loop stopped because of a white-space skipping them until another character is encountered*/
-        while (is_space_or_tab(*(line + i)))
+        while (is_white_space_or_tab(*(line + i)))
         {
             i++;
         }
@@ -199,13 +180,15 @@ char *remove_extra_spaces_in_file(char file_name[])
     new_file_name = create_new_file(file_name, ".temp1");
     if (new_file_name == NULL)
     {
-        cleanup_resources(2, "file", fp);
+        fclose(fp);
         return NULL;
     }
 
     if (!open_file_for_writing(new_file_name, &fp_temp))
     {
-        cleanup_resources(4, "file", fp, "%s", new_file_name);
+        fclose(fp);
+        remove(new_file_name);
+        free(new_file_name);
         return NULL;
     }
 
@@ -235,8 +218,10 @@ char *remove_extra_spaces_in_file(char file_name[])
         /* Save the changed line in the new file */
         fprintf(fp_temp, "%s", line);
     }
+
     fclose(fp);
     fclose(fp_temp);
+
     return new_file_name;
 }
 

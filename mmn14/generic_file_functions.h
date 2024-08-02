@@ -20,16 +20,15 @@ char *create_new_file(const char *base_file_name, const char *extension);
 int copy_file(const char *destination_file_name, const char *source_file_name);
 
 /**
- * Cleans up resources by removing files and closing file pointers as specified by the arguments.
- * Arguments are processed in pairs: a format specifier and a corresponding value.
- * Supported format specifiers:
- *   - "%s" for strings (file paths to remove)
- *   - "%f" for file pointers (to close)
- * 
- * @param num_args Number of arguments provided.
- * @param ... Variable arguments (format specifier and value pairs).
+ * @brief Cleans up the specified file by deleting it and freeing the memory allocated for the file path.
+ *
+ * This function removes the file located at the given file path. 
+ * The function also frees the memory allocated for the file path.
+ *
+ * @param file_path A pointer to the file path to be cleaned up. The memory allocated for
+ *                  this file path will be freed by this function.
  */
-void cleanup_resources(int num_args, ...);
+void cleanup_file(char *file_path);
 
 /**
  * Allocates memory and checks if the allocation was successful.
