@@ -11,6 +11,9 @@ typedef struct op_code {
 
 /* Function prototypes */
 
+/* Generic function to check if a string is one of the strings in an array */
+int is_one_of(char *str_input, char *array[], int array_length);
+
 /* Function to check if a string is an instruction */
 int is_instruction(char *str);
 

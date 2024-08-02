@@ -99,13 +99,14 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
         line_counter++;
 
         /* Extract the macro name from the declaration line and validate it */
-        /* Check if the line starts with "mcro" which is a macro declaration */
+        /* Check if the line starts with the `MACRO_DECLARATION` */
         if (strcmp(strtok(str, " "), MACRO_DECLARATION) == 0)
         {
 
             if (process_macro_declaration(fp, &line_counter, macro_list_head, file_name) == FAILURE)
             {
                 is_successful = FAILURE;
+                /* TODO: should we add a `break` here? */
             }
         }
     }
@@ -355,6 +356,7 @@ int process_macros(char file_name[])
     node *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
 
+    /* TODO: check whether lines of comment (== ";") or empty/whitespace lines should be included in .am file (=the pre-assembler output)*/
     /* Remove unnecessary white spaces in the file and save the result in a new temp file */
     temp_file = remove_extra_spaces_in_file(file_name);
 
@@ -365,12 +367,15 @@ int process_macros(char file_name[])
     /* Scan and save all the macros in the temp_file in a linked list of macros */
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
-        /* If something went wrong or one of the macros is not valid -> return -*/
+        /* If something went wrong or one of the macros is not valid -> return 0 */
+        printf("DEBUG: happens\n");
         free_list(macro_list_head);
+        printf("DEBUG: happens\n");
         cleanup_resources(2, "%s", temp_file);
+        printf("DEBUG: 2 not happening!\n");
         return FAILURE;
     }
-    
+
     if (!filter_macro_declarations(temp_file))
     {
         free_list(macro_list_head);
