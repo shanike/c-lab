@@ -106,6 +106,7 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
             if (process_macro_declaration(fp, &line_counter, macro_list_head, file_name) == FAILURE)
             {
                 is_successful = FAILURE;
+                /* TODO: should we add a `break` here? */
             }
         }
     }
@@ -355,6 +356,7 @@ int process_macros(char file_name[])
     node *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
 
+    /* TODO: check whether lines of comment (== ";") or empty/whitespace lines should be included in .am file (=the pre-assembler output)*/
     /* Remove unnecessary white spaces in the file and save the result in a new temp file */
     temp_file = remove_extra_spaces_in_file(file_name);
 
