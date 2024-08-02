@@ -1,30 +1,35 @@
 #include <stdio.h>
 
 #include "pre_assembler.h"
+#include "./generic_file_functions.h"
 
 
 int main(int argc, char *argv[])
 {
-    char *input_file;
     int result;
+    int i;
 
-    if (argc != 2)
+    if (argc < 2)
     {
-        fprintf(stderr, "Usage: %s\n", argv[0]);
+        fprintf(stderr, "Usage: %s <file1> <file2> ... <fileN>\n", argv[0]);
         return 0;
     }
 
-    input_file = argv[1];
-
-    result = process_macros(input_file); 
-
-    if (result == 1)
+    for (i = 1; i < argc; i++)
     {
-        printf("Pre-assembly completed successfully.\n");
-    }
-    else
-    {
-        printf("Pre-assembly failed.\n");
+        char *input_file = argv[i];
+
+        printf("Processing file: %s\n", input_file);
+        result = process_macros(create_new_file(input_file, ".as"));
+
+        if (result == 1)
+        {
+            printf("Pre-assembly completed successfully for file: %s\n", input_file);
+        }
+        else
+        {
+            fprintf(stderr, "Pre-assembly failed for file: %s\n", input_file);
+        }
     }
 
     return 1;
