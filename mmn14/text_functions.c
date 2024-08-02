@@ -35,6 +35,8 @@ void remove_spaces_next_to_comma(char *str)
     }
 }
 
+/* TODO: add check for tab? */
+/* TODO: maybe consider rename to is_whitespace */
 /* Check if the char is a space or a tab */
 int is_space_or_tab(char c)
 {
