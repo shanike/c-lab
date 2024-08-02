@@ -368,11 +368,14 @@ int process_macros(char file_name[])
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
         /* If something went wrong or one of the macros is not valid -> return 0 */
+        printf("DEBUG: happens\n");
         free_list(macro_list_head);
+        printf("DEBUG: happens\n");
         cleanup_resources(2, "%s", temp_file);
+        printf("DEBUG: 2 not happening!\n");
         return FAILURE;
     }
-    
+
     if (!filter_macro_declarations(temp_file))
     {
         free_list(macro_list_head);
