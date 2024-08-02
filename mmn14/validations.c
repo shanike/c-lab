@@ -26,59 +26,42 @@ char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
 
 char *INSTRUCTIONS[] = {".data", ".string", ".extern", ".entry"};
 
-int is_instruction(char *str)
+int is_one_of(char *str_input, char *array[], int array_length)
 {
     int i;
 
-    if (str == NULL)
+    if (str_input == NULL)
         return 0;
 
     /* Iterate through the instructions list and compare the given string with each instruction in the list */
-    for (i = 0; i < INSTRUCTIONS_NUMBER; i++)
+    for (i = 0; i < array_length; i++)
     {
         /* The string matches one of the instructions */
-        if (strcmp(str, INSTRUCTIONS[i]) == 0)
+        if (strcmp(str_input, array[i]) == 0)
         {
             return 1;
         }
     }
     return 0;
+}
+
+int is_instruction(char *str)
+{
+    return is_one_of(str, INSTRUCTIONS, INSTRUCTIONS_NUMBER);
 }
 
 int is_opcode(char *str)
 {
     int i;
-
-    if (str == NULL)
-        return 0;
-
-    /* Iterate through the opcodes list and compare the string with each opcode in the list */
+    char *op_code_names[OP_CODES_NUMBER];
     for (i = 0; i < OP_CODES_NUMBER; i++)
     {
-        if (strcmp(str, OP_CODES[i].opcode) == 0)
-        {
-            /* The string matches one of the opcodes */
-            return 1;
-        }
+        op_code_names[i] = OP_CODES[i].opcode;
     }
-    return 0;
+    return is_one_of(str, op_code_names, OP_CODES_NUMBER);
 }
 
 int is_register(char *str)
 {
-    int i;
-
-    if (str == NULL)
-        return 0;
-
-    /* Iterate through the registers list and compare the string with each register in the list */
-    for (i = 0; i < REGISTERS_NUMBER; i++)
-    {
-        if (strcmp(str, REGISTERS[i]) == 0)
-        {
-            /* The string matches one of the registers */
-            return 1;
-        }
-    }
-    return -0;
+    return is_one_of(str, REGISTERS, REGISTERS_NUMBER);
 }
