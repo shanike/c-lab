@@ -20,6 +20,6 @@ void remove_spaces_next_to_comma(char *str);
  * @param c The character to check.
  * @return 1 if the character is a space or a tab, 0 otherwise.
  */
-int is_space_or_tab(char c);
+int is_white_space_or_tab(char c);
 
 #endif /* TEXT_FUNCTIONS_H */

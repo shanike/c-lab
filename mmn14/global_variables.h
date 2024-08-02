@@ -5,9 +5,8 @@
 #define MACRO_DECLARATION "macr"
 #define MACRO_END "endmacr"
 
-/* TODO: why is 81 and not 80? */
 /* Maximum length of a single command line */
-#define MAX_LINE_LENGTH 81
+#define MAX_LINE_LENGTH 80
 
 /* Success and failure codes */
 #define SUCCESS 1
