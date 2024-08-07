@@ -12,12 +12,12 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-
 #define INSTRUCTIONS_NUMBER 4
 #define OP_CODES_NUMBER 16
 #define REGISTERS_NUMBER 8
 
-typedef struct location_in_file {
+typedef struct location_in_file
+{
     char *file_name;
     int line_number;
 } location_in_file;

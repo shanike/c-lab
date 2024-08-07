@@ -1,18 +1,16 @@
 #ifndef ERROR_HANDLING_H
 #define ERROR_HANDLING_H
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
 #include "global_variables.h"
 #include "generic_file_functions.h"
 
-
 /* An error with an associated error code and error message */
 typedef struct Error
 {
-    int error_code;    /* Unique code for the error */
+    int error_code;  /* Unique code for the error */
     char *error_msg; /* Error message associated with the error */
 } Error;
 
@@ -48,6 +46,5 @@ void print_system_error(int error_code);
  * @param file       The file location where the error occurred.
  */
 void print_file_error(int error_code, location_in_file file);
-
 
 #endif /* ERROR_HANDLING_H */
