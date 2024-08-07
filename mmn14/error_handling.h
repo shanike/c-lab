@@ -27,21 +27,22 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_108, /* Macros expansion in an .as file failed */
     ERROR_STATUS_CODE_109, /* Illegal name for macro */
     ERROR_STATUS_CODE_110, /* Line is too long */
-    ERROR_STATUS_CODE_111 /* Macro has more than one definition */
+    ERROR_STATUS_CODE_111, /* Macro has more than one definition */
+    ERROR_STATUS_CODE_112, /* Label is already used */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */
 
 /**
  * Print a system error message to the standard output.
- * 
+ *
  * @param error_code The error code for which the message should be printed.
  */
 void print_system_error(int error_code);
 
 /**
  * Print a file-related error message to the standard output.
- * 
+ *
  * @param error_code The error code for which the message should be printed.
  * @param file       The file location where the error occurred.
  */

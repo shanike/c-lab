@@ -19,7 +19,9 @@ Error errors[] = {
     {ERROR_STATUS_CODE_108, "Macros expansion in an .as file failed"},
     {ERROR_STATUS_CODE_109, "Illegal name for a macro"},
     {ERROR_STATUS_CODE_110, "Line is too long"},
-    {ERROR_STATUS_CODE_111, "Macro has more than one definition"}};
+    {ERROR_STATUS_CODE_111, "Macro has more than one definition"},
+    {ERROR_STATUS_CODE_112, "Label is already used"}
+};
 
 void print_system_error(int error_code)
 {

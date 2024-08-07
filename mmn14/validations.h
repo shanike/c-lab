@@ -23,4 +23,7 @@ int is_opcode(char *str);
 /* Function to check if a string is a register */
 int is_register(char *str);
 
+/* Function to check if a string is a label */
+int is_label(char *str);
+
 #endif /* VALIDATIONS_H */

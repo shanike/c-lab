@@ -7,6 +7,8 @@
 
 /* Maximum length of a single command line */
 #define MAX_LINE_LENGTH 80
+/* Maximum length of a label */
+#define MAX_LABEL_LENGTH 31
 
 /* Success and failure codes */
 #define SUCCESS 1

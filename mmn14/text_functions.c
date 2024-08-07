@@ -40,3 +40,34 @@ int is_white_space_or_tab(char c)
 {
     return (isspace(c) && c != '\n');
 }
+
+void trim_char(char *str, char c)
+{
+    char *end;
+
+    /* Trim leading char */
+    while (*str == c)
+    {
+        str++;
+    }
+
+    /* Trim trailing char */
+    end = str + strlen(str) - 1;
+    while (end > str && *end == c)
+    {
+        end--;
+    }
+
+    /* Write new null terminator */
+    *(end + 1) = '\0';
+}
+
+void trim_quotes(char *str)
+{
+    trim_char(str, '"');
+}
+
+void trim_newlines(char *str)
+{
+    trim_char(str, '\n');
+}

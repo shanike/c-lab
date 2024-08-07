@@ -65,3 +65,20 @@ int is_register(char *str)
 {
     return is_one_of(str, REGISTERS, REGISTERS_NUMBER);
 }
+
+int is_label(char *str)
+{
+    /* A label must not be over 31 characters long */
+    /* A label must start with an alphabetic character */
+    /* A label's last character must be a colon */
+    if (strlen(str) > MAX_LABEL_LENGTH || !isalpha(str[0]) || str[strlen(str) - 1] != ':')
+    {
+        return 0;
+    }
+    /* A label must not be a preserved word */
+    if (is_instruction(str) || is_opcode(str) || is_register(str))
+    {
+        return 0;
+    }
+    return 1;
+}
