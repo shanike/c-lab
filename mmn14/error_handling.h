@@ -28,7 +28,7 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_109, /* Illegal name for macro */
     ERROR_STATUS_CODE_110, /* Line is too long */
     ERROR_STATUS_CODE_111, /* Macro has more than one definition */
-    ERROR_STATUS_CODE_112, /* Label is already used */
+    ERROR_STATUS_CODE_112 /* Label is already used */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */

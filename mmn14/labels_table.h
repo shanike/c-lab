@@ -5,7 +5,7 @@ enum FEATURE_TYPE
 {
     DATA,
     EXTERNAL,
-    CODE,
+    CODE
 };
 typedef enum FEATURE_TYPE FeatureType;
 

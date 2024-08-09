@@ -93,10 +93,10 @@ int first_pass(char filename[])
                     /* TODO NOW check why trim quotes not working */
                     printf("word: %s\n", word);
                     trim_quotes(word);
-                    // word_len = strlen(word);
-                    // word[word_len - 1] = '\0'; /* Remove the quote from end the string */
-                    // word++;                    /* Remove the quote from start of string */
-                    // word_len = strlen(word);
+                    /* word_len = strlen(word);   */
+                    /* word[word_len - 1] = '\0'; */ /* Remove the quote from end the string */
+                    /* word++;                    */ /* Remove the quote from start of string */
+                    /* word_len = strlen(word);   */
                     printf("word: %s\n", word);
                     /* TODO add to data memory */
                     DC += word_len;
