@@ -24,6 +24,8 @@ int first_pass(char filename[])
     labelNode *labels_list = NULL;
     char *current_label = NULL;
 
+    int errors_cnt = 0;
+
     if (!open_file_for_reading(filename, &fp))
     {
         printf("Error: failed to open file for reading\n");
@@ -32,13 +34,13 @@ int first_pass(char filename[])
     printf("First pass for file: %s\n", filename);
 
     /* Read each line of the given file */
-    while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
+    while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
     {
         printf("\n----new line----\n");
         current_label = NULL;
+        line[strlen(line) - 1] = '\0'; /* Remove the newline character */
         printf("line: %s\n", line);
         word = strtok(line, " ");
-        printf("word: %s\n", word);
 
         if (word == NULL || word[0] == ';')
         {
@@ -48,60 +50,57 @@ int first_pass(char filename[])
 
         if (is_label(word)) /* If the line is a label */
         {
-            printf("it's a label!\n");
+            printf("it's a label! saving name.\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
             word[--word_len] = '\0';
-            printf("label: %s\n", word);
-            printf("label length: %d\n", word_len);
             /* Update current_label */
             current_label = malloc(word_len + 1);
             strcpy(current_label, word);
             current_label[word_len] = '\0';
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
-            printf("word: %s\n", word);
         }
         if (word[0] == '.')
         {
             printf("it's a directive line!\n");
-            printf("word: %s\n", word);
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
             {
-                printf("it's .data or .string!\n");
-                /* If label exists then add to the labels list */
-                if (current_label && add_node_to_list_label(&labels_list, current_label, DATA, DC) == FAILURE)
+                if (current_label) /* If label exists: add to the labels list */
                 {
-                    break;
+                    if (add_node_to_list_label(&labels_list, current_label, DATA, DC) == FAILURE)
+                    {
+                        errors_cnt++;
+                        continue;
+                    }
                 };
 
                 if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
-                    printf("it's .data!\n");
+                    printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        printf("word: %s\n", word);
-                        /* TODO add to data memory */
                         /* TODO check whether is_number validation is needed */
                         DC++;
                     }
+                    printf("setting DC to %d\n", DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
+                    printf("it's .string! ");
                     word = strtok(NULL, " \t");
-                    word[strlen(word) - 1] = '\0'; /* Remove the quote from end the string */
+                    word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
                     word++;                        /* Remove the quote from start of string */
                     word_len = strlen(word);
-                    printf("word: %s\n", word);
-                    /* TODO add to data memory */
                     DC += word_len;
+                    printf("setting DC to %d\n", DC);
                 }
             }
         }
         else
         {
             printf("ignoring for now (%s)\n", word);
-            /* TODO */
+            /* TODO instruction */
         }
     }
 
