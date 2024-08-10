@@ -22,32 +22,4 @@ void remove_spaces_next_to_comma(char *str);
  */
 int is_white_space_or_tab(char c);
 
-/**
- * Trims a specific character from the beginning and end of a string.
- *
- * This function removes a specific character from the beginning and end of a string.
- *
- * @param str The string to process.
- * @param c The character to remove.
- */
-void trim_char(char *str, char c);
-
-/**
- * Trims quotes from the beginning and end of a string.
- *
- * This function removes double quotes from the beginning and end of a string.
- *
- * @param str The string to process.
- */
-void trim_quotes(char *str);
-
-/**
- * Trims newline characters from the beginning and end of a string.
- *
- * This function removes newline characters from the beginning and end of a string.
- *
- * @param str The string to process.
- */
-void trim_newlines(char *str);
-
 #endif /* TEXT_FUNCTIONS_H */

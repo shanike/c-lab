@@ -36,8 +36,7 @@ int first_pass(char filename[])
     {
         printf("\n----new line----\n");
         current_label = NULL;
-        trim_newlines(line);
-        printf("line: %s\n", line);
+                printf("line: %s\n", line);
         word = strtok(line, " ");
         printf("word: %s\n", word);
 
@@ -88,15 +87,10 @@ int first_pass(char filename[])
                 }
                 else if (strcmp(word, ".string") == 0)
                 {
-                    printf(".string\n");
-                    word = strtok(NULL, " \t");
-                    /* TODO NOW check why trim quotes not working */
-                    printf("word: %s\n", word);
-                    trim_quotes(word);
-                    /* word_len = strlen(word);   */
-                    /* word[word_len - 1] = '\0'; */ /* Remove the quote from end the string */
-                    /* word++;                    */ /* Remove the quote from start of string */
-                    /* word_len = strlen(word);   */
+                                        word = strtok(NULL, " \t");
+                    word[strlen(word) - 1] = '\0'; /* Remove the quote from end the string */
+                    word++;                        /* Remove the quote from start of string */
+                    word_len = strlen(word);
                     printf("word: %s\n", word);
                     /* TODO add to data memory */
                     DC += word_len;
