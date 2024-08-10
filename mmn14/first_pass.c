@@ -49,7 +49,7 @@ int first_pass(char filename[])
         }
 
         if (is_label(word)) /* If the line is a label */
-        {
+        {                   /* TODO try extracting to func */
             printf("it's a label! saving name.\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
@@ -65,7 +65,7 @@ int first_pass(char filename[])
         {
             printf("it's a directive line!\n");
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
-            {
+            {                      /* TODO try extracting to func */
                 if (current_label) /* If label exists: add to the labels list */
                 {
                     if (add_node_to_list_label(&labels_list, current_label, DATA, DC) == FAILURE)
