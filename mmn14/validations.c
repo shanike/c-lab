@@ -24,7 +24,7 @@ op_code OP_CODES[] = {
     {"stop", 0}};
 char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
 
-char *INSTRUCTIONS[] = {".data", ".string", ".extern", ".entry"};
+char *INSTRUCTIONS[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
 
 int is_one_of(char *str_input, char *array[], int array_length)
 {
