@@ -23,6 +23,7 @@ int first_pass(char filename[])
 
     labelNode *labels_list = NULL;
     char *current_label = NULL;
+int op_code_l = 0;
 
     int errors_cnt = 0;
 
@@ -133,11 +134,25 @@ int first_pass(char filename[])
                     continue;
                 }
             }
+}
+        else if (is_opcode(word))
+        {
+            printf("it's an opcode!\n");
+            /* TODO calc L (=op_code_l) */
+            if (current_label) /* If label exists: add to the labels list */
+            {
+                if (add_node_to_list_label(&labels_list, current_label, CODE, IC) == FAILURE)
+                {
+                    errors_cnt++;
+                    continue;
+                }
+            }
+            IC += op_code_l;
+        }
             else
             {
-                printf("ignoring for now (%s)\n", word);
-                /* TODO instruction */
-            }
+            printf("TODO: error opcode not found: %s\n", word); /* TODO error */
+            continue;
         }
 
     } /* End of while */
