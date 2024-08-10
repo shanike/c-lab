@@ -96,15 +96,51 @@ int first_pass(char filename[])
                     printf("setting DC to %d\n", DC);
                 }
             }
-        }
-        else
-        {
-            printf("ignoring for now (%s)\n", word);
-            /* TODO instruction */
-        }
-    }
+            else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
+            {
+                printf("it's .extern or .entry!\n");
+                if (current_label)
+                {
+                    printf("TODO: warn ignoring label %s\n", current_label); /* TODO warning */
+                }
 
-} /* End of while */
+                current_label = strtok(NULL, " \t"); /* TODO #define inline_whitespace " \t" */
+                printf("current_label: %s\n", current_label);
+                if (!current_label)
+                {
+                    printf("TODO: missing label name\n"); /* TODO error */
+                    continue;
+                }
+                if (strcmp(word, DIRECTIVE_EXTERN) == 0)
+                {
+                    if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0) == FAILURE)
+                    {
+                        errors_cnt++;
+                        continue;
+                    }
+                }
+                else /* is DIRECTIVE_ENTRY */
+                {
+                    if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100) == FAILURE)
+                    {
+                        errors_cnt++;
+                        continue;
+                    }
+                }
+                if ((word = strtok(NULL, " \t")))
+                {
+                    printf("TODO: too many arguments\n"); /* TODO error */
+                    continue;
+                }
+            }
+            else
+            {
+                printf("ignoring for now (%s)\n", word);
+                /* TODO instruction */
+            }
+        }
+
+    } /* End of while */
 
     print_list_label(labels_list);
     fclose(fp);
