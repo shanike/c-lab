@@ -65,7 +65,7 @@ int first_pass(char filename[])
         if (word[0] == '.')
         {
             printf("is directive line: %s\n", word);
-            if (strcmp(word, ".data") == 0 || strcmp(word, ".string") == 0) /* TODO consts */
+            if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
             {
                 printf("is .data or .string\n");
                 /* If label exists then add to the labels list */
@@ -74,7 +74,7 @@ int first_pass(char filename[])
                     break;
                 };
 
-                if (strcmp(word, ".data") == 0)
+                if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
                     printf(".data\n");
                     while ((word = strtok(NULL, " ,\t")))
@@ -85,7 +85,7 @@ int first_pass(char filename[])
                         DC++;
                     }
                 }
-                else if (strcmp(word, ".string") == 0)
+                else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
                                         word = strtok(NULL, " \t");
                     word[strlen(word) - 1] = '\0'; /* Remove the quote from end the string */

@@ -18,6 +18,11 @@
 #define OP_CODES_NUMBER 16
 #define REGISTERS_NUMBER 8
 
+#define DIRECTIVE_DATA ".data"
+#define DIRECTIVE_STRING ".string"
+#define DIRECTIVE_ENTRY ".entry"
+#define DIRECTIVE_EXTERN ".extern"
+
 typedef struct location_in_file
 {
     char *file_name;
