@@ -23,7 +23,7 @@ int first_pass(char filename[])
 
     labelNode *labels_list = NULL;
     char *current_label = NULL;
-int op_code_l = 0;
+    int op_code_l = 0;
 
     int errors_cnt = 0;
 
@@ -38,9 +38,15 @@ int op_code_l = 0;
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
     {
         printf("\n----new line----\n");
+
+        /* Reset */
         current_label = NULL;
+        op_code_l = 0;
+        word_len = 0;
+
         line[strlen(line) - 1] = '\0'; /* Remove the newline character */
         printf("line: %s\n", line);
+
         word = strtok(line, " ");
 
         if (word == NULL || word[0] == ';')
@@ -134,7 +140,7 @@ int op_code_l = 0;
                     continue;
                 }
             }
-}
+        }
         else if (is_opcode(word))
         {
             printf("it's an opcode!\n");
@@ -149,8 +155,8 @@ int op_code_l = 0;
             }
             IC += op_code_l;
         }
-            else
-            {
+        else
+        {
             printf("TODO: error opcode not found: %s\n", word); /* TODO error */
             continue;
         }
