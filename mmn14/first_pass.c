@@ -104,8 +104,9 @@ int first_pass(char filename[])
         }
     }
 
-    print_list_label(labels_list);
+} /* End of while */
 
+    print_list_label(labels_list);
     fclose(fp);
     return SUCCESS;
 }
