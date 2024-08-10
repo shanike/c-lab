@@ -36,7 +36,7 @@ int first_pass(char filename[])
     {
         printf("\n----new line----\n");
         current_label = NULL;
-                printf("line: %s\n", line);
+        printf("line: %s\n", line);
         word = strtok(line, " ");
         printf("word: %s\n", word);
 
@@ -48,7 +48,7 @@ int first_pass(char filename[])
 
         if (is_label(word)) /* If the line is a label */
         {
-            printf("is label\n");
+            printf("it's a label!\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
             word[--word_len] = '\0';
@@ -64,10 +64,11 @@ int first_pass(char filename[])
         }
         if (word[0] == '.')
         {
-            printf("is directive line: %s\n", word);
+            printf("it's a directive line!\n");
+            printf("word: %s\n", word);
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
             {
-                printf("is .data or .string\n");
+                printf("it's .data or .string!\n");
                 /* If label exists then add to the labels list */
                 if (current_label && add_node_to_list_label(&labels_list, current_label, DATA, DC) == FAILURE)
                 {
@@ -76,7 +77,7 @@ int first_pass(char filename[])
 
                 if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
-                    printf(".data\n");
+                    printf("it's .data!\n");
                     while ((word = strtok(NULL, " ,\t")))
                     {
                         printf("word: %s\n", word);
@@ -87,7 +88,7 @@ int first_pass(char filename[])
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
-                                        word = strtok(NULL, " \t");
+                    word = strtok(NULL, " \t");
                     word[strlen(word) - 1] = '\0'; /* Remove the quote from end the string */
                     word++;                        /* Remove the quote from start of string */
                     word_len = strlen(word);
