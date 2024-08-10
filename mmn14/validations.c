@@ -75,6 +75,14 @@ int is_label(char *str)
     {
         return 0;
     }
+    /* A label must contain only alphanumeric characters */
+    for (int i = 1; i < strlen(str) - 1; i++)
+    {
+        if (!isalnum(str[i]))
+        {
+            return 0;
+        }
+    }
     /* A label must not be a preserved word */
     if (is_instruction(str) || is_opcode(str) || is_register(str))
     {
