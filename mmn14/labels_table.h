@@ -1,6 +1,8 @@
 #ifndef LABELS_TABLE_H
 #define LABELS_TABLE_H
 
+#include "./global_variables.h"
+
 enum FEATURE_TYPE
 {
     DATA,
@@ -12,10 +14,10 @@ typedef enum FEATURE_TYPE FeatureType;
 /* A node in a linked list */
 struct labelNode
 {
-    char *name;               /* Name associated with the node */
-    FeatureType feature_type; /* Feature type of the label */
-    int value;                /* Memory address of the label */
-    struct labelNode *next;   /* Pointer to the next node in the linked list */
+    char name[MAX_LABEL_LENGTH]; /* Name associated with the node */
+    FeatureType feature_type;    /* Feature type of the label */
+    int value;                   /* Memory address of the label */
+    struct labelNode *next;      /* Pointer to the next node in the linked list */
 };
 typedef struct labelNode labelNode;
 

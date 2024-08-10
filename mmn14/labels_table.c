@@ -14,7 +14,9 @@ labelNode *create_new_label_node(char *name, FeatureType feature_type, int value
     /* Check if memory allocation for the node succeeded */
     node = allocate_memory_with_check(sizeof(labelNode));
 
-    node->name = name;
+    /* Copy the name to the node's name array */
+    strcpy(node->name, name);
+
     node->feature_type = feature_type;
     node->value = value;
 
@@ -45,7 +47,7 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
 {
     labelNode *new_node, *current, *node_exists;
 
-    printf("Adding node to list: %s\n", name);
+    printf("Adding node: %s of %d\n", name, feature_type);
     node_exists = find_node_in_list_label(*head, name);
     printf("Node exists: %s\n", node_exists == NULL ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
