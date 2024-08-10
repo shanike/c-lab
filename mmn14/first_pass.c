@@ -61,7 +61,7 @@ int first_pass(char filename[])
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
         }
-        if (word[0] == '.')
+        if (is_instruction(word)) /* TODO: rename to directive?? */
         {
             printf("it's a directive line!\n");
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
