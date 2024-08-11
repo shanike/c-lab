@@ -9,6 +9,7 @@
 #include "./labels_table.h"
 #include "./validations.h"
 #include "./text_functions.h"
+#include "./error_handling.h"
 
 int first_pass(char filename[])
 {
@@ -97,8 +98,14 @@ int first_pass(char filename[])
                         printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        /* TODO check whether is_number validation is needed */
+if (!is_data_number(word))                         /* Word must be a number */
+                        {
+                            print_file_error(ERROR_STATUS_CODE_117, curr_location, word);
+                        }
+                        else
+                        {
                         DC++;
+}
                     }
                     if (IS_DEBUG)
                         printf("setting DC to %d\n", DC);

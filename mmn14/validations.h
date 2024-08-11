@@ -26,4 +26,7 @@ int is_register(char *str);
 /* Function to check if a string is a label */
 int is_label(char *str);
 
+/* Function to check if a string is a number, for .data directive */
+int is_data_number(char *str);
+
 #endif /* VALIDATIONS_H */

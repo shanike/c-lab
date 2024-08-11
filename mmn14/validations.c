@@ -92,3 +92,17 @@ int is_label(char *str)
     }
     return 1;
 }
+
+int is_data_number(char *str)
+{
+    /* A number can be any whole number */
+    int i;
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (!isdigit(str[i]) && str[i] != '-' && str[i] != '+')
+        {
+            return 0;
+        }
+    }
+    return 1;
+}
