@@ -33,7 +33,8 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_114, /* Received too many arguments */
     ERROR_STATUS_CODE_115, /* Missing label name */
     ERROR_STATUS_CODE_116, /* Ignoring label */
-    ERROR_STATUS_CODE_117 /* Argument must be a number but got: %s */
+    ERROR_STATUS_CODE_117, /* Argument must be a number but got: %s */
+    ERROR_STATUS_CODE_118 /* Invalid string, no closing and/or opening quote: %s */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */

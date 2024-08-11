@@ -119,7 +119,7 @@ int first_pass(char filename[])
                 {
                     if (IS_DEBUG)
                         printf("it's .string! ");
-                    word = strtok(NULL, " \t");
+                    extract_data_string(strtok(NULL, ""), &word, curr_location);
                     word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
                     word++;                        /* Remove the quote from start of string */
                     word_len = strlen(word);
