@@ -9,7 +9,7 @@ int temp_first_pass(char input_filename[])
 {
     char *am_filename = create_new_file(input_filename, ".am");
     printf("TEMP - Calling first_pass with .am (=after pre-assembler) file: %s\n", am_filename);
-    if(first_pass(am_filename)==FAILURE)
+    if (first_pass(am_filename) == FAILURE)
     {
         fprintf(stderr, "Error: first pass failed for file: %s\n", am_filename);
         return 1;
@@ -44,22 +44,34 @@ int main(int argc, char *argv[])
         {
             fprintf(stderr, "Pre-assembly failed for file: %s\n", input_file);
         }
+
+        result = first_pass(create_new_file(input_file, ".am"));
+
+        if (result == 0)
+        {
+            printf("First pass completed successfully for file: %s\n", input_file);
+        }
+        else
+        {
+            fprintf(stderr, "First pass failed for file: %s\n", input_file);
+        }
+
     }
 
     return 1;
 
-/*
-    int i;
-    if (argc < 2)
-    {
-        fprintf(stderr, "Error: No input file(s)\n");
-        printf("Usage: assembler <file1> <file2> ...\n");
-        return 1;
-    }
-    for (i = 1; i < argc; i++)
-    {
-        process_macros(argv[i]);
-    }
-    return 0;
-*/
+    /*
+        int i;
+        if (argc < 2)
+        {
+            fprintf(stderr, "Error: No input file(s)\n");
+            printf("Usage: assembler <file1> <file2> ...\n");
+            return 1;
+        }
+        for (i = 1; i < argc; i++)
+        {
+            process_macros(argv[i]);
+        }
+        return 0;
+    */
 }
