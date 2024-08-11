@@ -6,22 +6,22 @@
 #include "./global_variables.h"
 
 op_code OP_CODES[] = {
-    {"mov", 2},
-    {"cmp", 2},
-    {"add", 2},
-    {"sub", 2},
-    {"lea", 2},
-    {"not", 1},
-    {"clr", 1},
-    {"inc", 1},
-    {"dec", 1},
-    {"jmp", 1},
-    {"bne", 1},
-    {"red", 1},
-    {"prn", 1},
-    {"jsr", 1},
-    {"rts", 0},
-    {"stop", 0}};
+    {"mov", 2, 0},
+    {"cmp", 2, 1},
+    {"add", 2, 2},
+    {"sub", 2, 3},
+    {"lea", 2, 4},
+    {"not", 1, 5},
+    {"clr", 1, 6},
+    {"inc", 1, 7},
+    {"dec", 1, 8},
+    {"jmp", 1, 9},
+    {"bne", 1, 10},
+    {"red", 1, 11},
+    {"prn", 1, 12},
+    {"jsr", 1, 13},
+    {"rts", 0, 14},
+    {"stop", 0, 15}};
 char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
 
 char *DIRECTIVES[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
@@ -56,9 +56,27 @@ int is_opcode(char *str)
     char *op_code_names[OP_CODES_NUMBER];
     for (i = 0; i < OP_CODES_NUMBER; i++)
     {
-        op_code_names[i] = OP_CODES[i].opcode;
+        op_code_names[i] = OP_CODES[i].name;
     }
     return is_one_of(str, op_code_names, OP_CODES_NUMBER);
+}
+
+/* TODO merge is_opcode with get_opcode */
+
+int get_opcode(char *str, op_code *op)
+{
+    int i;
+    for (i = 0; i < OP_CODES_NUMBER; i++)
+    {
+        if (strcmp(OP_CODES[i].name, str) == 0)
+        {
+            op->name = OP_CODES[i].name;
+            op->arg_number = OP_CODES[i].arg_number;
+            op->code = OP_CODES[i].code;
+            return 1;
+        }
+    }
+    return 0;
 }
 
 int is_register(char *str)

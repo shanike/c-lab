@@ -10,6 +10,7 @@
 #include "./validations.h"
 #include "./text_functions.h"
 #include "./error_handling.h"
+#include "./encoding.h"
 
 /*
 Returns the number of errors that occurred during the first pass.
@@ -29,6 +30,7 @@ int first_pass(char filename[])
     labelNode *labels_list = NULL;
     char *current_label = NULL;
     int op_code_l = 0;
+    op_code *operation = NULL;
 
     int errors_cnt = 0;
 
@@ -174,7 +176,6 @@ int first_pass(char filename[])
         {
             if (IS_DEBUG)
                 printf("it's an opcode!\n");
-            /* TODO calc L (=op_code_l) */
             if (current_label) /* If label exists: add to the labels list */
             {
                 if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
@@ -183,6 +184,18 @@ int first_pass(char filename[])
                     continue;
                 }
             }
+            /* calc L (=op_code_l) */
+            if (operation != NULL)
+            {
+                free(operation);
+            }
+            operation = malloc(sizeof(operation));
+            if (!get_opcode(word, operation))
+            {
+                print_file_error(ERROR_STATUS_CODE_113, curr_location, word);
+                continue;
+            }
+            op_code_l = encode(operation, strtok(NULL, ""));
             IC += op_code_l;
         }
         else
