@@ -25,6 +25,8 @@
 #define DIRECTIVE_ENTRY ".entry"
 #define DIRECTIVE_EXTERN ".extern"
 
+#define INLINE_WHITESPACE " \t"
+
 typedef struct location_in_file
 {
     char *file_name;

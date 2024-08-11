@@ -126,7 +126,7 @@ int first_pass(char filename[])
                     DC += word_len + 1; /* +1 for the '\0' */
                     if (IS_DEBUG)
                         printf("setting DC to %d\n", DC);
-                    if ((word = strtok(NULL, " \t"))) /* If there are more words after the string */
+                    if ((word = strtok(NULL, INLINE_WHITESPACE))) /* If there are more words after the string */
                     {
                         print_file_error(ERROR_STATUS_CODE_114, curr_location);
                     }
@@ -141,7 +141,7 @@ int first_pass(char filename[])
                     print_file_warning(ERROR_STATUS_CODE_116);
                 }
 
-                current_label = strtok(NULL, " \t"); /* TODO #define inline_whitespace " \t" */
+                current_label = strtok(NULL, INLINE_WHITESPACE);
                 if (!current_label)
                 {
                     print_file_error(ERROR_STATUS_CODE_115, curr_location);
@@ -163,7 +163,7 @@ int first_pass(char filename[])
                         continue;
                     }
                 }
-                if ((word = strtok(NULL, " \t")))
+                if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
                     print_file_error(ERROR_STATUS_CODE_114, curr_location);
                     continue;
