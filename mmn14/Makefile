@@ -11,7 +11,7 @@ CFLAGS = -Wall -pedantic -ansi
 SRCS := $(shell find $(SRC_DIRS) -name '*.c')
 
 # Prepends BUILD_DIR and appends .o to every src file
-# As an example, ./your_dir/hello.cpp turns into ./build/./your_dir/hello.cpp.o
+# As an example, ./hello.c turns into ./build/./hello.c.o
 OBJS := $(SRCS:%=$(BUILD_DIR)/%.o)
 
 # The final build step.
