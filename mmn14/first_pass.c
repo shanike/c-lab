@@ -123,7 +123,7 @@ int first_pass(char filename[])
                     word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
                     word++;                        /* Remove the quote from start of string */
                     word_len = strlen(word);
-                    DC += word_len;
+                    DC += word_len + 1; /* +1 for the '\0' */
                     if (IS_DEBUG)
                         printf("setting DC to %d\n", DC);
                     if ((word = strtok(NULL, " \t"))) /* If there are more words after the string */
