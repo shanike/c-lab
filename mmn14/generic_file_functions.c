@@ -34,6 +34,7 @@ int open_file_for_writing(const char *file_name, FILE **fp_out)
     return SUCCESS;
 }
 
+/* TODO: rename to create_new_filename ?*/
 char *create_new_file(const char *base_file_name, const char *extension)
 {
     char *new_file_name, *extension_position;

@@ -1,0 +1,24 @@
+{
+    "cSpell.words": [
+        "endmacr",
+        "macr"
+    ],
+    "todo-tree.general.tags": [
+        "BUG",
+        "HACK",
+        "FIXME",
+        "TODO",
+        "XXX",
+        "[ ]",
+        "[x]",
+        "TODO NOW"
+    ],
+    "todo-tree.highlights.customHighlight": {
+        "TODO NOW": {
+            "background": "#ff82d3",
+            "foreground": "#363636",
+            "icon": "arrow-right",
+            "iconColour": "#ff82d3"
+        }
+    },
+}
