@@ -20,6 +20,7 @@ int first_pass(char filename[])
     char line[MAX_LINE_LENGTH], *word;
     FILE *fp;
     int word_len = 0;
+    int line_number = 0;
 
     labelNode *labels_list = NULL;
     char *current_label = NULL;
@@ -37,27 +38,33 @@ int first_pass(char filename[])
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
     {
-        printf("\n----new line----\n");
+        line_number++;
+
+        if (IS_DEBUG)
+            printf("\n----line %d----\n", line_number);
 
         /* Reset */
         current_label = NULL;
         op_code_l = 0;
         word_len = 0;
 
-        line[strlen(line) - 1] = '\0'; /* Remove the newline character */
-        printf("line: %s\n", line);
+        /* Remove the newline character */
+        line[strlen(line) - 1] = '\0';
+        if (IS_DEBUG)
+            printf("line: %s\n", line);
 
         word = strtok(line, " ");
 
         if (word == NULL || word[0] == ';')
         {
-            printf("ignoring\n");
+            /* Skip empty lines and comments */
             continue;
         }
 
         if (is_label(word)) /* If the line is a label */
         {                   /* TODO try extracting to func */
-            printf("it's a label! saving name.\n");
+            if (IS_DEBUG)
+                printf("it's a label! saving name.\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
             word[--word_len] = '\0';
@@ -68,9 +75,11 @@ int first_pass(char filename[])
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
         }
+
         if (is_instruction(word)) /* TODO: rename to directive?? */
         {
-            printf("it's a directive line!\n");
+            if (IS_DEBUG)
+                printf("it's a directive line!\n");
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
             {                      /* TODO try extracting to func */
                 if (current_label) /* If label exists: add to the labels list */
@@ -84,35 +93,39 @@ int first_pass(char filename[])
 
                 if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
-                    printf("it's .data! ");
+                    if (IS_DEBUG)
+                        printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
                         /* TODO check whether is_number validation is needed */
                         DC++;
                     }
-                    printf("setting DC to %d\n", DC);
+                    if (IS_DEBUG)
+                        printf("setting DC to %d\n", DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
-                    printf("it's .string! ");
+                    if (IS_DEBUG)
+                        printf("it's .string! ");
                     word = strtok(NULL, " \t");
                     word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
                     word++;                        /* Remove the quote from start of string */
                     word_len = strlen(word);
                     DC += word_len;
-                    printf("setting DC to %d\n", DC);
+                    if (IS_DEBUG)
+                        printf("setting DC to %d\n", DC);
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
             {
-                printf("it's .extern or .entry!\n");
+                if (IS_DEBUG)
+                    printf("it's .extern or .entry!\n");
                 if (current_label)
                 {
                     printf("TODO: warn ignoring label %s\n", current_label); /* TODO warning */
                 }
 
                 current_label = strtok(NULL, " \t"); /* TODO #define inline_whitespace " \t" */
-                printf("current_label: %s\n", current_label);
                 if (!current_label)
                 {
                     printf("TODO: missing label name\n"); /* TODO error */
@@ -143,11 +156,12 @@ int first_pass(char filename[])
         }
         else if (is_opcode(word))
         {
-            printf("it's an opcode!\n");
+            if (IS_DEBUG)
+                printf("it's an opcode!\n");
             /* TODO calc L (=op_code_l) */
             if (current_label) /* If label exists: add to the labels list */
             {
-                if (add_node_to_list_label(&labels_list, current_label, CODE, IC) == FAILURE)
+                if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100) == FAILURE)
                 {
                     errors_cnt++;
                     continue;

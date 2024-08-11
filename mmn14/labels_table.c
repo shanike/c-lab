@@ -4,6 +4,7 @@
 #include "./labels_table.h"
 #include "./generic_file_functions.h"
 #include "./error_handling.h"
+#include "./global_variables.h"
 
 /* TODO merge with list_data_structure.c */
 
@@ -47,9 +48,11 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
 {
     labelNode *new_node, *current, *node_exists;
 
-    printf("Adding node: %s of %d\n", name, feature_type);
+    if (IS_DEBUG)
+        printf("Adding node: %s of %d\n", name, feature_type);
     node_exists = find_node_in_list_label(*head, name);
-    printf("Node exists: %s\n", node_exists == NULL ? "~Nope~" : node_exists->name);
+    if (IS_DEBUG)
+        printf("Node exists: %s\n", node_exists == NULL ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
     {
         print_system_error(ERROR_STATUS_CODE_112);
