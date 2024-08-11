@@ -121,6 +121,10 @@ if (!is_data_number(word))                         /* Word must be a number */
                     DC += word_len;
                     if (IS_DEBUG)
                         printf("setting DC to %d\n", DC);
+if ((word = strtok(NULL, " \t"))) /* If there are more words after the string */
+                    {
+                        print_file_error(ERROR_STATUS_CODE_114, curr_location);
+                    }
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
