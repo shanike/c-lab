@@ -83,7 +83,7 @@ int first_pass(char filename[])
             word = strtok(NULL, " ");
         }
 
-        if (is_instruction(word)) /* TODO: rename to directive?? */
+        if (is_directive(word)) /* TODO: rename to directive?? */
         {
             if (IS_DEBUG)
                 printf("it's a directive line!\n");

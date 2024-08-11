@@ -24,7 +24,7 @@ op_code OP_CODES[] = {
     {"stop", 0}};
 char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
 
-char *INSTRUCTIONS[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
+char *DIRECTIVES[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
 
 int is_one_of(char *str_input, char *array[], int array_length)
 {
@@ -45,9 +45,9 @@ int is_one_of(char *str_input, char *array[], int array_length)
     return 0;
 }
 
-int is_instruction(char *str)
+int is_directive(char *str)
 {
-    return is_one_of(str, INSTRUCTIONS, INSTRUCTIONS_NUMBER);
+    return is_one_of(str, DIRECTIVES, DIRECTIVES_NUMBER);
 }
 
 int is_opcode(char *str)
@@ -86,7 +86,7 @@ int is_label(char *str)
         }
     }
     /* A label must not be a preserved word */
-    if (is_instruction(str) || is_opcode(str) || is_register(str))
+    if (is_directive(str) || is_opcode(str) || is_register(str))
     {
         return 0;
     }
