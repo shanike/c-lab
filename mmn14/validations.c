@@ -68,6 +68,8 @@ int is_register(char *str)
 
 int is_label(char *str)
 {
+    int i;
+
     /* A label must not be over 31 characters long */
     /* A label must start with an alphabetic character */
     /* A label's last character must be a colon */
@@ -76,7 +78,7 @@ int is_label(char *str)
         return 0;
     }
     /* A label must contain only alphanumeric characters */
-    for (int i = 1; i < strlen(str) - 1; i++)
+    for (i = 1; i < strlen(str) - 1; i++)
     {
         if (!isalnum(str[i]))
         {
