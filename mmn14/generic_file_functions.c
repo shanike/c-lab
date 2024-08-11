@@ -38,7 +38,7 @@ char *create_new_file(const char *base_file_name, const char *extension)
 {
     char *new_file_name, *extension_position;
 
-    /* TODO: maybe change length of allocation to length of `base_file_name` + length of `extension`?. wait, also: strcpy should be enough no? why need lines 43-47?*/
+    /* TODO: maybe change length of allocation to length of `base_file_name` + length of `extension`?. */
     /* Allocate memory for the new file name */
     new_file_name = allocate_memory_with_check(MAX_LINE_LENGTH * sizeof(char));
     if (new_file_name == NULL)
