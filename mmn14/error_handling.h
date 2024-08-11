@@ -28,7 +28,12 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_109, /* Illegal name for macro */
     ERROR_STATUS_CODE_110, /* Line is too long */
     ERROR_STATUS_CODE_111, /* Macro has more than one definition */
-    ERROR_STATUS_CODE_112 /* Label is already used */
+    ERROR_STATUS_CODE_112, /* Label is already used */
+    ERROR_STATUS_CODE_113, /* Op code %s not found */
+    ERROR_STATUS_CODE_114, /* Received too many arguments */
+    ERROR_STATUS_CODE_115, /* Missing label name */
+    ERROR_STATUS_CODE_116, /* Ignoring label */
+    ERROR_STATUS_CODE_117 /* Argument must be a number but got: %s */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */
@@ -41,11 +46,22 @@ typedef enum ERROR_STATUS_CODES
 void print_system_error(int error_code);
 
 /**
+ * Print a system warning message to the standard output.
+ *
+ * TODO: add support for location_in_file file
+ * TODO: add support for additional arguments
+ *
+ * @param error_code The error code for which the message should be printed.
+ */
+void print_file_warning(int error_code);
+
+/**
  * Print a file-related error message to the standard output.
+ * The error message may contain additional arguments, as specified in the errors array.
  *
  * @param error_code The error code for which the message should be printed.
  * @param file       The file location where the error occurred.
  */
-void print_file_error(int error_code, location_in_file file);
+void print_file_error(int error_code, location_in_file file, ...);
 
 #endif /* ERROR_HANDLING_H */
