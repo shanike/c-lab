@@ -300,7 +300,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
 
     /* Create a temporary files */
     temp_file_name = create_new_file(file_name, ".tmp");
-    final_file_name = create_new_file(file_name, ".am");
+    final_file_name = create_new_file(file_name, AFTER_MACRO_FILE_EXT);
 
     /* Copy the original file to both temporary and final files */
     if (!copy_file(temp_file_name, file_name) ||

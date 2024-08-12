@@ -23,14 +23,14 @@ int main(int argc, char *argv[])
 
         printf("Processing file: %s\n", input_file);
 
-        result = process_macros(create_new_file(input_file, ".as"));
+        result = process_macros(create_new_file(input_file, ASSEMBLY_FILE_EXT));
 
         if (!result)
         {
             fprintf(stderr, "Pre-assembly failed for file: %s\n", input_file);
         }
 
-        result = first_pass(create_new_file(input_file, ".am"));
+        result = first_pass(create_new_file(input_file, AFTER_MACRO_FILE_EXT));
 
         if (!result)
         {

@@ -27,6 +27,10 @@
 
 #define INLINE_WHITESPACE " \t"
 
+#define OBJECT_FILE_EXT ".ob"
+#define ASSEMBLY_FILE_EXT ".as"
+#define AFTER_MACRO_FILE_EXT ".am"
+
 typedef struct location_in_file
 {
     char *file_name;
