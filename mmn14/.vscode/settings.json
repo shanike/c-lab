@@ -11,7 +11,8 @@
         "XXX",
         "[ ]",
         "[x]",
-        "TODO NOW"
+        "TODO NOW",
+        "WORKS",
     ],
     "todo-tree.highlights.customHighlight": {
         "TODO NOW": {
@@ -19,6 +20,13 @@
             "foreground": "#363636",
             "icon": "arrow-right",
             "iconColour": "#ff82d3"
+        },
+        "WORKS": {
+            // happy color not pink:
+            "background": "#00d800",
+            "foreground": "#363636",
+            "icon": "check",
+            "iconColour": "#00d800"
         }
     },
 }
