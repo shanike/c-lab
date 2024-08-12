@@ -12,6 +12,7 @@
 #include "./text_functions.h"
 #include "./error_handling.h"
 #include "./encoding.h"
+#include "./memory_table.h"
 
 void handle_error_cnt(int *errors_cnt)
 {
@@ -45,6 +46,7 @@ int first_pass(char filename[])
     location_in_file curr_location;
 
     labelNode *labels_list = NULL;
+    wordNode *memory_list = NULL;
     char *current_label = NULL;
     int op_code_l = 0;
     op_code *operation = NULL;
@@ -203,8 +205,8 @@ int first_pass(char filename[])
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
             }
-            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location);
-            IC += op_code_l;
+            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, memory_list);
+            /* IC += op_code_l; */
         }
         else
         {

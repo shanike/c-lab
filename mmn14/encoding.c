@@ -4,6 +4,8 @@
 #include "./generic_file_functions.h"
 #include "./global_variables.h"
 #include "./encoding.h"
+#include "./memory_table.h"
+#include "./error_handling.h"
 
 void print_opcode(op_code *op)
 {
@@ -11,17 +13,6 @@ void print_opcode(op_code *op)
     printf("  arg_number: %d,\n", op->arg_number);
     printf("  code: %d,\n", op->code);
     printf("}\n");
-}
-
-/* Prints the bits of a number, left to right. */
-void print_bits(word num)
-{
-    int i;
-    for (i = 0; i < BITS_IN_WORD; i++)
-    {
-        printf("%d", (num & (1 << i)) ? 1 : 0);
-    }
-    printf("\n");
 }
 
 /* Returns 1 if the i-th bit of num is 1, and 0 otherwise. */
@@ -55,34 +46,82 @@ void set_decimal_in_bits(word *num, int decimal, int start_index_in_num, int end
     }
 }
 
-int encode_op(op_code *op, char *args_str, location_in_file file_location)
+/*
+Splits a string into an array of strings, using the delimiters ", \t".
+Returns the number of strings in the array.
+*/
+int split_args(char *args_str, char *args[], int args_number)
 {
-    word encoding = 15;
+    char delim[] = ", \t";
+    char *token = strtok(args_str, delim);
+    int i;
+    for (i = 0; i < args_number; i++)
+    {
+        if (token == NULL)
+        {
+            break;
+        }
+        args[i] = token;
+        token = strtok(NULL, delim);
+    }
+    return i;
+}
+
+/* TODO temp */
+void print_array(char *name, char **array, int array_len)
+{
+    int i;
+    printf("%s", name);
+    for (i = 0; i < array_len; i++)
+    {
+        if (i)
+        {
+            printf(", ");
+        }
+        printf("%d:%s", i, array[i]);
+    }
+    printf("\n");
+}
+
+/* TODO temp */
+void print_encoding(word encoding)
+{
+    printf("encoding: ");
+    print_bits(encoding);
+    printf("\nencoding in hex: %04X\n", encoding);
+}
+
+/*
+Returns the number of cells in memory the operation takes.
+*/
+int encode_op(op_code *op, char *args_str, location_in_file file_location, int *IC, wordNode *memory_table)
+{
+    word encoding = 0;
     char *ob_filename;
     FILE *ob_fp; /* ob file pointer */
 
-    if (IS_DEBUG)
-    {
-        printf("encoding operation: %s\n", op->name);
-        printf("arguments: %s\n", args_str);
-    }
+    char **args;
 
-    /* create file called--> */
-    ob_filename = create_new_file(file_location.file_name, OBJECT_FILE_EXT);
+    printf("encoding operation: %s\n", op->name);
 
-    if (!ob_filename)
+    args = malloc(op->arg_number * sizeof(char *));
+    if (split_args(args_str, args, op->arg_number) != op->arg_number)
     {
+        print_file_error(ERROR_STATUS_CODE_119, file_location, op->arg_number);
         return FAILURE;
     }
-
-    if (open_file_for_writing(ob_filename, &ob_fp) == FAILURE)
-    {
-        return FAILURE;
-    }
+    print_array("args: ", args, op->arg_number);
 
     set_decimal_in_bits(&encoding, op->code, 11, 14);
+    set_decimal_in_bits(&encoding, op->code, 7, 10);
 
-    fclose(ob_fp);
+    add_node_to_list_word(&memory_table, encoding, *IC);
 
-    return 0;
+    (*IC)++;
+
+    print_encoding(encoding);
+
+    print_list_word(memory_table);
+
+    return SUCCESS;
 }

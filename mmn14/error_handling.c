@@ -27,6 +27,7 @@ Error errors[] = {
     {ERROR_STATUS_CODE_116, "Ignoring label"},
     {ERROR_STATUS_CODE_117, "Argument must be a number but got: %s"},
     {ERROR_STATUS_CODE_118, "Invalid string, no closing and/or opening quote: %s"},
+    {ERROR_STATUS_CODE_119, "Incorrect number of arguments, expected %d"},
 };
 
 /*
