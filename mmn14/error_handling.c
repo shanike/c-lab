@@ -22,7 +22,7 @@ Error errors[] = {
     {ERROR_STATUS_CODE_111, "Macro has more than one definition"},
     {ERROR_STATUS_CODE_112, "Label is already used"},
     {ERROR_STATUS_CODE_113, "Op code %s not found"},
-    {ERROR_STATUS_CODE_114, "Received too many arguments"},
+    {ERROR_STATUS_CODE_114, "Received too many arguments"}, /* TODO add "expected %s argument(s)" */
     {ERROR_STATUS_CODE_115, "Missing label name"},
     {ERROR_STATUS_CODE_116, "Ignoring label"},
     {ERROR_STATUS_CODE_117, "Argument must be a number but got: %s"},

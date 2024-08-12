@@ -34,6 +34,6 @@ int is_white_space_or_tab(char c);
  * @param result Pointer to the extracted string.
  * @param curr_location The location in the file where the input string is located.
  */
-void extract_data_string(char *input, char **result, location_in_file curr_location);
+int extract_data_string(char *input, char **result, location_in_file curr_location);
 
 #endif /* TEXT_FUNCTIONS_H */

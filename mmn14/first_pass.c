@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "./first_pass.h"
 #include "./global_variables.h"
@@ -11,6 +12,22 @@
 #include "./text_functions.h"
 #include "./error_handling.h"
 #include "./encoding.h"
+
+void handle_error_cnt(int *errors_cnt)
+{
+    *errors_cnt += 1;
+}
+
+void handle_error_log(int error_code, location_in_file file_location, int *errors_cnt, ...)
+{
+    va_list args;
+    va_start(args, errors_cnt);
+
+    handle_error_cnt(errors_cnt);
+    print_file_error(error_code, file_location, args);
+
+    va_end(args);
+}
 
 /*
 Returns the number of errors that occurred during the first pass.
@@ -36,10 +53,8 @@ int first_pass(char filename[])
 
     if (!open_file_for_reading(filename, &fp))
     {
-        printf("Error: failed to open file for reading\n");
-        return FAILURE;
+        handle_error_cnt(&errors_cnt);
     }
-    printf("First pass for file: %s\n", filename);
 
     curr_location.line_number = 0;
     curr_location.file_name = filename;
@@ -64,7 +79,7 @@ int first_pass(char filename[])
 
         word = strtok(line, " ");
 
-        if (word == NULL || word[0] == ';')
+        if (!word || word[0] == ';')
         {
             /* Skip empty lines and comments */
             continue;
@@ -95,7 +110,7 @@ int first_pass(char filename[])
                 {
                     if (add_node_to_list_label(&labels_list, current_label, DATA, DC, curr_location) == FAILURE)
                     {
-                        errors_cnt++;
+                        handle_error_cnt(&errors_cnt);
                     }
                 };
 
@@ -107,7 +122,7 @@ int first_pass(char filename[])
                     {
                         if (!is_data_number(word)) /* Word must be a number */
                         {
-                            print_file_error(ERROR_STATUS_CODE_117, curr_location, word);
+                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &errors_cnt, word);
                         }
                         else
                         {
@@ -121,17 +136,13 @@ int first_pass(char filename[])
                 {
                     if (IS_DEBUG)
                         printf("it's .string! ");
-                    extract_data_string(strtok(NULL, ""), &word, curr_location);
-                    word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
-                    word++;                        /* Remove the quote from start of string */
-                    word_len = strlen(word);
-                    DC += word_len + 1; /* +1 for the '\0' */
+                    if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
+                    {
+                        handle_error_cnt(&errors_cnt);
+                    }
+                    DC += strlen(word) + 1; /* +1 for the '\0' */
                     if (IS_DEBUG)
                         printf("setting DC to %d\n", DC);
-                    if ((word = strtok(NULL, INLINE_WHITESPACE))) /* If there are more words after the string */
-                    {
-                        print_file_error(ERROR_STATUS_CODE_114, curr_location);
-                    }
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
@@ -146,29 +157,26 @@ int first_pass(char filename[])
                 current_label = strtok(NULL, INLINE_WHITESPACE);
                 if (!current_label)
                 {
-                    print_file_error(ERROR_STATUS_CODE_115, curr_location);
+                    handle_error_log(ERROR_STATUS_CODE_115, curr_location, &errors_cnt);
                     continue;
                 }
                 if (strcmp(word, DIRECTIVE_EXTERN) == 0)
                 {
                     if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
-                        errors_cnt++;
-                        continue;
+                        handle_error_cnt(&errors_cnt);
                     }
                 }
                 else /* is DIRECTIVE_ENTRY */
                 {
                     if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
                     {
-                        errors_cnt++;
-                        continue;
+                        handle_error_cnt(&errors_cnt);
                     }
                 }
                 if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
-                    print_file_error(ERROR_STATUS_CODE_114, curr_location);
-                    continue;
+                    handle_error_log(ERROR_STATUS_CODE_114, curr_location, &errors_cnt);
                 }
             }
         }
@@ -180,27 +188,26 @@ int first_pass(char filename[])
             {
                 if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
                 {
-                    errors_cnt++;
-                    continue;
+                    handle_error_cnt(&errors_cnt);
                 }
             }
-            /* calc L (=op_code_l) */
+            /* Calc operation length */
             if (operation != NULL)
             {
+                /* Free the prev operation */
                 free(operation);
             }
             operation = malloc(sizeof(operation));
             if (!get_opcode(word, operation))
             {
-                print_file_error(ERROR_STATUS_CODE_113, curr_location, word);
-                continue;
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
             }
             op_code_l = encode(operation, strtok(NULL, ""));
             IC += op_code_l;
         }
         else
         {
-            print_file_error(ERROR_STATUS_CODE_113, curr_location, word);
+            handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
         }
 
     } /* End of while */
