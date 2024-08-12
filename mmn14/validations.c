@@ -111,7 +111,7 @@ int is_label(char *str)
     return 1;
 }
 
-int is_data_number(char *str)
+int is_whole_number(char *str)
 {
     /* A number can be any whole number */
     int i;

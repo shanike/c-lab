@@ -122,7 +122,7 @@ int first_pass(char filename[])
                         printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        if (!is_data_number(word)) /* Word must be a number */
+                        if (!is_whole_number(word)) /* Word must be a number */
                         {
                             handle_error_log(ERROR_STATUS_CODE_117, curr_location, &errors_cnt, word);
                         }
