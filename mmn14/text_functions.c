@@ -43,15 +43,28 @@ int is_white_space_or_tab(char c)
     return (isspace(c) && c != '\n');
 }
 
-void extract_data_string(char *input, char **result, location_in_file curr_location)
+int extract_data_string(char *input, char **result, location_in_file curr_location)
 {
-    int result_len = strlen(input) - 2;
+    int result_len;
 
-    if (input[0] != '\"' || input[strlen(input) - 1] != '\"')
+    /* Find second quote */
+
+    char *second_quote = strchr(input + 1, '\"');
+    if (input[0] != '\"' || !second_quote)
     {
         print_file_error(ERROR_STATUS_CODE_118, curr_location, input);
-        return;
+        return FAILURE;
     }
+
+    int second_quote_index = second_quote - input;
+
+    if (second_quote_index != strlen(input) - 1)
+    {
+        print_file_error(ERROR_STATUS_CODE_114, curr_location, input);
+        return FAILURE;
+    }
+
+    result_len = second_quote_index - 1;
 
     /* Copy the input without the quotes */
     *result = malloc(result_len + 1);
