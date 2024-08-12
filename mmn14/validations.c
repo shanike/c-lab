@@ -30,7 +30,7 @@ int is_one_of(char *str_input, char *array[], int array_length)
 {
     int i;
 
-    if (str_input == NULL)
+    if (!str_input)
         return 0;
 
     /* Iterate through the instructions list and compare the given string with each instruction in the list */

@@ -51,7 +51,7 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
         printf("Adding node: %s of %d\n", name, feature_type);
     node_exists = find_node_in_list_label(*head, name);
     if (IS_DEBUG)
-        printf("Node exists: %s\n", node_exists == NULL ? "~Nope~" : node_exists->name);
+        printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
     {
         print_file_error(ERROR_STATUS_CODE_112, location);
