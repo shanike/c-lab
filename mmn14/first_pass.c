@@ -205,7 +205,7 @@ int first_pass(char filename[])
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
             }
-            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, memory_list);
+            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, &memory_list);
             /* IC += op_code_l; */
         }
         else

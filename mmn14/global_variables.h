@@ -1,7 +1,7 @@
 #ifndef GLOBAL_VARIABLES_H
 #define GLOBAL_VARIABLES_H
 
-#define IS_DEBUG 0
+#define IS_DEBUG 1
 
 /* Macro declarations */
 #define MACRO_DECLARATION "macr"

@@ -94,15 +94,15 @@ void print_encoding(word encoding)
 /*
 Returns the number of cells in memory the operation takes.
 */
-int encode_op(op_code *op, char *args_str, location_in_file file_location, int *IC, wordNode *memory_table)
+int encode_op(op_code *op, char *args_str, location_in_file file_location, int *IC, wordNode **memory_table)
 {
-    word encoding = 0;
+    word word = 0;
     char *ob_filename;
     FILE *ob_fp; /* ob file pointer */
 
     char **args;
 
-    printf("encoding operation: %s\n", op->name);
+    printf("encoding operation %s\n", op->name);
 
     args = malloc(op->arg_number * sizeof(char *));
     if (split_args(args_str, args, op->arg_number) != op->arg_number)
@@ -111,17 +111,14 @@ int encode_op(op_code *op, char *args_str, location_in_file file_location, int *
         return FAILURE;
     }
     print_array("args: ", args, op->arg_number);
+    /* TODO NOW calc the number of words this instruction will need */
+    /* second pass might also do the same calc, but don't think about it now, if it's too much. */
 
-    set_decimal_in_bits(&encoding, op->code, 11, 14);
-    set_decimal_in_bits(&encoding, op->code, 7, 10);
+    set_decimal_in_bits(&word, op->code, 11, 14);
 
-    add_node_to_list_word(memory_table, encoding, *IC, op->name);
+    add_node_to_list_word(memory_table, word, *IC, op->name);
 
-    (*IC)++;
-
-    print_encoding(encoding);
-
-    print_list_word(memory_table);
+    print_list_word(*memory_table);
 
     return SUCCESS;
 }
