@@ -10,6 +10,7 @@ struct wordNode
 {
     word value;
     int address;
+    char temp_name[3]; /* TODO temp */
     struct wordNode *next;
 };
 typedef struct wordNode wordNode;
@@ -23,7 +24,7 @@ typedef struct wordNode wordNode;
  * @param address The address of the node.
  * @return A pointer to the new node.
  */
-wordNode *create_new_word_node(word value, int address);
+wordNode *create_new_word_node(word value, int address, char *temp_name);
 
 /**
  * Adds a new node to the end of the linked list.
@@ -33,7 +34,7 @@ wordNode *create_new_word_node(word value, int address);
  * @param address The address of the new node.
  * @return SUCCESS if the node was added successfully, FAILURE otherwise.
  */
-int add_node_to_list_word(wordNode **head, word value, int address);
+int add_node_to_list_word(wordNode **head, word value, int address, char *temp_name);
 
 /**
  * Prints the linked list.

@@ -115,7 +115,7 @@ int encode_op(op_code *op, char *args_str, location_in_file file_location, int *
     set_decimal_in_bits(&encoding, op->code, 11, 14);
     set_decimal_in_bits(&encoding, op->code, 7, 10);
 
-    add_node_to_list_word(&memory_table, encoding, *IC);
+    add_node_to_list_word(memory_table, encoding, *IC, op->name);
 
     (*IC)++;
 
