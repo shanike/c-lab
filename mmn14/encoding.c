@@ -8,6 +8,7 @@
 #include "./error_handling.h"
 #include "./addressing_methods.h"
 #include "bitwise_functions.h"
+#include "a_r_e_fields.h"
 
 void print_opcode(op_code *op)
 {
@@ -125,6 +126,7 @@ int encode_op(op_code *op, char *args_str, location_in_file file_location, int *
     set_decimal_in_bits(&op_word, addressing_methods[0], 7, 10);
     set_decimal_in_bits(&op_word, addressing_methods[1], 6, 3);
 
+    turn_on_a(&op_word);
 
     add_node_to_list_word(memory_table, op_word, *IC, op->name);
 
