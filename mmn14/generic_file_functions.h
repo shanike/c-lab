@@ -22,7 +22,7 @@ int copy_file(const char *destination_file_name, const char *source_file_name);
 /**
  * @brief Cleans up the specified file by deleting it and freeing the memory allocated for the file path.
  *
- * This function removes the file located at the given file path. 
+ * This function removes the file located at the given file path.
  * The function also frees the memory allocated for the file path.
  *
  * @param file_path A pointer to the file path to be cleaned up. The memory allocated for

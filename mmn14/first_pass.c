@@ -136,6 +136,7 @@ int first_pass(char filename[])
                 {
                     if (IS_DEBUG)
                         printf("it's .string! ");
+                    /* TODO: maybe store the result of extract_Data_String in a diff variable. */
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
                         handle_error_cnt(&errors_cnt);
