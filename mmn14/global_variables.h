@@ -31,6 +31,8 @@
 #define ASSEMBLY_FILE_EXT ".as"
 #define AFTER_MACRO_FILE_EXT ".am"
 
+#define BITS_IN_WORD 15
+
 typedef struct location_in_file
 {
     char *file_name;
