@@ -87,7 +87,7 @@ int first_pass(char filename[])
             continue;
         }
 
-        if (is_label(word)) /* If the line is a label */
+        if (is_label(word, 0)) /* If the line is a label */
         {
             if (IS_DEBUG)
                 printf("it's a label! saving name.\n");

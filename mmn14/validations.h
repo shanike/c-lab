@@ -31,8 +31,12 @@ int get_opcode(char *str, op_code *op);
 /* Function to check if a string is a register */
 int is_register(char *str);
 
-/* Function to check if a string is a label */
-int is_label(char *str);
+/*
+Function to check if a string is a label.
+If is_colon_trimmed is 1, the function will check if the string is a label
+without a colon, e.g for instructions using labels.
+*/
+int is_label(char *str, int is_colon_trimmed);
 
 /* Function to check if a string is a number, for .data directive */
 int is_whole_number(char *str);
