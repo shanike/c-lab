@@ -45,7 +45,7 @@ int is_white_space_or_tab(char c)
 
 int extract_data_string(char *input, char **result, location_in_file curr_location)
 {
-    int result_len;
+    int second_quote_index, result_len;
 
     /* Find second quote */
 
@@ -56,7 +56,7 @@ int extract_data_string(char *input, char **result, location_in_file curr_locati
         return FAILURE;
     }
 
-    int second_quote_index = second_quote - input;
+    second_quote_index = second_quote - input;
 
     if (second_quote_index != strlen(input) - 1)
     {
@@ -70,4 +70,6 @@ int extract_data_string(char *input, char **result, location_in_file curr_locati
     *result = malloc(result_len + 1);
     strncpy(*result, input + 1, result_len);
     (*result)[result_len] = '\0';
+
+    return SUCCESS;
 }
