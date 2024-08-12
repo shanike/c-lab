@@ -1,6 +1,6 @@
 ; my example!
 macr my_fav_macro
-cmp r3, #-6 
+cmpLabel: cmp     r3    ,       #-6   
 bne          END 
 endmacr
 prn NAME
