@@ -79,6 +79,19 @@ int split_args(char *args_str, char *args[], int args_number)
     return i;
 }
 
+/* Returns the addressing method's index in the word encoding. */
+int get_arg_encoding_index(enum arg_index arg_index)
+{
+    if (arg_index == FIRST_ARG)
+    {
+        return 7;
+    }
+    else if (arg_index == SECOND_ARG)
+    {
+        return 3;
+    }
+}
+
 /*
 Returns the number of cells in memory the operation takes.
 */
@@ -89,11 +102,12 @@ int encode_op(op_code *op, char *args_str, location_in_file file_location, int *
     FILE *ob_fp; /* ob file pointer */
 
     char **args;
-    int args_number = op->arg_number;
-    enum addressing_methods addressing_methods[2] = {INVALID, INVALID};
+    int args_number = op->arg_number, arg_start_index;
+    enum addressing_methods curr_addressing_method;
     int i;
 
-    printf("encoding operation %s\n", op->name);
+    if (IS_DEBUG)
+        printf("encoding operation %s\n", op->name);
 
     args = allocate_memory_with_check(args_number * sizeof(char *));
     if (args == NULL)
@@ -103,36 +117,58 @@ int encode_op(op_code *op, char *args_str, location_in_file file_location, int *
     /* Reset args elements to NULL: */
     for (i = 0; i < args_number; i++)
     {
-        /* TODO NOW check why not set not setting! this makes line 117 and 119 not work which makes an undefined arg to be treated as an invalid addressing method */
         *(args + i) = NULL;
     }
 
-    if (split_args(args_str, args, args_number) != args_number)
+    if (args_number > MAX_ARGS_NUMBER || split_args(args_str, args, args_number) != args_number)
     {
         print_file_error(ERROR_STATUS_CODE_119, file_location, args_number);
         return FAILURE;
     }
-    print_array("args: ", args, 2);
 
-    set_decimal_in_bits(&op_word, op->code, 11, 14); /* WORKS! */
+    set_decimal_in_bits(&op_word, op->code, 11, 14);
 
-    if (args[0])
-        addressing_methods[0] = find_addressing_method(args[0], file_location);
-    if (args[1])
-        addressing_methods[1] = find_addressing_method(args[1], file_location);
-    print_array_ints("addressing_methods: ", addressing_methods, 2);
-    if (addressing_methods[0] == -1 || addressing_methods[1] == -1)
+    if (args_number == 1) /* TODO try to join the two if statements */
     {
-        return FAILURE;
+        curr_addressing_method = find_addressing_method(args[0], file_location);
+        if (IS_DEBUG)
+            printf("addressing_method of arg %s: %d\n", args[0], curr_addressing_method);
+        if (curr_addressing_method == INVALID)
+        {
+            return FAILURE;
+        }
+        arg_start_index = get_arg_encoding_index(SECOND_ARG);
+        set_bit(
+            &op_word,
+            arg_start_index + curr_addressing_method,
+            1);
     }
-    set_decimal_in_bits(&op_word, addressing_methods[0], 7, 10);
-    set_decimal_in_bits(&op_word, addressing_methods[1], 6, 3);
-
+    else
+    {
+        /* args_number == 2 */
+        for (i = 0; i < args_number; i++)
+        {
+            curr_addressing_method = find_addressing_method(args[i], file_location);
+            if (IS_DEBUG)
+                printf("addressing_method of arg %s: %d\n", args[i], curr_addressing_method);
+            if (curr_addressing_method == INVALID)
+            {
+                return FAILURE;
+            }
+            /* args_number is lte MAX_ARGS_NUMBER (=2), so arg_end_index and arg_start_index will not be -1 */
+            arg_start_index = get_arg_encoding_index(i);
+            set_bit(
+                &op_word,
+                arg_start_index + curr_addressing_method,
+                1);
+        }
+    }
     turn_on_a(&op_word);
 
     add_node_to_list_word(memory_table, op_word, *IC, op->name);
 
-    print_list_word(*memory_table);
+    if (IS_DEBUG)
+        print_list_word_octal(*memory_table);
 
     free(args);
 

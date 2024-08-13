@@ -10,6 +10,12 @@ enum addressing_methods
     /* UNSET = -2 */
 };
 
+enum arg_index
+{
+    FIRST_ARG = 0,
+    SECOND_ARG = 1,
+};
+
 /*
 Returns the addressing method of the given argument.
 If the argument is invalid, prints an error message and returns INVALID.

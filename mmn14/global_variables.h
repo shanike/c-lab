@@ -33,6 +33,8 @@
 
 #define BITS_IN_WORD 15
 
+#define MAX_ARGS_NUMBER 2
+
 typedef struct location_in_file
 {
     char *file_name;
