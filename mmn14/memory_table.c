@@ -67,7 +67,7 @@ void print_bits(word num)
     }
 }
 
-void print_list_word(wordNode *head)
+void print_list_word_binary(wordNode *head)
 {
     wordNode *current = head;
     int i = 0;
@@ -81,6 +81,24 @@ void print_list_word(wordNode *head)
         printf("\n\t[(temp_name:%s, address: %d, value: ", current->temp_name, current->address);
         print_bits(current->value);
         printf(")]");
+        current = current->next;
+        i++;
+    }
+    printf("\n");
+}
+
+void print_list_word_octal(wordNode *head)
+{
+    wordNode *current = head;
+    int i = 0;
+    printf("List: ");
+    while (current != NULL)
+    {
+        if (i)
+        {
+            printf(" -> ");
+        }
+        printf("\n\t[(temp_name:%s, address: %d, value: %05o)]", current->temp_name, current->address, current->value);
         current = current->next;
         i++;
     }
