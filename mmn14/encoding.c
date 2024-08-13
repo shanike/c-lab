@@ -10,33 +10,13 @@
 #include "bitwise_functions.h"
 #include "a_r_e_fields.h"
 
+/* TODO temp */
 void print_opcode(op_code *op)
 {
     printf("{ \n  name: %s,\n", op->name);
     printf("  arg_number: %d,\n", op->arg_number);
     printf("  code: %d,\n", op->code);
     printf("}\n");
-}
-
-/*
-Splits a string into an array of strings, using the delimiters ", \t".
-Returns the number of strings in the array.
-*/
-int split_args(char *args_str, char *args[], int args_number)
-{
-    char delim[] = ", \t";
-    char *token = strtok(args_str, delim);
-    int i;
-    for (i = 0; i < args_number; i++)
-    {
-        if (token == NULL)
-        {
-            break;
-        }
-        args[i] = token;
-        token = strtok(NULL, delim);
-    }
-    return i;
 }
 
 /* TODO temp */
@@ -54,6 +34,7 @@ void print_array(char *name, char **array, int array_len)
     }
     printf("\n");
 }
+/* TODO temp */
 void print_array_ints(char *name, int array[], int array_len)
 {
     int i;
@@ -75,6 +56,27 @@ void print_encoding(word encoding)
     printf("encoding: ");
     print_bits(encoding);
     printf("\nencoding in hex: %04X\n", encoding);
+}
+
+/*
+Splits a string into an array of strings, using the delimiters ", \t".
+Returns the number of strings in the array.
+*/
+int split_args(char *args_str, char *args[], int args_number)
+{
+    char delim[] = ", \t";
+    char *token = strtok(args_str, delim);
+    int i;
+    for (i = 0; i < args_number; i++)
+    {
+        if (token == NULL)
+        {
+            break;
+        }
+        args[i] = token;
+        token = strtok(NULL, delim);
+    }
+    return i;
 }
 
 /*
