@@ -1,6 +1,7 @@
 * Documentation of functions is in the corresponding function prototype in the header file.
 
 TODO (core):
+- rename opcode to operation
 - handle .entry in first-pass (what to save in the symbol table? feature type of the actual label content of ENTRY?)
 - define `externals_usage_table` in `first_pass` and add an external arg usage in `op_encode` 
 

@@ -112,6 +112,7 @@ void cleanup_file(char *file_path)
     }
 }
 
+/* TODO exit() program */
 /* Allocates memory and checks if the allocation was successful */
 void *allocate_memory_with_check(long size)
 {
