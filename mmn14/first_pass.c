@@ -212,7 +212,7 @@ int first_pass(char filename[])
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
             }
-            instruction_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, &memory_list);
+            instruction_l = encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &memory_list, labels_list);
             /* IC += instruction_l; */
         }
         else

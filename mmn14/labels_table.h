@@ -32,6 +32,15 @@ typedef struct labelNode labelNode;
 labelNode *create_new_label_node(char *name, FeatureType feature_type, int value);
 
 /**
+ * Finds a node in the linked list.
+ *
+ * @param head Pointer to the head of the list.
+ * @param name The name to search for.
+ * @return Pointer to the node if found, NULL otherwise.
+ */
+labelNode *find_node_in_list_label(labelNode *head, char *name);
+
+/**
  * Adds a new node to the linked list.
  * 
  * If the node already exists in the list, the function will print an error message and return FAILURE.
