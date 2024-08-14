@@ -48,8 +48,8 @@ int first_pass(char filename[])
     labelNode *labels_list = NULL;
     wordNode *memory_list = NULL;
     char *current_label = NULL;
-    int op_code_l = 0;
-    op_code *operation = NULL;
+    int instruction_l = 0;
+    operation *operation = NULL;
 
     int errors_cnt = 0;
 
@@ -71,7 +71,7 @@ int first_pass(char filename[])
 
         /* Reset */
         current_label = NULL;
-        op_code_l = 0;
+        instruction_l = 0;
         word_len = 0;
 
         /* Remove the newline character */
@@ -209,8 +209,8 @@ int first_pass(char filename[])
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
             }
-            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, &memory_list);
-            /* IC += op_code_l; */
+            instruction_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, &memory_list);
+            /* IC += instruction_l; */
         }
         else
         {

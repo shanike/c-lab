@@ -11,7 +11,7 @@
 #include "a_r_e_fields.h"
 
 /* TODO temp */
-void print_opcode(op_code *op)
+void print_opcode(operation *op)
 {
     printf("{ \n  name: %s,\n", op->name);
     printf("  arg_number: %d,\n", op->arg_number);
@@ -95,7 +95,7 @@ int get_arg_encoding_index(enum arg_index arg_index)
 /*
 Returns the number of cells in memory the operation takes.
 */
-int encode_op(op_code *op, char *args_str, location_in_file file_location, int *IC, wordNode **memory_table)
+int encode_op(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **memory_table)
 {
     word op_word = 0;
     char *ob_filename;
