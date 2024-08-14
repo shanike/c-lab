@@ -57,7 +57,7 @@ int is_macro_declaration_valid(char *str, char **p_macro_name, int line_counter,
     }
 
     /* Check if the macro name clashes with instruction name, opcode, or register name */
-    if (is_instruction(temp_macro_name) || is_opcode(temp_macro_name) || is_register(temp_macro_name))
+    if (is_directive(temp_macro_name) || is_opcode(temp_macro_name) || is_register(temp_macro_name))
     {
         location_in_file as_file;
         as_file.file_name = file_name;
@@ -300,7 +300,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
 
     /* Create a temporary files */
     temp_file_name = create_new_file(file_name, ".tmp");
-    final_file_name = create_new_file(file_name, ".am");
+    final_file_name = create_new_file(file_name, AFTER_MACRO_FILE_EXT);
 
     /* Copy the original file to both temporary and final files */
     if (!copy_file(temp_file_name, file_name) ||

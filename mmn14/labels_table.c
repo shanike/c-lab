@@ -4,6 +4,7 @@
 #include "./labels_table.h"
 #include "./generic_file_functions.h"
 #include "./error_handling.h"
+#include "./global_variables.h"
 
 /* TODO merge with list_data_structure.c */
 
@@ -34,7 +35,6 @@ labelNode *find_node_in_list_label(labelNode *head, char *name)
         /* If the node exists already */
         if (strcmp(name, current->name) == 0)
         {
-            printf("Node %s already exists in the list\n", name);
             return head;
         }
         current = current->next;
@@ -43,16 +43,18 @@ labelNode *find_node_in_list_label(labelNode *head, char *name)
     return NULL;
 }
 
-int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value)
+int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location)
 {
     labelNode *new_node, *current, *node_exists;
 
-    printf("Adding node: %s of %d\n", name, feature_type);
+    if (IS_DEBUG)
+        printf("Adding node: %s of %d\n", name, feature_type);
     node_exists = find_node_in_list_label(*head, name);
-    printf("Node exists: %s\n", node_exists == NULL ? "~Nope~" : node_exists->name);
+    if (IS_DEBUG)
+        printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
     {
-        print_system_error(ERROR_STATUS_CODE_112);
+        print_file_error(ERROR_STATUS_CODE_112, location);
         free(name);
         return FAILURE;
     }
@@ -91,7 +93,7 @@ void print_list_label(labelNode *head)
         {
             printf(" -> ");
         }
-        printf("[%s (value: %d, feature: %d)]", current->name, current->value, current->feature_type);
+        printf("\n\t[%s (value: %d, feature: %d)]", current->name, current->value, current->feature_type);
         current = current->next;
         i++;
     }

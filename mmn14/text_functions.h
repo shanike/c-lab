@@ -22,4 +22,18 @@ void remove_spaces_next_to_comma(char *str);
  */
 int is_white_space_or_tab(char c);
 
+/**
+ * Extracts the string value from a given .string directive.
+ *
+ * This function extracts a string, which is enclosed in double quotes. 
+ * The extracted string is stored in the result parameter.
+ * 
+ * If the input string is not enclosed in double quotes, an error message is printed.
+ *
+ * @param input The .string directive.
+ * @param result Pointer to the extracted string.
+ * @param curr_location The location in the file where the input string is located.
+ */
+int extract_data_string(char *input, char **result, location_in_file curr_location);
+
 #endif /* TEXT_FUNCTIONS_H */

@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <stdarg.h>
 
 #include "./first_pass.h"
 #include "./global_variables.h"
@@ -9,7 +10,29 @@
 #include "./labels_table.h"
 #include "./validations.h"
 #include "./text_functions.h"
+#include "./error_handling.h"
+#include "./encoding.h"
+#include "./memory_table.h"
 
+void handle_error_cnt(int *errors_cnt)
+{
+    *errors_cnt += 1;
+}
+
+void handle_error_log(int error_code, location_in_file file_location, int *errors_cnt, ...)
+{
+    va_list args;
+    va_start(args, errors_cnt);
+
+    handle_error_cnt(errors_cnt);
+    print_file_error(error_code, file_location, args);
+
+    va_end(args);
+}
+
+/*
+Returns the number of errors that occurred during the first pass.
+*/
 int first_pass(char filename[])
 {
     /* Data counter == מונה הנתונים */
@@ -20,44 +43,54 @@ int first_pass(char filename[])
     char line[MAX_LINE_LENGTH], *word;
     FILE *fp;
     int word_len = 0;
+    location_in_file curr_location;
 
     labelNode *labels_list = NULL;
+    wordNode *memory_list = NULL;
     char *current_label = NULL;
     int op_code_l = 0;
+    op_code *operation = NULL;
 
     int errors_cnt = 0;
 
     if (!open_file_for_reading(filename, &fp))
     {
-        printf("Error: failed to open file for reading\n");
-        return FAILURE;
+        handle_error_cnt(&errors_cnt);
     }
-    printf("First pass for file: %s\n", filename);
+
+    curr_location.line_number = 0;
+    curr_location.file_name = filename;
 
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
     {
-        printf("\n----new line----\n");
+        curr_location.line_number++;
+
+        if (IS_DEBUG)
+            printf("\n----line %d----\n", curr_location.line_number);
 
         /* Reset */
         current_label = NULL;
         op_code_l = 0;
         word_len = 0;
 
-        line[strlen(line) - 1] = '\0'; /* Remove the newline character */
-        printf("line: %s\n", line);
+        /* Remove the newline character */
+        line[strlen(line) - 1] = '\0';
+        if (IS_DEBUG)
+            printf("line: %s\n", line);
 
         word = strtok(line, " ");
 
-        if (word == NULL || word[0] == ';')
+        if (!word || word[0] == ';')
         {
-            printf("ignoring\n");
+            /* Skip empty lines and comments */
             continue;
         }
 
-        if (is_label(word)) /* If the line is a label */
-        {                   /* TODO try extracting to func */
-            printf("it's a label! saving name.\n");
+        if (is_label(word, 0)) /* If the line is a label */
+        {
+            if (IS_DEBUG)
+                printf("it's a label! saving name.\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
             word[--word_len] = '\0';
@@ -68,102 +101,125 @@ int first_pass(char filename[])
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
         }
-        if (is_instruction(word)) /* TODO: rename to directive?? */
+
+        if (is_directive(word))
         {
-            printf("it's a directive line!\n");
+            if (IS_DEBUG)
+                printf("it's a directive line!\n");
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
-            {                      /* TODO try extracting to func */
+            {
                 if (current_label) /* If label exists: add to the labels list */
                 {
-                    if (add_node_to_list_label(&labels_list, current_label, DATA, DC) == FAILURE)
+                    if (add_node_to_list_label(&labels_list, current_label, DATA, DC, curr_location) == FAILURE)
                     {
-                        errors_cnt++;
-                        continue;
+                        handle_error_cnt(&errors_cnt);
                     }
                 };
 
                 if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
-                    printf("it's .data! ");
+                    if (IS_DEBUG)
+                        printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        /* TODO check whether is_number validation is needed */
-                        DC++;
+                        if (!is_whole_number(word)) /* Word must be a number */
+                        {
+                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &errors_cnt, word);
+                        }
+                        else
+                        {
+                            DC++;
+                        }
                     }
-                    printf("setting DC to %d\n", DC);
+                    if (IS_DEBUG)
+                        printf("setting DC to %d\n", DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
-                    printf("it's .string! ");
-                    word = strtok(NULL, " \t");
-                    word[strlen(word) - 1] = '\0'; /* Remove the quote from end of string */
-                    word++;                        /* Remove the quote from start of string */
-                    word_len = strlen(word);
-                    DC += word_len;
-                    printf("setting DC to %d\n", DC);
+                    if (IS_DEBUG)
+                        printf("it's .string! ");
+                    /* TODO: maybe store the result of extract_Data_String in a diff variable. */
+                    if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
+                    {
+                        handle_error_cnt(&errors_cnt);
+                    }
+                    DC += strlen(word) + 1; /* +1 for the '\0' */
+                    if (IS_DEBUG)
+                        printf("setting DC to %d\n", DC);
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
             {
-                printf("it's .extern or .entry!\n");
+                if (IS_DEBUG)
+                    printf("it's .extern or .entry!\n");
                 if (current_label)
                 {
-                    printf("TODO: warn ignoring label %s\n", current_label); /* TODO warning */
+                    print_file_warning(ERROR_STATUS_CODE_116);
                 }
 
-                current_label = strtok(NULL, " \t"); /* TODO #define inline_whitespace " \t" */
-                printf("current_label: %s\n", current_label);
+                current_label = strtok(NULL, INLINE_WHITESPACE);
                 if (!current_label)
                 {
-                    printf("TODO: missing label name\n"); /* TODO error */
+                    handle_error_log(ERROR_STATUS_CODE_115, curr_location, &errors_cnt);
                     continue;
                 }
                 if (strcmp(word, DIRECTIVE_EXTERN) == 0)
                 {
-                    if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0) == FAILURE)
+                    if (!is_label(current_label, 0))
                     {
-                        errors_cnt++;
-                        continue;
+                        handle_error_log(ERROR_STATUS_CODE_122, curr_location, &errors_cnt, current_label);
+                    }
+                    if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
+                    {
+                        handle_error_cnt(&errors_cnt);
                     }
                 }
-                else /* is DIRECTIVE_ENTRY */
+                else /* is DIRECTIVE_ENTRY, do nothing for now. */
                 {
-                    if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100) == FAILURE)
-                    {
-                        errors_cnt++;
-                        continue;
-                    }
+                    /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
+                      {
+                          handle_error_cnt(&errors_cnt);
+                      } */
                 }
-                if ((word = strtok(NULL, " \t")))
+                if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
-                    printf("TODO: too many arguments\n"); /* TODO error */
-                    continue;
+                    handle_error_log(ERROR_STATUS_CODE_114, curr_location, &errors_cnt);
                 }
             }
         }
         else if (is_opcode(word))
         {
-            printf("it's an opcode!\n");
-            /* TODO calc L (=op_code_l) */
+            if (IS_DEBUG)
+                printf("it's an opcode!\n");
             if (current_label) /* If label exists: add to the labels list */
             {
-                if (add_node_to_list_label(&labels_list, current_label, CODE, IC) == FAILURE)
+                if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
                 {
-                    errors_cnt++;
-                    continue;
+                    handle_error_cnt(&errors_cnt);
                 }
             }
-            IC += op_code_l;
+            /* Calc operation length */
+            if (operation != NULL)
+            {
+                /* Free the prev operation */
+                free(operation);
+            }
+            operation = malloc(sizeof(operation));
+            if (!get_opcode(word, operation))
+            {
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
+            }
+            op_code_l = encode_op(operation, strtok(NULL, ""), curr_location, &IC, &memory_list);
+            /* IC += op_code_l; */
         }
         else
         {
-            printf("TODO: error opcode not found: %s\n", word); /* TODO error */
-            continue;
+            handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
         }
 
     } /* End of while */
 
     print_list_label(labels_list);
     fclose(fp);
-    return SUCCESS;
+    return errors_cnt;
 }

@@ -33,11 +33,13 @@ labelNode *create_new_label_node(char *name, FeatureType feature_type, int value
 
 /**
  * Adds a new node to the linked list.
+ * 
+ * If the node already exists in the list, the function will print an error message and return FAILURE.
  *
  * @param head Pointer to the head pointer of the list.
  * @param name The name to store in the new node.
  */
-int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value);
+int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location);
 
 /**
  * Prints the linked list.

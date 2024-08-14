@@ -3,10 +3,12 @@
 
 #include "global_variables.h"
 
-/* An operation code with its associated opcode and arguments number */
-typedef struct op_code {
-    char *opcode;    /* The opcode of the operation */
-    int arg_number;  /* The number of arguments for the operation */
+/* An operation code with its associated name, arguments number and code. */
+typedef struct op_code
+{
+    char *name;     /* The name of the operation */
+    int arg_number; /* The number of arguments for the operation */
+    int code;       /* The code of the operation */
 } op_code;
 
 /* Function prototypes */
@@ -15,15 +17,28 @@ typedef struct op_code {
 int is_one_of(char *str_input, char *array[], int array_length);
 
 /* Function to check if a string is an instruction */
-int is_instruction(char *str);
+int is_directive(char *str);
 
 /* Function to check if a string is an opcode */
 int is_opcode(char *str);
 
+/*
+Function to get the operation code of a given string.
+Returns 1 if the operation code was found, 0 otherwise.
+*/
+int get_opcode(char *str, op_code *op);
+
 /* Function to check if a string is a register */
 int is_register(char *str);
 
-/* Function to check if a string is a label */
-int is_label(char *str);
+/*
+Function to check if a string is a label.
+If is_colon_trimmed is 1, the function will check if the string is a label
+without a colon, e.g for instructions using labels.
+*/
+int is_label(char *str, int is_colon_trimmed);
+
+/* Function to check if a string is a number, for .data directive */
+int is_whole_number(char *str);
 
 #endif /* VALIDATIONS_H */
