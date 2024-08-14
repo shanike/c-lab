@@ -165,17 +165,21 @@ int first_pass(char filename[])
                 }
                 if (strcmp(word, DIRECTIVE_EXTERN) == 0)
                 {
+                    if (!is_label(current_label, 0))
+                    {
+                        handle_error_log(ERROR_STATUS_CODE_122, curr_location, &errors_cnt, current_label);
+                    }
                     if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_cnt(&errors_cnt);
                     }
                 }
-                else /* is DIRECTIVE_ENTRY */
+                else /* is DIRECTIVE_ENTRY, do nothing for now. */
                 {
-                    if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
-                    {
-                        handle_error_cnt(&errors_cnt);
-                    }
+                    /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
+                      {
+                          handle_error_cnt(&errors_cnt);
+                      } */
                 }
                 if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
