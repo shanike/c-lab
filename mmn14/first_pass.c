@@ -74,8 +74,11 @@ int first_pass(char filename[])
         instruction_l = 0;
         word_len = 0;
 
-        /* Remove the newline character */
+        /* Remove the newline character, if exists */
+        if (line[strlen(line) - 1] == '\n')
+        {
         line[strlen(line) - 1] = '\0';
+        }
         if (IS_DEBUG)
             printf("line: %s\n", line);
 
