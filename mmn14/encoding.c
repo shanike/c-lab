@@ -90,6 +90,7 @@ int get_arg_encoding_index(enum arg_index arg_index)
     {
         return 3;
     }
+return -1;
 }
 
 /*
