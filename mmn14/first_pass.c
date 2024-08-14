@@ -77,7 +77,7 @@ int first_pass(char filename[])
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
         {
-        line[strlen(line) - 1] = '\0';
+            line[strlen(line) - 1] = '\0';
         }
         if (IS_DEBUG)
             printf("line: %s\n", line);
@@ -168,7 +168,7 @@ int first_pass(char filename[])
                 }
                 if (strcmp(word, DIRECTIVE_EXTERN) == 0)
                 {
-                    if (!is_label(current_label, 0))
+                    if (!is_label(current_label, 1))
                     {
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &errors_cnt, current_label);
                     }
