@@ -30,6 +30,8 @@
 #define OBJECT_FILE_EXT ".ob"
 #define ASSEMBLY_FILE_EXT ".as"
 #define AFTER_MACRO_FILE_EXT ".am"
+#define ENTRY_FILE_EXT ".ent"
+#define EXTERN_FILE_EXT ".ext"
 
 #define BITS_IN_WORD 15
 
