@@ -17,7 +17,7 @@
 #define FAILURE 0
 
 #define DIRECTIVES_NUMBER 4
-#define OP_CODES_NUMBER 16
+#define OPERATIONS_NUMBER 16
 #define REGISTERS_NUMBER 8
 
 #define DIRECTIVE_DATA ".data"
