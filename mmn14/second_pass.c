@@ -4,6 +4,7 @@
 #include "generic_file_functions.h"
 #include "global_variables.h"
 #include "memory_table.h"
+#include "labels_table.h"
 
 int create_ob_file(wordNode *instructions, int count, char *input_file_name, int IC, int DC)
 {
@@ -40,3 +41,53 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
     return SUCCESS;
 }
 
+/* TODO  what should we do with the data Node?? */
+int exe_second_pass(char *input_file_name, labelNode *labels_table, int IC, int DC, wordNode *instructions, wordNode *data)
+{
+    FILE *fp, *ext_fp;
+    int is_error = 0;
+    location_in_file curr_location;
+    char line[MAX_LINE_LENGTH], *ext_file_name;
+
+    if (!open_file_for_reading(input_file_name, &fp))
+    {
+        is_error = 1;
+    }
+
+    curr_location.line_number = 0;
+    curr_location.file_name = input_file_name;
+
+    /* Create the output file name with an '.ext' extension */
+    ext_file_name = create_new_file(input_file_name, EXTERN_FILE_EXT);
+
+    /* Open the new '.ext' file for writing */
+    if (!open_file_for_writing(ext_file_name, &ext_fp))
+    {
+        fclose(ext_fp);
+        is_error = 1;
+    }
+
+    /* Read each line of the given file */
+    while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
+    {
+
+        /* TODO Check if this line uses a label */
+
+        /* TODO If so, replace each label usage in the table with the corresponding address in labels table */
+
+        /* TODO For each extern type label , write it in the .ext file */
+    }
+
+    if (is_error == 1)
+    {
+        return FAILURE;
+    }
+
+    /* Create the outputs files ".ob" and ".ent" and write their data */
+    create_ob_file(instructions, IC + DC, input_file_name, IC, DC);
+    create_entries_output(labels_table, input_file_name);
+
+    /* TODO Free all the allocated memory and resources used during the second pass */
+
+    return SUCCESS;
+}
