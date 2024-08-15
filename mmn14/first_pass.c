@@ -40,15 +40,16 @@ int first_pass(char filename[])
     /* Instructions counter == מונה ההוראות */
     int IC = 0;
 
-    char line[MAX_LINE_LENGTH], *word;
+    char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
     int word_len = 0;
     location_in_file curr_location;
 
     labelNode *labels_list = NULL;
     wordNode *instructions_table = NULL;
+    wordNode *data_table = NULL;
+
     char *current_label = NULL;
-    int instruction_l = 0;
     operation *operation = NULL;
 
     int is_error = 0;
@@ -63,6 +64,7 @@ int first_pass(char filename[])
 
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
+    /* TODO divide this huge loop into functions(!) */
     {
         curr_location.line_number++;
 
@@ -71,7 +73,6 @@ int first_pass(char filename[])
 
         /* Reset */
         current_label = NULL;
-        instruction_l = 0;
         word_len = 0;
 
         /* Remove the newline character, if exists */
@@ -147,7 +148,7 @@ int first_pass(char filename[])
                 {
                     if (IS_DEBUG_FIRST_PASS)
                         printf("it's .string! ");
-                    /* TODO: maybe store the result of extract_Data_String in a diff variable. */
+                    /* TODO: maybe store the result of extract_data_string in a diff variable. */
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
@@ -239,7 +240,6 @@ int first_pass(char filename[])
             {
                 handle_error_flag(&is_error);
             }
-            /* IC += instruction_l; */
         }
         else
         {
@@ -249,6 +249,9 @@ int first_pass(char filename[])
     } /* End of while */
 
     print_list_label(labels_list);
+    print_list_word_octal("instructions_table: ", instructions_table);
+    print_list_word_octal("data_table: ", data_table);
+
     fclose(fp);
     return is_error ? FAILURE : SUCCESS;
 }
