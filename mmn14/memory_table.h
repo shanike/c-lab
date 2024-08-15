@@ -3,7 +3,7 @@
 
 #include "./global_variables.h"
 
-typedef unsigned int word;
+typedef unsigned short int word;
 
 /* A node in a linked list */
 struct wordNode
@@ -41,14 +41,14 @@ int add_node_to_list_word(wordNode **head, word value, int address, char *temp_n
  *
  * @param head Pointer to the head of the list to print.
  */
-void print_list_word_binary(wordNode *head);
+void print_list_word_binary(char *name, wordNode *head);
 
 /**
  * Prints the linked list in octal format.
  *
  * @param head Pointer to the head of the list to print.
  */
-void print_list_word_octal(wordNode *head);
+void print_list_word_octal(char *name, wordNode *head);
 
 /**
  * Frees the memory allocated for a node.
