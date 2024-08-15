@@ -6,14 +6,14 @@ enum addressing_methods
     DIRECT = 1,
     INDIRECT_REGISTER = 2,
     DIRECT_REGISTER = 3,
-    INVALID = -1,
+    INVALID = -1
     /* UNSET = -2 */
 };
 
 enum arg_index
 {
     FIRST_ARG = 0,
-    SECOND_ARG = 1,
+    SECOND_ARG = 1
 };
 
 /*

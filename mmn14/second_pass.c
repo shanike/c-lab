@@ -5,6 +5,7 @@
 #include "global_variables.h"
 #include "memory_table.h"
 #include "labels_table.h"
+#include "entries_output.h"
 
 int create_ob_file(wordNode *instructions, int count, char *input_file_name, int IC, int DC)
 {
@@ -42,7 +43,7 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
 }
 
 /* TODO  what should we do with the data Node?? */
-int exe_second_pass(char *input_file_name, labelNode *labels_table, int IC, int DC, wordNode *instructions, wordNode *data)
+int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int DC, wordNode *instructions, wordNode *data)
 {
     FILE *fp, *ext_fp;
     int is_error = 0;
