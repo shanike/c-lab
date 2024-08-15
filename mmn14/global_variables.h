@@ -39,6 +39,8 @@
 
 #define MAX_ARGS_NUMBER 2
 
+#define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
+
 typedef struct location_in_file
 {
     char *file_name;

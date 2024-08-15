@@ -30,15 +30,38 @@ void handle_error_log(int error_code, location_in_file file_location, int *error
     va_end(args);
 }
 
+void inc_data_table_addresses(wordNode *data_table, int IC)
+{
+    wordNode *curr = data_table;
+    while (curr)
+    {
+        curr->address += IC;
+        curr = curr->next;
+    }
+}
+
+void inc_data_labels_addresses(labelNode *labels_list, int IC)
+{
+    labelNode *curr = labels_list;
+    while (curr)
+    {
+        if (curr->feature_type == DATA)
+        {
+            curr->value += IC;
+        }
+        curr = curr->next;
+    }
+}
+
 /*
 Returns the number of errors that occurred during the first pass.
 */
 int first_pass(char filename[])
 {
     /* Data counter == מונה הנתונים */
-    int DC = 0;
+    int DC = INSTRUCTIONS_MEMORY_ADDRESS_START;
     /* Instructions counter == מונה ההוראות */
-    int IC = 0;
+    int IC = INSTRUCTIONS_MEMORY_ADDRESS_START, instructions_length;
 
     char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
@@ -152,6 +175,7 @@ int first_pass(char filename[])
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
+                        continue;
                     }
                     /* Add each char of .string value to `data_table` in ascii form */
                     c = word;
@@ -195,15 +219,17 @@ int first_pass(char filename[])
                     if (!is_label(current_label, 1))
                     {
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
+                        continue;
                     }
                     if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
+                        continue;
                     }
                 }
                 else /* is DIRECTIVE_ENTRY, do nothing for now. */
                 {
-                    /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
+                    /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + INSTRUCTIONS_MEMORY_ADDRESS_START, curr_location) == FAILURE)
                       {
                           handle_error_flag(&errors_cnt);
                       } */
@@ -211,6 +237,7 @@ int first_pass(char filename[])
                 if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
                     handle_error_log(ERROR_STATUS_CODE_114, curr_location, &is_error);
+                    continue;
                 }
             }
         }
@@ -220,7 +247,7 @@ int first_pass(char filename[])
                 printf("it's an operation!\n");
             if (current_label) /* If label exists: add to the labels list */
             {
-                if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
+                if (add_node_to_list_label(&labels_list, current_label, CODE, IC, curr_location) == FAILURE)
                 {
                     handle_error_flag(&is_error);
                 }
@@ -231,14 +258,20 @@ int first_pass(char filename[])
                 /* Free the prev operation */
                 free(operation);
             }
-            operation = malloc(sizeof(operation));
+            operation = allocate_memory_with_check(sizeof(operation));
+            if (!operation)
+            {
+                return FAILURE;
+            }
             if (!get_opcode(word, operation))
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+                continue;
             }
             if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &instructions_table, labels_list) == FAILURE)
             {
                 handle_error_flag(&is_error);
+                continue;
             }
         }
         else
@@ -247,6 +280,12 @@ int first_pass(char filename[])
         }
 
     } /* End of while */
+
+    instructions_length = IC - INSTRUCTIONS_MEMORY_ADDRESS_START;
+    /* Update addresses of data_table to be after addresses of instructions_table */
+    inc_data_table_addresses(data_table, instructions_length);
+    /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
+    inc_data_labels_addresses(labels_list, instructions_length);
 
     print_list_label(labels_list);
     print_list_word_octal("instructions_table: ", instructions_table);
