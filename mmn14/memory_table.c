@@ -5,6 +5,7 @@
 #include "./generic_file_functions.h"
 #include "./error_handling.h"
 #include "./global_variables.h"
+#include "./bitwise_functions.h"
 
 /* TODO merge with list_data_structure.c and labels_table.c */
 
@@ -15,6 +16,7 @@ wordNode *create_new_word_node(word value, int address, char *temp_name)
     node->value = value;
     node->address = address;
     if (temp_name)
+        /* TODO check whether allocation is needed */
         strcpy(node->temp_name, temp_name);
     node->next = NULL;
 
@@ -23,7 +25,7 @@ wordNode *create_new_word_node(word value, int address, char *temp_name)
 
 int add_node_to_list_word(wordNode **head, word value, int address, char *temp_name)
 {
-    wordNode *new_node, *current, *node_exists;
+    wordNode *new_node, *current;
 
     if (IS_DEBUG)
         printf("Adding word node\n");
@@ -67,7 +69,7 @@ void print_bits(word num)
     }
 }
 
-void print_list_word_binary(wordNode *head)
+void print_list_word_binary(char *name, wordNode *head)
 {
     wordNode *current = head;
     int i = 0;
@@ -87,11 +89,12 @@ void print_list_word_binary(wordNode *head)
     printf("\n");
 }
 
-void print_list_word_octal(wordNode *head)
+/* TODO fix octal printing when data is negative. notice that only words that are "data" (and not part of instruction) need to be "read" using two's complement to negatives. */
+void print_list_word_octal(char *name, wordNode *head)
 {
     wordNode *current = head;
     int i = 0;
-    printf("List: ");
+    printf("%s", name);
     while (current != NULL)
     {
         if (i)

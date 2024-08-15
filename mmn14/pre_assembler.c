@@ -56,7 +56,7 @@ int is_macro_declaration_valid(char *str, char **p_macro_name, int line_counter,
         return FAILURE;
     }
 
-    /* Check if the macro name clashes with instruction name, opcode, or register name */
+    /* Check if the macro name clashes with directive name, operation name, or register name */
     if (is_directive(temp_macro_name) || is_opcode(temp_macro_name) || is_register(temp_macro_name))
     {
         location_in_file as_file;

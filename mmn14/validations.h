@@ -4,12 +4,12 @@
 #include "global_variables.h"
 
 /* An operation code with its associated name, arguments number and code. */
-typedef struct op_code
+typedef struct operation
 {
     char *name;     /* The name of the operation */
     int arg_number; /* The number of arguments for the operation */
     int code;       /* The code of the operation */
-} op_code;
+} operation;
 
 /* Function prototypes */
 
@@ -19,14 +19,14 @@ int is_one_of(char *str_input, char *array[], int array_length);
 /* Function to check if a string is an instruction */
 int is_directive(char *str);
 
-/* Function to check if a string is an opcode */
+/* Function to check if a string is an operation name */
 int is_opcode(char *str);
 
 /*
 Function to get the operation code of a given string.
 Returns 1 if the operation code was found, 0 otherwise.
 */
-int get_opcode(char *str, op_code *op);
+int get_opcode(char *str, operation *op);
 
 /* Function to check if a string is a register */
 int is_register(char *str);

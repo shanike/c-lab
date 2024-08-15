@@ -2,6 +2,8 @@
 #define GLOBAL_VARIABLES_H
 
 #define IS_DEBUG 1
+#define IS_DEBUG_FIRST_PASS 1
+#define IS_DEBUG_ENCODING 0
 
 /* Macro declarations */
 #define MACRO_DECLARATION "macr"
@@ -17,7 +19,7 @@
 #define FAILURE 0
 
 #define DIRECTIVES_NUMBER 4
-#define OP_CODES_NUMBER 16
+#define OPERATIONS_NUMBER 16
 #define REGISTERS_NUMBER 8
 
 #define DIRECTIVE_DATA ".data"

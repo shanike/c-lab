@@ -5,7 +5,7 @@
 #include "./validations.h"
 #include "./global_variables.h"
 
-op_code OP_CODES[] = {
+operation OPERATIONS[] = {
     {"mov", 2, 0},
     {"cmp", 2, 1},
     {"add", 2, 2},
@@ -53,26 +53,26 @@ int is_directive(char *str)
 int is_opcode(char *str)
 {
     int i;
-    char *op_code_names[OP_CODES_NUMBER];
-    for (i = 0; i < OP_CODES_NUMBER; i++)
+    char *op_names[OPERATIONS_NUMBER];
+    for (i = 0; i < OPERATIONS_NUMBER; i++)
     {
-        op_code_names[i] = OP_CODES[i].name;
+        op_names[i] = OPERATIONS[i].name;
     }
-    return is_one_of(str, op_code_names, OP_CODES_NUMBER);
+    return is_one_of(str, op_names, OPERATIONS_NUMBER);
 }
 
 /* TODO merge is_opcode with get_opcode */
 
-int get_opcode(char *str, op_code *op)
+int get_opcode(char *str, operation *op)
 {
     int i;
-    for (i = 0; i < OP_CODES_NUMBER; i++)
+    for (i = 0; i < OPERATIONS_NUMBER; i++)
     {
-        if (strcmp(OP_CODES[i].name, str) == 0)
+        if (strcmp(OPERATIONS[i].name, str) == 0)
         {
-            op->name = OP_CODES[i].name;
-            op->arg_number = OP_CODES[i].arg_number;
-            op->code = OP_CODES[i].code;
+            op->name = OPERATIONS[i].name;
+            op->arg_number = OPERATIONS[i].arg_number;
+            op->code = OPERATIONS[i].code;
             return 1;
         }
     }
