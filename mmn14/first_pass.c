@@ -217,7 +217,7 @@ int first_pass(char filename[])
         else if (is_opcode(word))
         {
             if (IS_DEBUG_FIRST_PASS)
-                printf("it's an opcode!\n");
+                printf("it's an operation!\n");
             if (current_label) /* If label exists: add to the labels list */
             {
                 if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)

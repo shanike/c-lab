@@ -2,13 +2,7 @@
 
 ## TODO (core):
 
-- rename opcode to operation
-
-## TODO (chore):
-
-- remove includes from .c files that are already included in the header files
-
-## entries .ent (=export)
+### entries .ent (=export)
 
 = list of all labels that were `.entry`ed
 
@@ -22,10 +16,14 @@ TODO:
 - Then, anyway,  
   on second pass, go over `entry_labels_table` OR over `labels_table.filter(feature_type == ENTRY)` -> and write them to .ent file.
 
-## externs .ext (=import)
+### externs .ext (=import)
 
 = list of all usages of external labels
 
 TODO:
 
 - on second pass, go over input (.am) file and find all labels with feature_type of `EXTERNAL` -> and white them to .ext file.
+
+## TODO (chore):
+
+- remove includes from .c files that are already included in the header files
