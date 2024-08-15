@@ -93,7 +93,7 @@ int get_arg_encoding_index(enum arg_index arg_index)
     return -1;
 }
 
-int encode_op(word *op_word, operation *op, char **args, location_in_file file_location, int *IC, wordNode **memory_table)
+int encode_op(word *op_word, operation *op, char **args, location_in_file file_location, int *IC, wordNode **instructions_table)
 {
     int args_number = op->arg_number;
     int arg_encoding_index;
@@ -165,7 +165,7 @@ int get_register_number(char *register_str, enum addressing_methods addressing_m
     return atoi(register_str + i);
 }
 
-int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **memory_table, int *IC, location_in_file file_location)
+int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
     enum addressing_methods curr_addressing_method, *args_address_methods;
 
@@ -204,7 +204,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 
         turn_on_a(&arg_words[0]);
 
-        add_node_to_list_word(memory_table, arg_words[0], *IC, args[0]);
+        add_node_to_list_word(instructions_table, arg_words[0], *IC, args[0]);
         (*IC)++;
 
         return SUCCESS;
@@ -258,7 +258,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         {
             continue;
         }
-        add_node_to_list_word(memory_table, arg_words[i], *IC, args[i]);
+        add_node_to_list_word(instructions_table, arg_words[i], *IC, args[i]);
         (*IC)++;
     }
 
@@ -268,7 +268,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 /*
 Returns the number of cells in memory the operation takes.
 */
-int encode_instruction(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **memory_table, labelNode *labels_list)
+int encode_instruction(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
 {
     word op_word = 0;
 
@@ -298,23 +298,23 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
         return FAILURE;
     }
 
-    if (encode_op(&op_word, op, args, file_location, IC, memory_table) == FAILURE)
+    if (encode_op(&op_word, op, args, file_location, IC, instructions_table) == FAILURE)
     {
         is_error = 1;
     }
-    add_node_to_list_word(memory_table, op_word, *IC, op->name);
+    add_node_to_list_word(instructions_table, op_word, *IC, op->name);
     (*IC)++;
 
     if (args_number)
     {
-        if (encode_args(args, args_number, labels_list, memory_table, IC, file_location) == FAILURE)
+        if (encode_args(args, args_number, labels_list, instructions_table, IC, file_location) == FAILURE)
         {
             is_error = 1;
         }
     }
 
     if (IS_DEBUG)
-        print_list_word_octal(*memory_table);
+        print_list_word_octal(*instructions_table);
 
     free(args);
     return is_error ? FAILURE : SUCCESS;

@@ -46,7 +46,7 @@ int first_pass(char filename[])
     location_in_file curr_location;
 
     labelNode *labels_list = NULL;
-    wordNode *memory_list = NULL;
+    wordNode *instructions_table = NULL;
     char *current_label = NULL;
     int instruction_l = 0;
     operation *operation = NULL;
@@ -212,7 +212,7 @@ int first_pass(char filename[])
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
             }
-            if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &memory_list, labels_list) == FAILURE)
+            if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &instructions_table, labels_list) == FAILURE)
             {
                 handle_error_flag(&is_error);
             }
