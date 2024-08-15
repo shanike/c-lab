@@ -211,7 +211,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     }
 
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
-    for (i = MAX_ARGS_NUMBER - args_number; i < args_number; i++) /* TODO split to functions, so loop is not so long */
+    for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
     {
         if (IS_DEBUG)
             printf("encoding arg %s\n", args[i]);
@@ -244,13 +244,13 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         else if (is_register_addressing_method(curr_addressing_method))
         {
             int register_number = get_register_number(args[i], curr_addressing_method);
-            if (i == FIRST_ARG)
+            if (i == SECOND_ARG || args_number == 1)
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 6, 8);
+                set_decimal_in_bits(&arg_words[i], register_number, 3, 5);
             }
             else
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 3, 5);
+                set_decimal_in_bits(&arg_words[i], register_number, 6, 8);
             }
             turn_on_a(&arg_words[i]);
         }
