@@ -175,6 +175,7 @@ int first_pass(char filename[])
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
+                        continue;
                     }
                     /* Add each char of .string value to `data_table` in ascii form */
                     c = word;
@@ -218,10 +219,12 @@ int first_pass(char filename[])
                     if (!is_label(current_label, 1))
                     {
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
+                        continue;
                     }
                     if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
+                        continue;
                     }
                 }
                 else /* is DIRECTIVE_ENTRY, do nothing for now. */
@@ -234,6 +237,7 @@ int first_pass(char filename[])
                 if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
                     handle_error_log(ERROR_STATUS_CODE_114, curr_location, &is_error);
+                    continue;
                 }
             }
         }
@@ -254,14 +258,20 @@ int first_pass(char filename[])
                 /* Free the prev operation */
                 free(operation);
             }
-            operation = malloc(sizeof(operation));
+            operation = allocate_memory_with_check(sizeof(operation));
+            if (!operation)
+            {
+                return FAILURE;
+            }
             if (!get_opcode(word, operation))
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+                continue;
             }
             if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &instructions_table, labels_list) == FAILURE)
             {
                 handle_error_flag(&is_error);
+                continue;
             }
         }
         else
