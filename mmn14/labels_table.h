@@ -7,7 +7,8 @@ enum FEATURE_TYPE
 {
     DATA,
     EXTERNAL,
-    CODE
+    CODE,
+    ENTRY /* Used on second-pass to override DATA or CODE labels to ENTRY, if declared as so */
 };
 typedef enum FEATURE_TYPE FeatureType;
 
@@ -42,7 +43,7 @@ labelNode *find_node_in_list_label(labelNode *head, char *name);
 
 /**
  * Adds a new node to the linked list.
- * 
+ *
  * If the node already exists in the list, the function will print an error message and return FAILURE.
  *
  * @param head Pointer to the head pointer of the list.
