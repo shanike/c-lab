@@ -100,7 +100,7 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     int i;
     enum addressing_methods curr_addressing_method;
 
-    if (IS_DEBUG)
+    if (IS_DEBUG_ENCODING)
         printf("encoding operation %s\n", op->name);
 
     set_decimal_in_bits(op_word, op->code, 11, 14);
@@ -108,14 +108,14 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     if (args_number == 1) /* TODO try to join the two if statements */
     {
         curr_addressing_method = find_addressing_method(args[0], file_location);
-        if (IS_DEBUG)
+        if (IS_DEBUG_ENCODING)
             printf("addressing_method of arg[0] %s: %d\n", args[0], curr_addressing_method);
         if (curr_addressing_method == INVALID)
         {
             return FAILURE;
         }
         arg_encoding_index = get_arg_encoding_index(SECOND_ARG);
-        if (IS_DEBUG)
+        if (IS_DEBUG_ENCODING)
             printf("arg_encoding_index: %d\n", arg_encoding_index);
         set_bit(
             op_word,
@@ -128,7 +128,7 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
         for (i = 0; i < args_number; i++)
         {
             curr_addressing_method = find_addressing_method(args[i], file_location);
-            if (IS_DEBUG)
+            if (IS_DEBUG_ENCODING)
                 printf("addressing_method of arg[i] %s: %d\n", args[i], curr_addressing_method);
             if (curr_addressing_method == INVALID)
             {
@@ -169,14 +169,13 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 {
     enum addressing_methods curr_addressing_method, *args_address_methods;
 
-    FeatureType label_feature;
     int i;
     int is_common_word;
     int arg1_register_value, arg2_register_value;
 
     word arg_words[2] = {0, 0};
 
-    if (IS_DEBUG)
+    if (IS_DEBUG_ENCODING)
         print_array("encoding args: ", args, args_number);
 
     args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
@@ -191,7 +190,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 
     is_common_word = is_register_addressing_method(args_address_methods[0]) &&
                      is_register_addressing_method(args_address_methods[1]);
-    if (IS_DEBUG)
+    if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
 
     if (is_common_word) /* TODO extract to another function `encode_two_registers` (או כדומה) */
@@ -213,11 +212,11 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
     for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
     {
-        if (IS_DEBUG)
+        if (IS_DEBUG_ENCODING)
             printf("encoding arg %s\n", args[i]);
 
         curr_addressing_method = find_addressing_method(args[i], file_location);
-        if (IS_DEBUG)
+        if (IS_DEBUG_ENCODING)
             printf("addressing_method of arg %s: %d\n", args[i], curr_addressing_method);
 
         if (curr_addressing_method == IMMEDIATE)
@@ -277,7 +276,7 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
     int i;
     int is_error = 0;
 
-    if (IS_DEBUG)
+    if (IS_DEBUG_ENCODING)
         printf("encoding operation %s with args %s\n", op->name, args_str);
 
     /* TODO extract init+reset of args to another func */
@@ -313,8 +312,8 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
         }
     }
 
-    if (IS_DEBUG)
-        print_list_word_octal(*instructions_table);
+    if (IS_DEBUG_ENCODING)
+        print_list_word_octal("instructions_table: ", *instructions_table);
 
     free(args);
     return is_error ? FAILURE : SUCCESS;

@@ -131,6 +131,12 @@ int first_pass(char filename[])
                         }
                         else
                         {
+                            /* Add the number to `data_table` */
+                            if (add_node_to_list_word(&data_table, atoi(word), DC, word) == FAILURE)
+                            {
+                                handle_error_flag(&is_error);
+                            }
+                            /* Update the data counter */
                             DC++;
                         }
                     }
@@ -146,7 +152,24 @@ int first_pass(char filename[])
                     {
                         handle_error_flag(&is_error);
                     }
-                    DC += strlen(word) + 1; /* +1 for the '\0' */
+                    /* Add each char of .string value to `data_table` in ascii form */
+                    c = word;
+                    while (*c)
+                    {
+                        if (add_node_to_list_word(&data_table, *c, DC, c) == FAILURE)
+                        {
+                            handle_error_flag(&is_error);
+                        }
+                        c++;
+                        DC++;
+                    }
+                    /* And add a \0 at the end */
+                    if (add_node_to_list_word(&data_table, '\0', DC, "\\0") == FAILURE)
+                    {
+                        handle_error_flag(&is_error);
+                    }
+                    DC++;
+
                     if (IS_DEBUG_FIRST_PASS)
                         printf("setting DC to %d\n", DC);
                 }
