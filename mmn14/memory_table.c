@@ -87,6 +87,7 @@ void print_list_word_binary(wordNode *head)
     printf("\n");
 }
 
+/* TODO fix octal printing when data is negative. notice that only words that are "data" (and not part of instruction) need to be "read" using two's complement to negatives. */
 void print_list_word_octal(wordNode *head)
 {
     wordNode *current = head;
