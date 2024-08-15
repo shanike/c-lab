@@ -6,8 +6,6 @@
 
 = list of all labels that were `.entry`ed
 
-- after first pass, increment each label's address in `labels_table` by IC+100
-
 - on second pass, if encountered an `.entry` directive -> then find and update the label in `labels_table` to have feature_type of `ENTRY`
 - **OR** on first pass, if encountered an `.entry` directive -> then add the label to (a new) `entry_labels_table`.
 
@@ -25,3 +23,12 @@
 ## TODO (chore):
 
 - remove includes from .c files that are already included in the header files
+
+
+## Tests
+
+- [ ] Negative .data values
+- [ ] Weird .string values
+
+- [ ] 
+
