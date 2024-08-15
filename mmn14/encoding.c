@@ -275,6 +275,7 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
     char **args;
     int args_number = op->arg_number;
     int i;
+    int is_error = 0;
 
     if (IS_DEBUG)
         printf("encoding operation %s with args %s\n", op->name, args_str);
@@ -297,19 +298,24 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
         return FAILURE;
     }
 
-    encode_op(&op_word, op, args, file_location, IC, memory_table);
+    if (encode_op(&op_word, op, args, file_location, IC, memory_table) == FAILURE)
+    {
+        is_error = 1;
+    }
     add_node_to_list_word(memory_table, op_word, *IC, op->name);
     (*IC)++;
 
     if (args_number)
     {
-        encode_args(args, args_number, labels_list, memory_table, IC, file_location);
+        if (encode_args(args, args_number, labels_list, memory_table, IC, file_location) == FAILURE)
+        {
+            is_error = 1;
+        }
     }
 
     if (IS_DEBUG)
         print_list_word_octal(*memory_table);
 
     free(args);
-
-    return SUCCESS;
+    return is_error ? FAILURE : SUCCESS;
 }

@@ -14,9 +14,9 @@
 #include "./encoding.h"
 #include "./memory_table.h"
 
-void handle_error_cnt(int *errors_cnt)
+void handle_error_flag(int *is_error)
 {
-    *errors_cnt += 1;
+    *is_error = 1;
 }
 
 void handle_error_log(int error_code, location_in_file file_location, int *errors_cnt, ...)
@@ -24,7 +24,7 @@ void handle_error_log(int error_code, location_in_file file_location, int *error
     va_list args;
     va_start(args, errors_cnt);
 
-    handle_error_cnt(errors_cnt);
+    handle_error_flag(errors_cnt);
     print_file_error(error_code, file_location, args);
 
     va_end(args);
@@ -51,11 +51,11 @@ int first_pass(char filename[])
     int instruction_l = 0;
     operation *operation = NULL;
 
-    int errors_cnt = 0;
+    int is_error = 0;
 
     if (!open_file_for_reading(filename, &fp))
     {
-        handle_error_cnt(&errors_cnt);
+        handle_error_flag(&is_error);
     }
 
     curr_location.line_number = 0;
@@ -66,7 +66,7 @@ int first_pass(char filename[])
     {
         curr_location.line_number++;
 
-        if (IS_DEBUG)
+        if (IS_DEBUG_FIRST_PASS)
             printf("\n----line %d----\n", curr_location.line_number);
 
         /* Reset */
@@ -92,7 +92,7 @@ int first_pass(char filename[])
 
         if (is_label(word, 0)) /* If the line is a label */
         {
-            if (IS_DEBUG)
+            if (IS_DEBUG_FIRST_PASS)
                 printf("it's a label! saving name.\n");
             word_len = strlen(word);
             /* Remove the ':' from the label */
@@ -107,7 +107,7 @@ int first_pass(char filename[])
 
         if (is_directive(word))
         {
-            if (IS_DEBUG)
+            if (IS_DEBUG_FIRST_PASS)
                 printf("it's a directive line!\n");
             if (strcmp(word, DIRECTIVE_DATA) == 0 || strcmp(word, DIRECTIVE_STRING) == 0)
             {
@@ -115,45 +115,45 @@ int first_pass(char filename[])
                 {
                     if (add_node_to_list_label(&labels_list, current_label, DATA, DC, curr_location) == FAILURE)
                     {
-                        handle_error_cnt(&errors_cnt);
+                        handle_error_flag(&is_error);
                     }
                 };
 
                 if (strcmp(word, DIRECTIVE_DATA) == 0)
                 {
-                    if (IS_DEBUG)
+                    if (IS_DEBUG_FIRST_PASS)
                         printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
                         if (!is_whole_number(word)) /* Word must be a number */
                         {
-                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &errors_cnt, word);
+                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &is_error, word);
                         }
                         else
                         {
                             DC++;
                         }
                     }
-                    if (IS_DEBUG)
+                    if (IS_DEBUG_FIRST_PASS)
                         printf("setting DC to %d\n", DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
-                    if (IS_DEBUG)
+                    if (IS_DEBUG_FIRST_PASS)
                         printf("it's .string! ");
                     /* TODO: maybe store the result of extract_Data_String in a diff variable. */
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
-                        handle_error_cnt(&errors_cnt);
+                        handle_error_flag(&is_error);
                     }
                     DC += strlen(word) + 1; /* +1 for the '\0' */
-                    if (IS_DEBUG)
+                    if (IS_DEBUG_FIRST_PASS)
                         printf("setting DC to %d\n", DC);
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
             {
-                if (IS_DEBUG)
+                if (IS_DEBUG_FIRST_PASS)
                     printf("it's .extern or .entry!\n");
                 if (current_label)
                 {
@@ -163,42 +163,42 @@ int first_pass(char filename[])
                 current_label = strtok(NULL, INLINE_WHITESPACE);
                 if (!current_label)
                 {
-                    handle_error_log(ERROR_STATUS_CODE_115, curr_location, &errors_cnt);
+                    handle_error_log(ERROR_STATUS_CODE_115, curr_location, &is_error);
                     continue;
                 }
                 if (strcmp(word, DIRECTIVE_EXTERN) == 0)
                 {
                     if (!is_label(current_label, 1))
                     {
-                        handle_error_log(ERROR_STATUS_CODE_122, curr_location, &errors_cnt, current_label);
+                        handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
                     }
                     if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
-                        handle_error_cnt(&errors_cnt);
+                        handle_error_flag(&is_error);
                     }
                 }
                 else /* is DIRECTIVE_ENTRY, do nothing for now. */
                 {
                     /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
                       {
-                          handle_error_cnt(&errors_cnt);
+                          handle_error_flag(&errors_cnt);
                       } */
                 }
                 if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
-                    handle_error_log(ERROR_STATUS_CODE_114, curr_location, &errors_cnt);
+                    handle_error_log(ERROR_STATUS_CODE_114, curr_location, &is_error);
                 }
             }
         }
         else if (is_opcode(word))
         {
-            if (IS_DEBUG)
+            if (IS_DEBUG_FIRST_PASS)
                 printf("it's an opcode!\n");
             if (current_label) /* If label exists: add to the labels list */
             {
                 if (add_node_to_list_label(&labels_list, current_label, CODE, IC + 100, curr_location) == FAILURE)
                 {
-                    handle_error_cnt(&errors_cnt);
+                    handle_error_flag(&is_error);
                 }
             }
             /* Calc operation length */
@@ -210,19 +210,22 @@ int first_pass(char filename[])
             operation = malloc(sizeof(operation));
             if (!get_opcode(word, operation))
             {
-                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
             }
-            instruction_l = encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &memory_list, labels_list);
+            if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &memory_list, labels_list) == FAILURE)
+            {
+                handle_error_flag(&is_error);
+            }
             /* IC += instruction_l; */
         }
         else
         {
-            handle_error_log(ERROR_STATUS_CODE_113, curr_location, &errors_cnt, word);
+            handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
         }
 
     } /* End of while */
 
     print_list_label(labels_list);
     fclose(fp);
-    return errors_cnt;
+    return is_error ? FAILURE : SUCCESS;
 }

@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
 {
     int i;
     char *input_file;
-    int result, errors_cnt;
+    int result;
 
     if (argc < 2)
     {
@@ -30,11 +30,11 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Pre-assembly failed for file: %s\n", input_file);
         }
     
-        errors_cnt = first_pass(create_new_file(input_file, AFTER_MACRO_FILE_EXT));
+        result = first_pass(create_new_file(input_file, AFTER_MACRO_FILE_EXT));
 
-        if (errors_cnt)
+        if (result)
         {
-            fprintf(stderr, "First pass failed for file: %s with %d error(s)\n", input_file, errors_cnt);
+            fprintf(stderr, "First pass failed for file: %s\n", input_file);
         }
     }
 
