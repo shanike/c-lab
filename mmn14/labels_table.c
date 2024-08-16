@@ -35,7 +35,7 @@ labelNode *find_node_in_list_label(labelNode *head, char *name)
         /* If the node exists already */
         if (strcmp(name, current->name) == 0)
         {
-            return head;
+            return current;
         }
         current = current->next;
     }
@@ -79,6 +79,21 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
         /* Append the new node at the end of the list */
         current->next = new_node;
     }
+    return SUCCESS;
+}
+
+int set_label_as_entry(labelNode **head, char *name)
+{
+    labelNode *label = find_node_in_list_label(*head, name);
+    if (IS_DEBUG_SECOND_PASS)
+        printf("Setting label as entry: %s\n", label ? label->name : "NULL");
+    if (!label)
+    {
+        /* todo what if label is not defined? */
+        return FAILURE;
+    }
+
+    label->feature_type = ENTRY;
     return SUCCESS;
 }
 
