@@ -22,10 +22,13 @@
 
 int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, node *macro_list_head)
 {
-    char *label_name, *word;
+    char *label_name, *word, *line_copy;
     location_in_file as_file;
 
-    word = strtok(line, " ");
+    line_copy = strdup(line);
+    word = strtok(line_copy, " ");
+
+
     /* Check if the line starts with a label */
     if (is_label(word, 0))
     {
@@ -46,7 +49,6 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
     /* There are no labels with the same name as the macro names */
     return SUCCESS;
 }
-
 
 /**
  * Extracts the content of a macro from a file.
@@ -135,7 +137,6 @@ int validate_macro_declaration(char *str, char **p_macro_name, int line_counter,
 
     return SUCCESS;
 }
-
 
 /**
  * Processes a macro declaration in a file.
