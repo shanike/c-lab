@@ -209,35 +209,19 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
     for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
     {
-        if (IS_DEBUG_ENCODING)
-            printf("encoding arg %s\n", args[i]);
+                curr_addressing_method = find_addressing_method(args[i], file_location);
 
-        curr_addressing_method = find_addressing_method(args[i], file_location);
-        if (IS_DEBUG_ENCODING)
-            printf("addressing_method of arg %s: %d\n", args[i], curr_addressing_method);
-
-        if (curr_addressing_method == IMMEDIATE)
+        if (curr_addressing_method == INVALID)
+        {
+            continue;
+        }
+        else         if (curr_addressing_method == IMMEDIATE)
         {
             set_decimal_in_bits(&arg_words[i], atoi(args[i] + 1), 3, 14);
 
             turn_on_a(&arg_words[i]);
         }
-        else if (curr_addressing_method == DIRECT)
-        {
-            /* TODO on SECOND PASS. for now, ignore on first pass
-            set_decimal_in_bits(arg_words[i], find_node_in_list_label(labels_list, args[i])->value, 3, 14);
-            label_feature = find_node_in_list_label(labels_list, args[i])->feature_type;
-            if (label_feature == EXTERNAL)
-            {
-                turn_on_e(arg_words[i]);
-            }
-            else
-            {
-                turn_on_r(arg_words[i]);
-            }
-            */
-        }
-        else if (is_register_addressing_method(curr_addressing_method))
+                else if (is_register_addressing_method(curr_addressing_method))
         {
             int register_number = get_register_number(args[i], curr_addressing_method);
             if (i == SECOND_ARG || args_number == 1)
@@ -250,10 +234,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
             }
             turn_on_a(&arg_words[i]);
         }
-        else
-        {
-            continue;
-        }
+        /* Add word into instructions table, in any case except for invalid. */
         add_node_to_list_word(instructions_table, arg_words[i], *IC, args[i]);
         (*IC)++;
     }
