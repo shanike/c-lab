@@ -2,8 +2,9 @@
 #define GLOBAL_VARIABLES_H
 
 #define IS_DEBUG 1
-#define IS_DEBUG_FIRST_PASS 1
+#define IS_DEBUG_FIRST_PASS 0
 #define IS_DEBUG_ENCODING 0
+#define IS_DEBUG_SECOND_PASS 0
 
 /* Macro declarations */
 #define MACRO_DECLARATION "macr"

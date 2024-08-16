@@ -52,6 +52,15 @@ labelNode *find_node_in_list_label(labelNode *head, char *name);
 int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location);
 
 /**
+ * Sets the feature type of an existing label in the linked list to ENTRY.
+ *
+ * @param head Pointer to the head of the list.
+ * @param name The name of the label to set as ENTRY.
+ * @return SUCCESS if the label was found and set as ENTRY, FAILURE otherwise.
+ */
+int set_label_as_entry(labelNode **head, char *name);
+
+/**
  * Prints the linked list.
  */
 void print_list_label(labelNode *head);

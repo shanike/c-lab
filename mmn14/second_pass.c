@@ -42,12 +42,14 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
 }
 
 /* TODO  what should we do with the data Node?? */
-int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int DC, wordNode *instructions, wordNode *data)
+int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
     FILE *fp, *ext_fp;
     int is_error = 0;
     location_in_file curr_location;
-    char line[MAX_LINE_LENGTH], *ext_file_name;
+    char line[MAX_LINE_LENGTH], *ext_file_name, *word;
+
+    char *curr_label_name = NULL;
 
     if (!open_file_for_reading(input_file_name, &fp))
     {
@@ -70,6 +72,29 @@ int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
     {
+        /* Remove the newline character, if exists */
+        if (line[strlen(line) - 1] == '\n')
+        {
+            line[strlen(line) - 1] = '\0';
+        }
+        if (IS_DEBUG)
+            printf("line: %s\n", line);
+
+        word = strtok(line, " ");
+        if (word == NULL)
+        {
+            continue;
+        }
+        if (IS_DEBUG)
+            printf("word: %s\n", word);
+
+        /* Update .entry labels to have a feature_type of ENTRY */
+
+        if (strcmp(word, DIRECTIVE_ENTRY) == 0) /* An entry directive */
+        {
+            curr_label_name = strtok(NULL, INLINE_WHITESPACE);
+            set_label_as_entry(labels_table, curr_label_name);
+        }
 
         /* TODO Check if this line uses a label */
 
@@ -84,9 +109,9 @@ int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int
     }
 
     /* Create the outputs files ".ob" and ".ent" and write their data */
-    create_ob_file(instructions, IC + DC, input_file_name, IC, DC);
-    
-    create_entries_output(labels_table, input_file_name);
+    create_ob_file(*instructions, IC + DC, input_file_name, IC, DC);
+
+    create_entries_output(*labels_table, input_file_name);
 
     /* TODO Free all the allocated memory and resources used during the second pass */
 
