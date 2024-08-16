@@ -4,7 +4,7 @@
 int create_entries_output(labelNode *labels_table, char *filename)
 {
     labelNode *current_label = labels_table;
-    char *entries_filename = create_new_file(filename, ENTRY_FILE_EXT);
+    char *entries_filename = create_new_file_name(filename, ENTRY_FILE_EXT);
     FILE *entries_fp;
 
     if (entries_filename == NULL)

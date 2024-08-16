@@ -14,7 +14,7 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
     char *ob_file_name;
 
     /* Create the output file name with an '.ob' extension */
-    ob_file_name = create_new_file(input_file_name, OBJECT_FILE_EXT);
+    ob_file_name = create_new_file_name(input_file_name, OBJECT_FILE_EXT);
 
     /* Open the new .ob file for writing */
     if (!open_file_for_writing(ob_file_name, &ob_fp))
@@ -59,7 +59,7 @@ int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int
     curr_location.file_name = input_file_name;
 
     /* Create the output file name with an '.ext' extension */
-    ext_file_name = create_new_file(input_file_name, EXTERN_FILE_EXT);
+    ext_file_name = create_new_file_name(input_file_name, EXTERN_FILE_EXT);
 
     /* Open the new '.ext' file for writing */
     if (!open_file_for_writing(ext_file_name, &ext_fp))

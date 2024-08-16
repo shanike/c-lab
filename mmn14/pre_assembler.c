@@ -160,7 +160,7 @@ int filter_macro_declarations(char file_name[])
         return FAILURE;
 
     /* Create a new filename with the ".temp2" extension */
-    filtered_file_name = create_new_file(file_name, ".temp2");
+    filtered_file_name = create_new_file_name(file_name, ".temp2");
 
     /* Open the new file for writing */
     if (!open_file_for_writing(filtered_file_name, &output_file))
@@ -299,8 +299,8 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     FILE *input_temp_file, *output_file;
 
     /* Create a temporary files */
-    temp_file_name = create_new_file(file_name, ".tmp");
-    final_file_name = create_new_file(file_name, AFTER_MACRO_FILE_EXT);
+    temp_file_name = create_new_file_name(file_name, ".tmp");
+    final_file_name = create_new_file_name(file_name, AFTER_MACRO_FILE_EXT);
 
     /* Copy the original file to both temporary and final files */
     if (!copy_file(temp_file_name, file_name) ||
@@ -413,7 +413,7 @@ int process_macros(char file_name[])
         return FAILURE;
     }
 
-    temp_file_name = create_new_file(file_name, ".temp1");
+    temp_file_name = create_new_file_name(file_name, ".temp1");
     
     cleanup_file(temp_file_name);
 

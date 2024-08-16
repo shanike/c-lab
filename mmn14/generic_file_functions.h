@@ -14,7 +14,7 @@ int open_file_for_reading(const char *file_name, FILE **fp);
 int open_file_for_writing(const char *file_name, FILE **fp_out);
 
 /* Function to create a new file name with the specified extension */
-char *create_new_file(const char *base_file_name, const char *extension);
+char *create_new_file_name(const char *base_file_name, const char *extension);
 
 /* Function to copy the contents of one file to another */
 int copy_file(const char *destination_file_name, const char *source_file_name);
