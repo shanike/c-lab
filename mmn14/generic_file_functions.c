@@ -54,7 +54,6 @@ void soft_fclose(FILE **fp)
     }
 }
 
-/* TODO: rename to create_new_filename ?*/
 char *create_new_file_name(const char *base_file_name, const char *extension)
 {
     char *new_file_name, *extension_position;

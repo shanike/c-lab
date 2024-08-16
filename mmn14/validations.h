@@ -19,8 +19,6 @@ int is_one_of(char *str_input, char *array[], int array_length);
 /* Function to check if a string is an instruction */
 int is_directive(char *str);
 
-/* Function to check if a string is an operation name */
-int is_opcode(char *str);
 
 /*
 Function to get the operation code of a given string.
