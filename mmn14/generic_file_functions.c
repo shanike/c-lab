@@ -34,6 +34,26 @@ int open_file_for_writing(const char *file_name, FILE **fp_out)
     return SUCCESS;
 }
 
+/* Open file for writing only if file is not yet open */
+int soft_open_file_for_writing(const char *file_name, FILE **fp_out)
+{
+    if (*fp_out == NULL)
+    {
+        return open_file_for_writing(file_name, fp_out);
+    }
+    return SUCCESS;
+}
+
+/* Close file only if file is open */
+void soft_fclose(FILE **fp)
+{
+    if (*fp != NULL)
+    {
+        fclose(*fp);
+        *fp = NULL;
+    }
+}
+
 /* TODO: rename to create_new_filename ?*/
 char *create_new_file(const char *base_file_name, const char *extension)
 {
@@ -102,7 +122,7 @@ void cleanup_file(char *file_path)
     {
         /* Remove the file */
         remove(file_path);
-        
+
         /* Free the allocated memory for the file path */
         free(file_path);
     }

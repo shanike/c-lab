@@ -13,6 +13,12 @@ int open_file_for_reading(const char *file_name, FILE **fp);
 /* Function to open the file for writing and handle errors */
 int open_file_for_writing(const char *file_name, FILE **fp_out);
 
+/* Open file for writing only if file is not yet open */
+int soft_open_file_for_writing(const char *file_name, FILE **fp_out);
+
+/* Close file only if file is open */
+void soft_fclose(FILE **fp);
+
 /* Function to create a new file name with the specified extension */
 char *create_new_file(const char *base_file_name, const char *extension);
 
