@@ -134,7 +134,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
                 return FAILURE;
             }
 
-            get_opcode(word, curr_operation);
+            get_operation(word, curr_operation);
 
             if (encode_labels(curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) == FAILURE)
             {

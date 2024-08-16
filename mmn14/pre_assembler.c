@@ -148,10 +148,11 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
 }
 
 /* Remove the declaration of the macros from the input file and save the result in the same temp file */
-int filter_macro_declarations(char file_name[])
+int filter_macro_declarations(char file_name[], node *macro_list_head)
 {
     char *line_token, *filtered_file_name;
     char line[MAX_LINE_LENGTH];
+    int line_counter = 0;
     char line_copy[MAX_LINE_LENGTH];
     FILE *input_file, *output_file;
 
@@ -174,6 +175,10 @@ int filter_macro_declarations(char file_name[])
     /* Process the input file line by line and don't write related lines to macros */
     while (fgets(line, MAX_LINE_LENGTH, input_file))
     {
+
+        if (!check_for_label_with_same_name_as_macros(file_name, line, line_counter, macro_list_head))
+            return FAILURE;
+
         /* Copy the line to the variable line_copy*/
         strcpy(line_copy, line);
         line_token = strtok(line, " \n");
@@ -210,6 +215,8 @@ int filter_macro_declarations(char file_name[])
             /* Write the line to the new file since it's not part of a macro */
             fprintf(output_file, "%s", line_copy);
         }
+
+        line_counter++;
     }
     /* Close file pointers */
     fclose(input_file);
@@ -368,45 +375,30 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     return final_file_name;
 }
 
-int check_for_labels_with_same_name_as_macros(char *temp_file_name, node *macro_list_head)
+int check_for_label_with_same_name_as_macros(char file_name[], const char *line, int line_counter, node *macro_list_head)
 {
-    FILE *fp;
-    int line_counter = 0;
-    char line[MAX_LINE_LENGTH];
     char *label_name, *word;
     location_in_file as_file;
 
-    /* Open the temporary file for reading */
-    if (!open_file_for_reading(temp_file_name, &fp))
-        return FAILURE;
-
-    /* Read each line in the temporary file */
-    while (fgets(line, MAX_LINE_LENGTH, fp))
+    word = strtok(line, " ");
+    /* Check if the line starts with a label */
+    if (is_label(word, 0))
     {
-        word = strtok(line, " ");
-        /* Check if the line starts with a label */
-        if (is_label(word, 0))
+        /* Extract the label name (assuming label names are followed by a colon) */
+        label_name = strtok(word, ":");
+
+        /* Check if the label name exists in the macro list */
+        if (find_node_in_list(macro_list_head, label_name) != NULL)
         {
-            /* Extract the label name (assuming label names are followed by a colon) */
-            label_name = strtok(word, ":");
-
-            /* Check if the label name exists in the macro list */
-            if (find_node_in_list(macro_list_head, label_name) != NULL)
-            {
-                /* Found a label with the same name as one of the macros */
-                fclose(fp);
-                as_file.file_name = temp_file_name;
-                as_file.line_number = line_counter;
-                print_file_error(ERROR_STATUS_CODE_123, as_file);
-                return FAILURE;
-            }
+            /* Found a label with the same name as one of the macros */
+            as_file.file_name = file_name;
+            as_file.line_number = line_counter;
+            print_file_error(ERROR_STATUS_CODE_123, as_file);
+            return FAILURE;
         }
-
-        line_counter++;
     }
 
     /* There are no labels with the same name as the macro names */
-    fclose(fp);
     return SUCCESS;
 }
 
@@ -433,15 +425,8 @@ int process_macros(char file_name[])
     }
 
     /* Scan the file again and look for labels and check if they have the same name as one of the macros */
-    if (!check_for_labels_with_same_name_as_macros(temp_file, macro_list_head))
-    {
-        free_list(macro_list_head);
 
-        cleanup_file(temp_file);
-        return FAILURE;
-    }
-
-    if (!filter_macro_declarations(temp_file))
+    if (!filter_macro_declarations(temp_file, macro_list_head))
     {
         free_list(macro_list_head);
 
