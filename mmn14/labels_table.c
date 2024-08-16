@@ -47,10 +47,10 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
 {
     labelNode *new_node, *current, *node_exists;
 
-    if (IS_DEBUG)
+    if (IS_DEBUG_FIRST_PASS)
         printf("Adding node: %s of %d\n", name, feature_type);
     node_exists = find_node_in_list_label(*head, name);
-    if (IS_DEBUG)
+    if (IS_DEBUG_FIRST_PASS)
         printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
     {

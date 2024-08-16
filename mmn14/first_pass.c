@@ -103,7 +103,7 @@ int first_pass(
         {
             line[strlen(line) - 1] = '\0';
         }
-        if (IS_DEBUG)
+        if (IS_DEBUG_FIRST_PASS)
             printf("line: %s\n", line);
 
         word = strtok(line, " ");
@@ -227,14 +227,7 @@ int first_pass(
                         continue;
                     }
                 }
-                else /* is DIRECTIVE_ENTRY, do nothing for now. */
-                {
-                    /*if (add_node_to_list_label(labels_list, current_label, CODE, *IC + INSTRUCTIONS_MEMORY_ADDRESS_START, curr_location) == FAILURE)
-                      {
-                          handle_error_flag(&errors_cnt);
-                      } */
-                }
-                if ((word = strtok(NULL, INLINE_WHITESPACE)))
+                else if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
                     handle_error_log(ERROR_STATUS_CODE_114, curr_location, &is_error);
                     continue;
@@ -252,7 +245,7 @@ int first_pass(
                     handle_error_flag(&is_error);
                 }
             }
-            /* Calc operation length */
+            /* Calc instruction length */
             if (operation != NULL)
             {
                 /* Free the prev operation */
@@ -289,10 +282,6 @@ int first_pass(
     inc_data_table_addresses(*data_table, *IC);
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
-
-    print_list_label(*labels_list);
-    print_list_word_octal("instructions_table: ", *instructions_table);
-    print_list_word_octal("data_table: ", *data_table);
 
     free(operation);
     fclose(fp);

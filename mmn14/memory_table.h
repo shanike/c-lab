@@ -37,6 +37,16 @@ wordNode *create_new_word_node(word value, int address, char *temp_name);
 int add_node_to_list_word(wordNode **head, word value, int address, char *temp_name);
 
 /**
+ * Sets the value of a node by its address.
+ *
+ * @param head Pointer to the head of the list.
+ * @param address The address of the node to update.
+ * @param newValue The new value of the node.
+ * @return SUCCESS if the value was found and updated successfully, FAILURE otherwise.
+ */
+int set_value_by_address(wordNode *head, int address, word newValue);
+
+/**
  * Prints the linked list in binary format.
  *
  * @param head Pointer to the head of the list to print.

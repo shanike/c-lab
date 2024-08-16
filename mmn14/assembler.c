@@ -54,6 +54,10 @@ int main(int argc, char *argv[])
             continue;
         }
 
+        print_list_label(labels_list);
+        print_list_word_octal("instructions_table: ", instructions_table);
+        print_list_word_octal("data_table: ", data_table);
+
         result = exec_second_pass(
             am_filename,
             &labels_list,
@@ -61,6 +65,8 @@ int main(int argc, char *argv[])
             &data_table,
             IC,
             DC);
+
+        print_list_word_octal("instructions_table: ", instructions_table);
 
         if (result == FAILURE)
         {

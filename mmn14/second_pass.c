@@ -5,6 +5,7 @@
 #include "global_variables.h"
 #include "memory_table.h"
 #include "entries_output.h"
+#include "encoding.h"
 
 int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name, int IC, int DC)
 {
@@ -59,7 +60,10 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     location_in_file curr_location;
     char line[MAX_LINE_LENGTH], *ext_file_name, *word;
 
+    int second_pass_IC = INSTRUCTIONS_MEMORY_ADDRESS_START;
+
     char *curr_label_name = NULL;
+    operation *curr_operation = NULL;
 
     if (!open_file_for_reading(input_file_name, &fp))
     {
@@ -87,7 +91,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         {
             line[strlen(line) - 1] = '\0';
         }
-        if (IS_DEBUG)
+        if (IS_DEBUG_SECOND_PASS)
             printf("line: %s\n", line);
 
         word = strtok(line, " ");
@@ -95,18 +99,49 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         {
             continue;
         }
-        if (IS_DEBUG)
-            printf("word: %s\n", word);
+
+        if (is_label(word, 0))
+        {
+            /* Strip and ignore label */
+            word = strtok(NULL, INLINE_WHITESPACE);
+        }
 
         /* Update .entry labels to have a feature_type of ENTRY */
-
         if (strcmp(word, DIRECTIVE_ENTRY) == 0) /* An entry directive */
         {
             curr_label_name = strtok(NULL, INLINE_WHITESPACE);
             set_label_as_entry(labels_table, curr_label_name);
         }
+        else if (is_directive(word))
+        {
+            /* Skip other directives */
+            continue;
+        }
 
         /* TODO Check if this line uses a label */
+        else /* is an instruction line! */
+        {
+            /* Calc instruction length */
+
+            if (curr_operation != NULL)
+            {
+                /* Free the prev operation */
+                free(curr_operation);
+            }
+            curr_operation = allocate_memory_with_check(sizeof(curr_operation));
+            if (!curr_operation)
+            {
+                return FAILURE;
+            }
+
+            get_opcode(word, curr_operation);
+
+            if (encode_labels(curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) == FAILURE)
+            {
+                handle_error_flag(&is_error);
+                continue;
+            }
+        }
 
         /* TODO If so, replace each label usage in the table with the corresponding address in labels table */
 
