@@ -9,7 +9,7 @@ int create_entries_output(labelNode *labels_table, char *filename)
     FILE *entries_fp = NULL;
 
     /* Set entries filename */
-    entries_filename = create_new_file(filename, ENTRY_FILE_EXT);
+    entries_filename = create_new_file_name(filename, ENTRY_FILE_EXT);
     if (entries_filename == NULL)
     {
         return FAILURE;
