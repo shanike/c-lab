@@ -25,7 +25,9 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
     char *label_name, *word, *line_copy;
     location_in_file as_file;
 
-    line_copy = strdup(line);
+    line_copy = allocate_memory_with_check((strlen(line) + 1) * sizeof(char));
+    strcpy(line_copy, line);
+    
     word = strtok(line_copy, " ");
 
 

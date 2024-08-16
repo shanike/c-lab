@@ -163,7 +163,6 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     fclose(fp);
 
     free(ext_file_name);
-    free(curr_label_name);
     free(curr_operation);
 
     return SUCCESS;
