@@ -55,7 +55,7 @@ void soft_fclose(FILE **fp)
 }
 
 /* TODO: rename to create_new_filename ?*/
-char *create_new_file(const char *base_file_name, const char *extension)
+char *create_new_file_name(const char *base_file_name, const char *extension)
 {
     char *new_file_name, *extension_position;
 
@@ -199,7 +199,7 @@ char *remove_extra_spaces_in_file(char file_name[])
     if (!open_file_for_reading(file_name, &fp))
         return NULL;
 
-    new_file_name = create_new_file(file_name, ".temp1");
+    new_file_name = create_new_file_name(file_name, ".temp1");
     if (new_file_name == NULL)
     {
         fclose(fp);

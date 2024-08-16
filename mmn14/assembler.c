@@ -29,15 +29,15 @@ int main(int argc, char *argv[])
 
         printf("Processing file: %s\n", input_filename);
 
-        result = process_macros(create_new_file(input_filename, ASSEMBLY_FILE_EXT));
+        result = process_macros(create_new_file_name(input_filename, ASSEMBLY_FILE_EXT));
 
         if (result == FAILURE)
         {
             fprintf(stderr, "Pre-assembly failed for file: %s\n", input_filename);
             continue;
         }
-
-        am_filename = create_new_file(input_filename, AFTER_MACRO_FILE_EXT);
+    
+        am_filename = create_new_file_name(input_filename, AFTER_MACRO_FILE_EXT);
         printf("AM file: %s\n", am_filename);
 
         result = first_pass(

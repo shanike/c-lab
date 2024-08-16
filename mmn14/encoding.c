@@ -105,43 +105,24 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
 
     set_decimal_in_bits(op_word, op->code, 11, 14);
 
-    if (args_number == 1) /* TODO try to join the two if statements */
+    for (i = 0; i < args_number; i++)
     {
-        curr_addressing_method = find_addressing_method(args[0], file_location);
+        curr_addressing_method = find_addressing_method(args[i], file_location);
         if (IS_DEBUG_ENCODING)
-            printf("addressing_method of arg[0] %s: %d\n", args[0], curr_addressing_method);
+            printf("addressing_method of arg[i] %s: %d\n", args[i], curr_addressing_method);
         if (curr_addressing_method == INVALID)
         {
             return FAILURE;
         }
-        arg_encoding_index = get_arg_encoding_index(SECOND_ARG);
+
+        /* args_number is lte MAX_ARGS_NUMBER (=2), so arg_end_index and arg_encoding_index will not be -1 */
+        arg_encoding_index = get_arg_encoding_index(args_number == 1 ? SECOND_ARG : i);
         if (IS_DEBUG_ENCODING)
             printf("arg_encoding_index: %d\n", arg_encoding_index);
         set_bit(
             op_word,
             arg_encoding_index + curr_addressing_method,
             1);
-    }
-    else
-    {
-        /* args_number == 2 */
-        for (i = 0; i < args_number; i++)
-        {
-            curr_addressing_method = find_addressing_method(args[i], file_location);
-            if (IS_DEBUG_ENCODING)
-                printf("addressing_method of arg[i] %s: %d\n", args[i], curr_addressing_method);
-            if (curr_addressing_method == INVALID)
-            {
-                return FAILURE;
-            }
-
-            /* args_number is lte MAX_ARGS_NUMBER (=2), so arg_end_index and arg_encoding_index will not be -1 */
-            arg_encoding_index = get_arg_encoding_index(i);
-            set_bit(
-                op_word,
-                arg_encoding_index + curr_addressing_method,
-                1);
-        }
     }
 
     turn_on_a(op_word);
