@@ -146,6 +146,16 @@ int get_register_number(char *register_str, enum addressing_methods addressing_m
     return atoi(register_str + i);
 }
 
+/*
+Returns whether the both arguments share a single word in memory.
+Notice that the function assumes there are two arguments! Therefore args_address_methods must be of length 2.
+*/
+int is_args_single_word(enum addressing_methods *args_address_methods)
+{
+    return is_register_addressing_method(args_address_methods[0]) &&
+           is_register_addressing_method(args_address_methods[1]);
+}
+
 int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
     enum addressing_methods curr_addressing_method, *args_address_methods;
@@ -169,8 +179,8 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         *(args_address_methods + i) = find_addressing_method(args[i], file_location);
     }
 
-    is_common_word = is_register_addressing_method(args_address_methods[0]) &&
-                     is_register_addressing_method(args_address_methods[1]);
+    is_common_word = is_args_single_word(args_address_methods);
+    
     if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
 

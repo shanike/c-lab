@@ -62,8 +62,6 @@ int first_pass(
     int *IC,
     int *DC)
 {
-    int instructions_length;
-
     char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
     int word_len = 0;
@@ -283,11 +281,14 @@ int first_pass(
 
     } /* End of while */
 
-    instructions_length = *IC - INSTRUCTIONS_MEMORY_ADDRESS_START;
+    /* Reset IC and DC to clean counters without INSTRUCTIONS_MEMORY_ADDRESS_START */
+    *IC -= INSTRUCTIONS_MEMORY_ADDRESS_START;
+    *DC -= INSTRUCTIONS_MEMORY_ADDRESS_START;
+
     /* Update addresses of data_table to be after addresses of instructions_table */
-    inc_data_table_addresses(*data_table, instructions_length);
+    inc_data_table_addresses(*data_table, *IC);
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
-    inc_data_labels_addresses(*labels_list, instructions_length);
+    inc_data_labels_addresses(*labels_list, *IC);
 
     print_list_label(*labels_list);
     print_list_word_octal("instructions_table: ", *instructions_table);

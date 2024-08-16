@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
             fprintf(stderr, "Pre-assembly failed for file: %s\n", input_filename);
             continue;
         }
-    
+
         am_filename = create_new_file_name(input_filename, AFTER_MACRO_FILE_EXT);
         printf("AM file: %s\n", am_filename);
 
@@ -61,6 +61,12 @@ int main(int argc, char *argv[])
             &data_table,
             IC,
             DC);
+
+        if (result == FAILURE)
+        {
+            fprintf(stderr, "Second pass failed for file: %s\n", input_filename);
+            continue;
+        }
     }
 
     return 0;

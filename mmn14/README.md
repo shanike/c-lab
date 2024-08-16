@@ -29,6 +29,15 @@
 
 - [ ] Negative .data values
 - [ ] Weird .string values
+- [ ] Quotes in .string values
+- [ ] .data with no values
+- [ ] .string with no values
+- [ ] Multi commas
+- [ ] Label with no content
+- [ ] Using a label that was not defined in operation
+- [ ] Using a label that was not defined in .entry/.extern
 
-- [ ] 
+- [ ] What should happen if calling the assembler with a file "file.as"?
+- [ ] Check max length of line 
+
 
