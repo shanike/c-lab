@@ -317,22 +317,18 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
     char *ext_filename = create_new_file_name(file_location.file_name, EXTERN_FILE_EXT);
 
     /* Set & init args */
-    printf("Allocating memory for args...\n");
     args = allocate_memory_with_check(args_number * sizeof(char *));
     if (args == NULL)
     {
-        printf("Failed to allocate memory for args.\n");
         return FAILURE;
     }
 
     split_args(args_str, args, args_number, file_location);
 
     /* Set & init args_address_methods */
-    printf("Allocating memory for args_address_methods...\n");
     args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
     if (args_address_methods == NULL)
     {
-        printf("Failed to allocate memory for args_address_methods.\n");
         free(args);
         return FAILURE;
     }
@@ -360,7 +356,6 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
         {
             if (args_address_methods[i] == DIRECT)
             {
-                printf("Found label: %s\n", args[i]);
                 label = find_node_in_list_label(labels_list, args[i]);
 
                 /* Encode label */
