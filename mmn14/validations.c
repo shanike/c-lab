@@ -50,19 +50,6 @@ int is_directive(char *str)
     return is_one_of(str, DIRECTIVES, DIRECTIVES_NUMBER);
 }
 
-int is_opcode(char *str)
-{
-    int i;
-    char *op_names[OPERATIONS_NUMBER];
-    for (i = 0; i < OPERATIONS_NUMBER; i++)
-    {
-        op_names[i] = OPERATIONS[i].name;
-    }
-    return is_one_of(str, op_names, OPERATIONS_NUMBER);
-}
-
-/* TODO merge is_opcode with get_opcode */
-
 int get_opcode(char *str, operation *op)
 {
     int i;
@@ -70,9 +57,12 @@ int get_opcode(char *str, operation *op)
     {
         if (strcmp(OPERATIONS[i].name, str) == 0)
         {
-            op->name = OPERATIONS[i].name;
-            op->arg_number = OPERATIONS[i].arg_number;
-            op->code = OPERATIONS[i].code;
+            if (op)
+            {
+                op->name = OPERATIONS[i].name;
+                op->arg_number = OPERATIONS[i].arg_number;
+                op->code = OPERATIONS[i].code;
+            }
             return 1;
         }
     }
@@ -110,7 +100,7 @@ int is_label(char *str, int is_colon_trimmed)
         }
     }
     /* A label must not be a preserved word */
-    if (is_directive(str) || is_opcode(str) || is_register(str))
+    if (is_directive(str) || get_opcode(str, NULL) || is_register(str))
     {
         return 0;
     }

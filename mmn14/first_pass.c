@@ -243,7 +243,7 @@ int first_pass(
                 }
             }
         }
-        else if (is_opcode(word))
+        else if (get_opcode(word, NULL))
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's an operation!\n");
