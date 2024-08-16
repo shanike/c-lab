@@ -7,12 +7,10 @@
 #include "./first_pass.h"
 #include "./global_variables.h"
 #include "./generic_file_functions.h"
-#include "./labels_table.h"
 #include "./validations.h"
 #include "./text_functions.h"
 #include "./error_handling.h"
 #include "./encoding.h"
-#include "./memory_table.h"
 
 void handle_error_flag(int *is_error)
 {
@@ -56,26 +54,30 @@ void inc_data_labels_addresses(labelNode *labels_list, int IC)
 /*
 Returns the number of errors that occurred during the first pass.
 */
-int first_pass(char filename[])
+int first_pass(
+    char filename[],
+    labelNode **labels_list,
+    wordNode **instructions_table,
+    wordNode **data_table,
+    int *IC,
+    int *DC)
 {
-    /* Data counter == מונה הנתונים */
-    int DC = INSTRUCTIONS_MEMORY_ADDRESS_START;
-    /* Instructions counter == מונה ההוראות */
-    int IC = INSTRUCTIONS_MEMORY_ADDRESS_START, instructions_length;
+    int instructions_length;
 
     char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
     int word_len = 0;
     location_in_file curr_location;
 
-    labelNode *labels_list = NULL;
-    wordNode *instructions_table = NULL;
-    wordNode *data_table = NULL;
-
     char *current_label = NULL;
     operation *operation = NULL;
 
     int is_error = 0;
+
+    /* Data counter == מונה הנתונים */
+    *DC = INSTRUCTIONS_MEMORY_ADDRESS_START;
+    /* Instructions counter == מונה ההוראות */
+    *IC = INSTRUCTIONS_MEMORY_ADDRESS_START;
 
     if (!open_file_for_reading(filename, &fp))
     {
@@ -137,7 +139,7 @@ int first_pass(char filename[])
             {
                 if (current_label) /* If label exists: add to the labels list */
                 {
-                    if (add_node_to_list_label(&labels_list, current_label, DATA, DC, curr_location) == FAILURE)
+                    if (add_node_to_list_label(labels_list, current_label, DATA, *DC, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                     }
@@ -156,16 +158,16 @@ int first_pass(char filename[])
                         else
                         {
                             /* Add the number to `data_table` */
-                            if (add_node_to_list_word(&data_table, atoi(word), DC, word) == FAILURE)
+                            if (add_node_to_list_word(data_table, atoi(word), *DC, word) == FAILURE)
                             {
                                 handle_error_flag(&is_error);
                             }
                             /* Update the data counter */
-                            DC++;
+                            (*DC)++;
                         }
                     }
                     if (IS_DEBUG_FIRST_PASS)
-                        printf("setting DC to %d\n", DC);
+                        printf("setting DC to %d\n", *DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
@@ -181,22 +183,22 @@ int first_pass(char filename[])
                     c = word;
                     while (*c)
                     {
-                        if (add_node_to_list_word(&data_table, *c, DC, c) == FAILURE)
+                        if (add_node_to_list_word(data_table, *c, *DC, c) == FAILURE)
                         {
                             handle_error_flag(&is_error);
                         }
                         c++;
-                        DC++;
+                        (*DC)++;
                     }
                     /* And add a \0 at the end */
-                    if (add_node_to_list_word(&data_table, '\0', DC, "\\0") == FAILURE)
+                    if (add_node_to_list_word(data_table, '\0', *DC, "\\0") == FAILURE)
                     {
                         handle_error_flag(&is_error);
                     }
-                    DC++;
+                    (*DC)++;
 
                     if (IS_DEBUG_FIRST_PASS)
-                        printf("setting DC to %d\n", DC);
+                        printf("setting DC to %d\n", *DC);
                 }
             }
             else if (strcmp(word, DIRECTIVE_EXTERN) == 0 || strcmp(word, DIRECTIVE_ENTRY) == 0)
@@ -221,7 +223,7 @@ int first_pass(char filename[])
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
                         continue;
                     }
-                    if (add_node_to_list_label(&labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
+                    if (add_node_to_list_label(labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                         continue;
@@ -229,7 +231,7 @@ int first_pass(char filename[])
                 }
                 else /* is DIRECTIVE_ENTRY, do nothing for now. */
                 {
-                    /*if (add_node_to_list_label(&labels_list, current_label, CODE, IC + INSTRUCTIONS_MEMORY_ADDRESS_START, curr_location) == FAILURE)
+                    /*if (add_node_to_list_label(labels_list, current_label, CODE, *IC + INSTRUCTIONS_MEMORY_ADDRESS_START, curr_location) == FAILURE)
                       {
                           handle_error_flag(&errors_cnt);
                       } */
@@ -247,7 +249,7 @@ int first_pass(char filename[])
                 printf("it's an operation!\n");
             if (current_label) /* If label exists: add to the labels list */
             {
-                if (add_node_to_list_label(&labels_list, current_label, CODE, IC, curr_location) == FAILURE)
+                if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
                 {
                     handle_error_flag(&is_error);
                 }
@@ -268,7 +270,7 @@ int first_pass(char filename[])
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
                 continue;
             }
-            if (encode_instruction(operation, strtok(NULL, ""), curr_location, &IC, &instructions_table, labels_list) == FAILURE)
+            if (encode_instruction(operation, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) == FAILURE)
             {
                 handle_error_flag(&is_error);
                 continue;
@@ -281,15 +283,15 @@ int first_pass(char filename[])
 
     } /* End of while */
 
-    instructions_length = IC - INSTRUCTIONS_MEMORY_ADDRESS_START;
+    instructions_length = *IC - INSTRUCTIONS_MEMORY_ADDRESS_START;
     /* Update addresses of data_table to be after addresses of instructions_table */
-    inc_data_table_addresses(data_table, instructions_length);
+    inc_data_table_addresses(*data_table, instructions_length);
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
-    inc_data_labels_addresses(labels_list, instructions_length);
+    inc_data_labels_addresses(*labels_list, instructions_length);
 
-    print_list_label(labels_list);
-    print_list_word_octal("instructions_table: ", instructions_table);
-    print_list_word_octal("data_table: ", data_table);
+    print_list_label(*labels_list);
+    print_list_word_octal("instructions_table: ", *instructions_table);
+    print_list_word_octal("data_table: ", *data_table);
 
     fclose(fp);
     return is_error ? FAILURE : SUCCESS;

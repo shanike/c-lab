@@ -42,7 +42,7 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
 }
 
 /* TODO  what should we do with the data Node?? */
-int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int DC, wordNode *instructions, wordNode *data)
+int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
     FILE *fp, *ext_fp;
     int is_error = 0;
@@ -84,9 +84,9 @@ int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int
     }
 
     /* Create the outputs files ".ob" and ".ent" and write their data */
-    create_ob_file(instructions, IC + DC, input_file_name, IC, DC);
+    create_ob_file(*instructions, IC + DC, input_file_name, IC, DC);
     
-    create_entries_output(labels_table, input_file_name);
+    create_entries_output(*labels_table, input_file_name);
 
     /* TODO Free all the allocated memory and resources used during the second pass */
 
