@@ -24,7 +24,7 @@ int is_directive(char *str);
 Function to get the operation code of a given string.
 Returns 1 if the operation code was found, 0 otherwise.
 */
-int get_opcode(char *str, operation *op);
+int get_operation(char *str, operation *op);
 
 /* Function to check if a string is a register */
 int is_register(char *str);
