@@ -62,8 +62,6 @@ int first_pass(
     int *IC,
     int *DC)
 {
-    int instructions_length;
-
     char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
     int word_len = 0;

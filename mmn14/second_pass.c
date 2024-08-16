@@ -8,7 +8,7 @@
 
 int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name, int IC, int DC)
 {
-    int i, address, word_content;
+    int address, word_content;
     FILE *ob_fp;
     char *ob_file_name;
 
@@ -27,7 +27,7 @@ int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name
 
     /* Write each memory word (address and value) in the required format */
 
-    while (instructions != NULL|| data != NULL)
+    while (instructions != NULL || data != NULL)
     {
         if (instructions != NULL)
         {
