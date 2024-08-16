@@ -103,7 +103,7 @@ int first_pass(
         {
             line[strlen(line) - 1] = '\0';
         }
-        if (IS_DEBUG)
+        if (IS_DEBUG_FIRST_PASS)
             printf("line: %s\n", line);
 
         word = strtok(line, " ");
@@ -252,7 +252,7 @@ int first_pass(
                     handle_error_flag(&is_error);
                 }
             }
-            /* Calc operation length */
+            /* Calc instruction length */
             if (operation != NULL)
             {
                 /* Free the prev operation */
@@ -289,10 +289,6 @@ int first_pass(
     inc_data_table_addresses(*data_table, *IC);
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
-
-    print_list_label(*labels_list);
-    print_list_word_octal("instructions_table: ", *instructions_table);
-    print_list_word_octal("data_table: ", *data_table);
 
     free(operation);
     fclose(fp);

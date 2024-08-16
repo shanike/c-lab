@@ -87,7 +87,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         {
             line[strlen(line) - 1] = '\0';
         }
-        if (IS_DEBUG)
+        if (IS_DEBUG_SECOND_PASS)
             printf("line: %s\n", line);
 
         word = strtok(line, " ");
