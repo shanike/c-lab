@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./global_variables.h"
-#include "./pre_assembler.h"
-#include "./error_handling.h"
-#include "./validations.h"
-#include "./generic_file_functions.h"
+#include "global_variables.h"
+#include "pre_assembler.h"
+#include "error_handling.h"
+#include "validations.h"
+#include "generic_file_functions.h"
 
 #define SUCCESS 1
 #define FAILURE 0

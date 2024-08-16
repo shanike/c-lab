@@ -4,13 +4,13 @@
 #include <stdlib.h>
 #include <stdarg.h>
 
-#include "./first_pass.h"
-#include "./global_variables.h"
-#include "./generic_file_functions.h"
-#include "./validations.h"
-#include "./text_functions.h"
-#include "./error_handling.h"
-#include "./encoding.h"
+#include "first_pass.h"
+#include "global_variables.h"
+#include "generic_file_functions.h"
+#include "validations.h"
+#include "text_functions.h"
+#include "error_handling.h"
+#include "encoding.h"
 
 void handle_error_flag(int *is_error)
 {

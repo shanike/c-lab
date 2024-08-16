@@ -1,5 +1,5 @@
 #include "bitwise_functions.h"
-#include "./memory_table.h"
+#include "memory_table.h"
 
 int is_bit_set(word num, int bit_index)
 {

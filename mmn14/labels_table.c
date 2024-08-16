@@ -1,10 +1,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./labels_table.h"
-#include "./generic_file_functions.h"
-#include "./error_handling.h"
-#include "./global_variables.h"
+
+#include "labels_table.h"
+#include "generic_file_functions.h"
+#include "error_handling.h"
 
 /* TODO merge with list_data_structure.c */
 

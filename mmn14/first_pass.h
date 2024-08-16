@@ -1,5 +1,8 @@
-#include "./labels_table.h"
-#include "./memory_table.h"
+#ifndef FIRST_PASS_H
+#define FIRST_PASS_H
+
+#include "labels_table.h"
+#include "memory_table.h"
 
 /* Main function of first_pass */
 int first_pass(char filename[],
@@ -8,3 +11,5 @@ int first_pass(char filename[],
                wordNode **data_table,
                int *IC,
                int *DC);
+
+#endif

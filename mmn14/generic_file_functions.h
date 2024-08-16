@@ -1,9 +1,9 @@
 
-#ifndef UTILS_H
-#define UTILS_H
+#ifndef GENERIC_FILE_FUNCTIONS_H
+#define GENERIC_FILE_FUNCTIONS_H
 
 #include <stdio.h>
-#include "./global_variables.h"
+#include "global_variables.h"
 
 /* Function prototypes */
 

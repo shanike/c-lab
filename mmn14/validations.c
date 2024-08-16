@@ -2,8 +2,7 @@
 #include <string.h>
 #include <ctype.h>
 
-#include "./validations.h"
-#include "./global_variables.h"
+#include "validations.h"
 
 operation OPERATIONS[] = {
     {"mov", 2, 0},

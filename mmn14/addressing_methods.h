@@ -1,4 +1,7 @@
-#include "./memory_table.h"
+#ifndef ADDRESSING_METHODS_H
+#define ADDRESSING_METHODS_H
+
+#include "memory_table.h"
 
 enum addressing_methods
 {
@@ -21,3 +24,5 @@ Returns the addressing method of the given argument.
 If the argument is invalid, prints an error message and returns INVALID.
 */
 int find_addressing_method(char arg[], location_in_file file_location);
+
+#endif

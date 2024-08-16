@@ -1,6 +1,6 @@
-#include "./addressing_methods.h"
-#include "./validations.h"
-#include "./error_handling.h"
+#include "addressing_methods.h"
+#include "validations.h"
+#include "error_handling.h"
 
 int find_addressing_method(char arg[], location_in_file file_location)
 {
