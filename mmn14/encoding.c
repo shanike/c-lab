@@ -215,7 +215,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         {
             continue;
         }
-        else         if (curr_addressing_method == IMMEDIATE)
+        else if (curr_addressing_method == IMMEDIATE)
         {
             set_decimal_in_bits(&arg_words[i], atoi(args[i] + 1), 3, 14);
 
