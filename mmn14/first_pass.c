@@ -293,6 +293,8 @@ int first_pass(
     print_list_word_octal("instructions_table: ", *instructions_table);
     print_list_word_octal("data_table: ", *data_table);
 
+    free(operation);
     fclose(fp);
+
     return is_error ? FAILURE : SUCCESS;
 }
