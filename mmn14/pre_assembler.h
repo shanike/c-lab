@@ -25,7 +25,7 @@ char *extract_macro_content(FILE *fp, fpos_t *position, int *line_count);
  * @param file_name Name of the file containing the macro declaration.
  * @return 1 if the macro declaration is valid, 0 otherwise.
  */
-int is_macro_declaration_valid(char *str, char **p_macro_name, int line_counter, char *file_name);
+int validate_macro_declaration(char *str, char **p_macro_name, int line_counter, char *file_name);
 
 /**
  * Collects all macros in a file into a linked list.

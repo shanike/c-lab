@@ -44,7 +44,7 @@ char *extract_macro_content(FILE *fp, fpos_t *position, int *line_count)
     return copy_text(fp, position, macro_content_length);
 }
 
-int is_macro_declaration_valid(char *str, char **p_macro_name, int line_counter, char *file_name)
+int validate_macro_declaration(char *str, char **p_macro_name, int line_counter, char *file_name)
 {
     char *temp_macro_name, *extra;
 
@@ -124,7 +124,7 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
     int macro_line = *line_counter;
 
     /* Validate the macro declaration */
-    if (!is_macro_declaration_valid(NULL, &name, *line_counter, file_name))
+    if (!validate_macro_declaration(NULL, &name, *line_counter, file_name))
     {
         return FAILURE;
     }
@@ -368,12 +368,53 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     return final_file_name;
 }
 
+int check_for_labels_with_same_name_as_macros(char *temp_file_name, node *macro_list_head)
+{
+    FILE *fp;
+    int line_counter = 0;
+    char line[MAX_LINE_LENGTH];
+    char *label_name, *word;
+    location_in_file as_file;
+
+    /* Open the temporary file for reading */
+    if (!open_file_for_reading(temp_file_name, &fp))
+        return FAILURE;
+
+    /* Read each line in the temporary file */
+    while (fgets(line, MAX_LINE_LENGTH, fp))
+    {
+        word = strtok(line, " ");
+        /* Check if the line starts with a label */
+        if (is_label(word, 0))
+        {
+            /* Extract the label name (assuming label names are followed by a colon) */
+            label_name = strtok(word, ":");
+
+            /* Check if the label name exists in the macro list */
+            if (find_node_in_list(macro_list_head, label_name) != NULL)
+            {
+                /* Found a label with the same name as one of the macros */
+                fclose(fp);
+                as_file.file_name = temp_file_name;
+                as_file.line_number = line_counter;
+                print_file_error(ERROR_STATUS_CODE_123, as_file);
+                return FAILURE;
+            }
+        }
+
+        line_counter++;
+    }
+
+    /* There are no labels with the same name as the macro names */
+    fclose(fp);
+    return SUCCESS;
+}
+
 int process_macros(char file_name[])
 {
     node *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
 
-    /* TODO: check whether lines of comment (== ";") or empty/whitespace lines should be included in .am file (=the pre-assembler output)*/
     /* Remove unnecessary white spaces in the file and save the result in a new temp file */
     temp_file = remove_extra_spaces_in_file(file_name);
 
@@ -385,6 +426,15 @@ int process_macros(char file_name[])
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
         /* If something went wrong or one of the macros is not valid -> return 0 */
+        free_list(macro_list_head);
+
+        cleanup_file(temp_file);
+        return FAILURE;
+    }
+
+    /* Scan the file again and look for labels and check if they have the same name as one of the macros */
+    if (!check_for_labels_with_same_name_as_macros(temp_file, macro_list_head))
+    {
         free_list(macro_list_head);
 
         cleanup_file(temp_file);
@@ -414,7 +464,7 @@ int process_macros(char file_name[])
     }
 
     temp_file_name = create_new_file_name(file_name, ".temp1");
-    
+
     cleanup_file(temp_file_name);
 
     /* Free allocated memory */

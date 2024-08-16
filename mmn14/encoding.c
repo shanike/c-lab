@@ -184,7 +184,6 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 
     int i;
     int is_common_word;
-    int arg1_register_value, arg2_register_value;
 
     word arg_words[2] = {0, 0};
 

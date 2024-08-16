@@ -38,7 +38,8 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_119, /* Incorrect number of arguments, expected %d */
     ERROR_STATUS_CODE_120,  /* An immediate addressing method must be a number, but got %s */
     ERROR_STATUS_CODE_121,  /* Invalid register name: %s */
-    ERROR_STATUS_CODE_122  /* Invalid label name: %s */
+    ERROR_STATUS_CODE_122,  /* Invalid label name: %s */
+    ERROR_STATUS_CODE_123 /* Found label with the same name as one of the macros */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */

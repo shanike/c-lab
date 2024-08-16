@@ -22,6 +22,15 @@ typedef struct node {
 node *create_new_node(char *name, char *content, int line_number);
 
 /**
+ * Finds a given node name in the list and return it if it was found.
+ *
+ * @param head Pointer to the head pointer of the list.
+ * @param name The name we want to find.
+ * @return Pointer to the node if found and if not, return NULL.
+ */
+node *find_node_in_list(node *head, char *name);
+
+/**
  * Adds a new node to the linked list.
  *
  * @param head Pointer to the head pointer of the list.
