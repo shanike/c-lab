@@ -28,3 +28,11 @@ $(BUILD_DIR)/%.c.o: %.c
 .PHONY: clean
 clean:
 	rm -r $(BUILD_DIR)
+
+.PHONY: cleanwithoutputs
+cleanwithoutputs:
+	rm $(SRC_DIRS)example_inputs/*.ob & \
+	rm $(SRC_DIRS)example_inputs/*.am & \
+	rm $(SRC_DIRS)example_inputs/*.ent & \
+	rm $(SRC_DIRS)example_inputs/*.ext & \
+	make clean
