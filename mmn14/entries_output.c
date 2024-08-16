@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include "entries_output.h"
 
 int create_entries_output(labelNode *labels_table, char *filename)
