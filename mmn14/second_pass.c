@@ -4,7 +4,6 @@
 #include "generic_file_functions.h"
 #include "global_variables.h"
 #include "memory_table.h"
-#include "labels_table.h"
 #include "entries_output.h"
 
 int create_ob_file(wordNode *instructions, int count, char *input_file_name, int IC, int DC)
@@ -86,6 +85,7 @@ int exec_second_pass(char *input_file_name, labelNode *labels_table, int IC, int
 
     /* Create the outputs files ".ob" and ".ent" and write their data */
     create_ob_file(instructions, IC + DC, input_file_name, IC, DC);
+    
     create_entries_output(labels_table, input_file_name);
 
     /* TODO Free all the allocated memory and resources used during the second pass */
