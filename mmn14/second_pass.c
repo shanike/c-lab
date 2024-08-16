@@ -160,5 +160,11 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
     /* TODO Free all the allocated memory and resources used during the second pass */
 
+    fclose(fp);
+
+    free(ext_file_name);
+    free(curr_label_name);
+    free(curr_operation);
+
     return SUCCESS;
 }
