@@ -29,7 +29,7 @@ int main(int argc, char *argv[])
 
         printf("Processing file: %s\n", input_filename);
 
-        result = process_macros(create_new_file_name(input_filename, ASSEMBLY_FILE_EXT));
+        result = pre_assembler(create_new_file_name(input_filename, ASSEMBLY_FILE_EXT));
 
         if (result == FAILURE)
         {

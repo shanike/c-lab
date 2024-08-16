@@ -10,6 +10,52 @@
 #define SUCCESS 1
 #define FAILURE 0
 
+/**
+ * Checks if a label with the same name as a macro exists in the file.
+ *
+ * @param file_name Name of the file to check.
+ * @param line The line to check for a label.
+ * @param line_counter Line number of the line.
+ * @param macro_list_head Pointer to the head of the linked list of macros.
+ * @return 1 if a label with the same name as a macro was found, 0 otherwise.
+ */
+
+int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, node *macro_list_head)
+{
+    char *label_name, *word;
+    location_in_file as_file;
+
+    word = strtok(line, " ");
+    /* Check if the line starts with a label */
+    if (is_label(word, 0))
+    {
+        /* Extract the label name (assuming label names are followed by a colon) */
+        label_name = strtok(word, ":");
+
+        /* Check if the label name exists in the macro list */
+        if (find_node_in_list(macro_list_head, label_name) != NULL)
+        {
+            /* Found a label with the same name as one of the macros */
+            as_file.file_name = file_name;
+            as_file.line_number = line_counter;
+            print_file_error(ERROR_STATUS_CODE_123, as_file);
+            return FAILURE;
+        }
+    }
+
+    /* There are no labels with the same name as the macro names */
+    return SUCCESS;
+}
+
+
+/**
+ * Extracts the content of a macro from a file.
+ *
+ * @param fp File pointer to the file.
+ * @param position Position in the file to start extracting content.
+ * @param line_count Pointer to the line counter.
+ * @return Dynamically allocated string containing the macro content.
+ */
 char *extract_macro_content(FILE *fp, fpos_t *position, int *line_count)
 {
     int macro_content_length = 0;
@@ -44,6 +90,15 @@ char *extract_macro_content(FILE *fp, fpos_t *position, int *line_count)
     return copy_text(fp, position, macro_content_length);
 }
 
+/**
+ * Validates a macro declaration.
+ *
+ * @param str String containing the macro declaration.
+ * @param p_macro_name Pointer to store the macro name.
+ * @param line_counter Line number of the macro declaration.
+ * @param file_name Name of the file containing the macro declaration.
+ * @return 1 if the macro declaration is valid, 0 otherwise.
+ */
 int validate_macro_declaration(char *str, char **p_macro_name, int line_counter, char *file_name)
 {
     char *temp_macro_name, *extra;
@@ -81,7 +136,54 @@ int validate_macro_declaration(char *str, char **p_macro_name, int line_counter,
     return SUCCESS;
 }
 
-/* Scan and save all the macros in the given file in a linked list of macros */
+
+/**
+ * Processes a macro declaration in a file.
+ *
+ * @param fp File pointer to the file.
+ * @param line_counter Pointer to the line counter.
+ * @param macro_list_head Pointer to the head of the linked list of macros.
+ * @param file_name Name of the file containing the macro declaration.
+ * @return SUCCESS if the macro was processed successfully, FAILURE otherwise.
+ */
+int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_head, char *file_name)
+{
+    char *name, *content;
+    fpos_t file_position;
+    int macro_line = *line_counter;
+
+    /* Validate the macro declaration */
+    if (!validate_macro_declaration(NULL, &name, *line_counter, file_name))
+    {
+        return FAILURE;
+    }
+
+    /* Save the current file position */
+    fgetpos(fp, &file_position);
+
+    /* Save the macro content starting from the current file position */
+    content = extract_macro_content(fp, &file_position, line_counter);
+    if (content == NULL)
+    {
+        return FAILURE;
+    }
+
+    /* Reset the file pointer to the end of the macro */
+    fsetpos(fp, &file_position);
+
+    /* Add the new macro to the macro list */
+    add_node_to_list(macro_list_head, name, content, macro_line);
+    return SUCCESS;
+}
+
+/**
+ * Collects all macros in a file into a linked list.
+ * Scan and save all the macros in the given file in a linked list of macros
+ *
+ * @param file_name Name of the file to scan for macros.
+ * @param macro_list_head Pointer to the head of the linked list of macros.
+ * @return SUCCESS if macros were collected successfully, FAILURE otherwise.
+ */
 int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
 {
     int line_counter = 0;
@@ -116,38 +218,12 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
     return is_successful;
 }
 
-/* Function to process a macro declaration */
-int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_head, char *file_name)
-{
-    char *name, *content;
-    fpos_t file_position;
-    int macro_line = *line_counter;
-
-    /* Validate the macro declaration */
-    if (!validate_macro_declaration(NULL, &name, *line_counter, file_name))
-    {
-        return FAILURE;
-    }
-
-    /* Save the current file position */
-    fgetpos(fp, &file_position);
-
-    /* Save the macro content starting from the current file position */
-    content = extract_macro_content(fp, &file_position, line_counter);
-    if (content == NULL)
-    {
-        return FAILURE;
-    }
-
-    /* Reset the file pointer to the end of the macro */
-    fsetpos(fp, &file_position);
-
-    /* Add the new macro to the macro list */
-    add_node_to_list(macro_list_head, name, content, macro_line);
-    return SUCCESS;
-}
-
-/* Remove the declaration of the macros from the input file and save the result in the same temp file */
+/**
+ * Removes macro declarations from a file and saves the result in a temporary file.
+ *
+ * @param file_name Name of the file to filter macros from.
+ * @return Name of the new file without the macros, or NULL on failure.
+ */
 int filter_macro_declarations(char file_name[], node *macro_list_head)
 {
     char *line_token, *filtered_file_name;
@@ -229,6 +305,14 @@ int filter_macro_declarations(char file_name[], node *macro_list_head)
     return SUCCESS;
 }
 
+/**
+ * Extracts parts of a line before and after a macro name.
+ *
+ * @param line The original line containing the macro name.
+ * @param macro_name The macro name to extract around.
+ * @param start_part Buffer to store the part before the macro name.
+ * @param end_part Buffer to store the part after the macro name.
+ */
 void extract_line_parts(const char *line, const char *macro_name, char *start_part, char *end_part)
 {
     const char *macro_position = strstr(line, macro_name);
@@ -241,6 +325,13 @@ void extract_line_parts(const char *line, const char *macro_name, char *start_pa
     strcpy(end_part, macro_position + strlen(macro_name));
 }
 
+/**
+ * Replaces a macro in a line with its content.
+ *
+ * @param line The original line containing the macro name.
+ * @param macro Pointer to the macro node.
+ * @return Dynamically allocated string with the macro content replaced, or NULL on failure.
+ */
 char *replace_macro_in_line(char *line, node *macro)
 {
     char start_part[MAX_LINE_LENGTH];
@@ -266,7 +357,14 @@ char *replace_macro_in_line(char *line, node *macro)
     return new_line;
 }
 
-/* Process each line of the input file and write the macro's content instead of the declaration in the output file (the final file) */
+/**
+ * Process each line of the input file and write the macro's content instead of the declaration in the output file (the final file)
+ *
+ * @param input_file File pointer to the input file.
+ * @param output_file File pointer to the output file.
+ * @param macro Pointer to the macro node.
+ * @return 1 if macros were processed successfully, 0 otherwise.
+ */
 int process_macros_in_file(FILE *input_file, FILE *output_file, node *macro)
 {
     char line[MAX_LINE_LENGTH];
@@ -299,6 +397,13 @@ int process_macros_in_file(FILE *input_file, FILE *output_file, node *macro)
     return SUCCESS;
 }
 
+/**
+ * Replaces all macros in a file with their definitions and saves the result in a new file.
+ *
+ * @param file_name Name of the file to process.
+ * @param head Pointer to the head of the linked list of macros.
+ * @return Name of the new file with macros replaced, or NULL on failure.
+ */
 char *replace_all_macros_in_file(char file_name[], node *head)
 {
     node *current_macro = head;
@@ -375,34 +480,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     return final_file_name;
 }
 
-int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, node *macro_list_head)
-{
-    char *label_name, *word;
-    location_in_file as_file;
-
-    word = strtok(line, " ");
-    /* Check if the line starts with a label */
-    if (is_label(word, 0))
-    {
-        /* Extract the label name (assuming label names are followed by a colon) */
-        label_name = strtok(word, ":");
-
-        /* Check if the label name exists in the macro list */
-        if (find_node_in_list(macro_list_head, label_name) != NULL)
-        {
-            /* Found a label with the same name as one of the macros */
-            as_file.file_name = file_name;
-            as_file.line_number = line_counter;
-            print_file_error(ERROR_STATUS_CODE_123, as_file);
-            return FAILURE;
-        }
-    }
-
-    /* There are no labels with the same name as the macro names */
-    return SUCCESS;
-}
-
-int process_macros(char file_name[])
+int pre_assembler(char file_name[])
 {
     node *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
