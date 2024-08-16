@@ -6,8 +6,6 @@
 
 ## TODO (chore):
 
-- remove includes from .c files that are already included in the header files
-
 ## Tests
 
 - [ ] Negative .data values

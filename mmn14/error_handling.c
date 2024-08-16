@@ -3,8 +3,7 @@
 #include <string.h>
 #include <stdarg.h>
 
-#include "./generic_file_functions.h"
-#include "./error_handling.h"
+#include "error_handling.h"
 
 /* The Following array specifies the error status code numbers and the corresponding error message. */
 Error errors[] = {

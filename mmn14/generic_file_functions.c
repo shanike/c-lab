@@ -2,10 +2,10 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdarg.h>
-#include "./generic_file_functions.h"
-#include "./text_functions.h"
-#include "./error_handling.h"
-#include "./global_variables.h"
+
+#include "generic_file_functions.h"
+#include "text_functions.h"
+#include "error_handling.h"
 
 /*
 Function to open the file for reading and handle errors.

@@ -1,11 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "./memory_table.h"
-#include "./generic_file_functions.h"
-#include "./error_handling.h"
-#include "./global_variables.h"
-#include "./bitwise_functions.h"
+
+#include "memory_table.h"
+#include "generic_file_functions.h"
+#include "error_handling.h"
+#include "bitwise_functions.h"
 
 /* TODO merge with list_data_structure.c and labels_table.c */
 

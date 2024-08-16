@@ -1,9 +1,9 @@
 #include <stdio.h>
+
 #include "second_pass.h"
 #include "error_handling.h"
 #include "generic_file_functions.h"
 #include "global_variables.h"
-#include "memory_table.h"
 #include "entries_output.h"
 #include "encoding.h"
 

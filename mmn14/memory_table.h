@@ -1,7 +1,7 @@
 #ifndef MEMORY_TABLE_H
 #define MEMORY_TABLE_H
 
-#include "./global_variables.h"
+#include "global_variables.h"
 
 typedef unsigned short int word;
 

@@ -2,9 +2,9 @@
 #include <string.h>
 
 #include "pre_assembler.h"
-#include "./first_pass.h"
+#include "first_pass.h"
 #include "second_pass.h"
-#include "./generic_file_functions.h"
+#include "generic_file_functions.h"
 
 int main(int argc, char *argv[])
 {

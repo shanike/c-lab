@@ -1,12 +1,10 @@
 #include <stdio.h>
 
-#include "./validations.h"
-#include "./generic_file_functions.h"
-#include "./global_variables.h"
-#include "./encoding.h"
-#include "./memory_table.h"
-#include "./error_handling.h"
-#include "./addressing_methods.h"
+#include "generic_file_functions.h"
+#include "global_variables.h"
+#include "encoding.h"
+#include "error_handling.h"
+#include "addressing_methods.h"
 #include "bitwise_functions.h"
 #include "a_r_e_fields.h"
 

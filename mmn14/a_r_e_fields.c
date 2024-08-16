@@ -1,5 +1,5 @@
 #include "bitwise_functions.h"
-#include "./a_r_e_fields.h"
+#include "a_r_e_fields.h"
 
 void turn_on_a(word *num)
 {
