@@ -260,7 +260,6 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 
     char **args;
     int args_number = op->arg_number;
-    int i;
     int is_error = 0;
 
     if (IS_DEBUG_ENCODING)

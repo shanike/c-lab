@@ -138,7 +138,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
             if (encode_labels(curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) == FAILURE)
             {
-                handle_error_flag(&is_error);
+                is_error = 1;
                 continue;
             }
         }
@@ -159,6 +159,12 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     create_entries_output(*labels_table, input_file_name);
 
     /* TODO Free all the allocated memory and resources used during the second pass */
+
+    fclose(fp);
+
+    free(ext_file_name);
+    free(curr_label_name);
+    free(curr_operation);
 
     return SUCCESS;
 }

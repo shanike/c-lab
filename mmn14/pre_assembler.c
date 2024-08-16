@@ -375,7 +375,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
     return final_file_name;
 }
 
-int check_for_label_with_same_name_as_macros(char file_name[], const char *line, int line_counter, node *macro_list_head)
+int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, node *macro_list_head)
 {
     char *label_name, *word;
     location_in_file as_file;
