@@ -53,6 +53,21 @@ int add_node_to_list_word(wordNode **head, word value, int address, char *temp_n
     return SUCCESS;
 }
 
+int set_value_by_address(wordNode *head, int address, word newValue)
+{
+    wordNode *current = head;
+    while (current != NULL)
+    {
+        if (current->address == address)
+        {
+            current->value = newValue;
+            return SUCCESS;
+        }
+        current = current->next;
+    }
+    return FAILURE;
+}
+
 /* TODO temp..? */
 /* Prints the bits of a number, left to right. */
 void print_bits(word num)

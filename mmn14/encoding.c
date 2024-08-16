@@ -77,7 +77,7 @@ int split_args(char *args_str, char *args[], int args_number, location_in_file f
         args[i] = token;
         token = strtok(NULL, delim);
     }
-if (i < args_number || token != NULL) /* Found more or less args than args_number */
+    if (i < args_number || token != NULL) /* Found more or less args than args_number */
     {
         print_file_error(ERROR_STATUS_CODE_119, file_location, args_number);
         return FAILURE;
@@ -186,7 +186,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     }
 
     is_common_word = is_args_single_word(args_address_methods);
-    
+
     if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
 
@@ -209,7 +209,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
     for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
     {
-                curr_addressing_method = find_addressing_method(args[i], file_location);
+        curr_addressing_method = find_addressing_method(args[i], file_location);
 
         if (curr_addressing_method == INVALID)
         {
@@ -221,7 +221,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 
             turn_on_a(&arg_words[i]);
         }
-                else if (is_register_addressing_method(curr_addressing_method))
+        else if (is_register_addressing_method(curr_addressing_method))
         {
             int register_number = get_register_number(args[i], curr_addressing_method);
             if (i == SECOND_ARG || args_number == 1)
@@ -257,15 +257,15 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
     if (IS_DEBUG_ENCODING)
         printf("encoding operation %s with args %s\n", op->name, args_str);
 
-        args = allocate_memory_with_check(args_number * sizeof(char *));
+    args = allocate_memory_with_check(args_number * sizeof(char *));
     if (args == NULL)
     {
         return FAILURE;
     }
-    
+
     if (split_args(args_str, args, args_number, file_location) == FAILURE)
     {
-                return FAILURE;
+        return FAILURE;
     }
 
     if (encode_op(&op_word, op, args, file_location, IC, instructions_table) == FAILURE)
@@ -288,4 +288,104 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 
     free(args);
     return is_error ? FAILURE : SUCCESS;
+}
+
+/*
+Encodes the labels of an instruction line and adds external labels to the external file.
+Important to notice that if the instruction line got to this function, most validations on it have already been done.
+*/
+int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
+{
+    char **args;
+    int args_number = op->arg_number;
+    int i;
+
+    enum addressing_methods *args_address_methods;
+
+    word labelWord = 0;
+    labelNode *label;
+
+    FILE *ext_fp = NULL;
+    char *ext_filename = create_new_file_name(file_location.file_name, EXTERN_FILE_EXT);
+
+    /* Set & init args */
+    printf("Allocating memory for args...\n");
+    args = allocate_memory_with_check(args_number * sizeof(char *));
+    if (args == NULL)
+    {
+        printf("Failed to allocate memory for args.\n");
+        return FAILURE;
+    }
+
+    split_args(args_str, args, args_number, file_location);
+
+    /* Set & init args_address_methods */
+    printf("Allocating memory for args_address_methods...\n");
+    args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
+    if (args_address_methods == NULL)
+    {
+        printf("Failed to allocate memory for args_address_methods.\n");
+        free(args);
+        return FAILURE;
+    }
+    for (i = 0; i < args_number; i++)
+    {
+        *(args_address_methods + i) = find_addressing_method(args[i], file_location);
+    }
+
+    (*IC)++; /* For operation word */
+
+    if (!args_number)
+    {
+        free(args);
+        return SUCCESS;
+    }
+
+    if (args_number == 2 && is_args_single_word(args_address_methods))
+    {
+        (*IC)++;
+    }
+    else
+    {
+        /* If one of the args is a label -> encode it! */
+        for (i = 0; i < args_number; i++)
+        {
+            if (args_address_methods[i] == DIRECT)
+            {
+                printf("Found label: %s\n", args[i]);
+                label = find_node_in_list_label(labels_list, args[i]);
+
+                /* Encode label */
+                set_decimal_in_bits(&labelWord, label->value, 3, 14);
+                if (label->feature_type == EXTERNAL)
+                {
+                    turn_on_e(&labelWord);
+                }
+                else
+                {
+                    turn_on_r(&labelWord);
+                }
+
+                /* Update label word in instructions table */
+                set_value_by_address(*instructions_table, *IC, labelWord);
+
+                /* Handle external labels */
+                if (label->feature_type == EXTERNAL)
+                {
+                    if (!soft_open_file_for_writing(ext_filename, &ext_fp))
+                    {
+                        return FAILURE;
+                    }
+                    fprintf(ext_fp, "%s %04d\n", label->name, *IC);
+                }
+            }
+            (*IC)++;
+        }
+    }
+
+    soft_fclose(&ext_fp);
+
+    free(args);
+
+    return SUCCESS;
 }

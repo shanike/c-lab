@@ -227,14 +227,7 @@ int first_pass(
                         continue;
                     }
                 }
-                else /* is DIRECTIVE_ENTRY, do nothing for now. */
-                {
-                    /*if (add_node_to_list_label(labels_list, current_label, CODE, *IC + INSTRUCTIONS_MEMORY_ADDRESS_START, curr_location) == FAILURE)
-                      {
-                          handle_error_flag(&errors_cnt);
-                      } */
-                }
-                if ((word = strtok(NULL, INLINE_WHITESPACE)))
+                else if ((word = strtok(NULL, INLINE_WHITESPACE)))
                 {
                     handle_error_log(ERROR_STATUS_CODE_114, curr_location, &is_error);
                     continue;
