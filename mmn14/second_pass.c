@@ -6,7 +6,7 @@
 #include "memory_table.h"
 #include "entries_output.h"
 
-int create_ob_file(wordNode *instructions, int count, char *input_file_name, int IC, int DC)
+int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name, int IC, int DC)
 {
     int i, address, word_content;
     FILE *ob_fp;
@@ -23,13 +23,24 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
     }
 
     /* Write the values of IC and DC in the first line of the ob file file */
-    fprintf(ob_fp, "%d %d\n", IC + 100, DC);
+    fprintf(ob_fp, "%d %d\n", IC, DC);
 
     /* Write each memory word (address and value) in the required format */
-    for (i = 0; i < count; i++)
+
+    while (instructions != NULL|| data != NULL)
     {
-        address = 100 + i; /* Addressing starts at 100 */
-        word_content = (instructions + i)->value;
+        if (instructions != NULL)
+        {
+            address = instructions->address;
+            word_content = instructions->value;
+            instructions = instructions->next;
+        }
+        else
+        {
+            address = data->address;
+            word_content = data->value;
+            data = data->next;
+        }
 
         /* Print address in 4-digit decimal format and content in 5-digit octal format */
         fprintf(ob_fp, "%04d %05o\n", address, word_content);
@@ -41,7 +52,6 @@ int create_ob_file(wordNode *instructions, int count, char *input_file_name, int
     return SUCCESS;
 }
 
-/* TODO  what should we do with the data Node?? */
 int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
     FILE *fp, *ext_fp;
@@ -109,7 +119,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     }
 
     /* Create the outputs files ".ob" and ".ent" and write their data */
-    create_ob_file(*instructions, IC + DC, input_file_name, IC, DC);
+    create_ob_file(*instructions, *data, input_file_name, IC, DC);
 
     create_entries_output(*labels_table, input_file_name);
 
