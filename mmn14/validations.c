@@ -50,7 +50,7 @@ int is_directive(char *str)
     return is_one_of(str, DIRECTIVES, DIRECTIVES_NUMBER);
 }
 
-int get_opcode(char *str, operation *op)
+int get_operation(char *str, operation *op)
 {
     int i;
     for (i = 0; i < OPERATIONS_NUMBER; i++)
@@ -100,7 +100,7 @@ int is_label(char *str, int is_colon_trimmed)
         }
     }
     /* A label must not be a preserved word */
-    if (is_directive(str) || get_opcode(str, NULL) || is_register(str))
+    if (is_directive(str) || get_operation(str, NULL) || is_register(str))
     {
         return 0;
     }

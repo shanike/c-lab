@@ -162,6 +162,28 @@ int is_args_single_word(enum addressing_methods *args_address_methods)
            is_register_addressing_method(args_address_methods[1]);
 }
 
+int encode_two_registers(char **args, word *arg_word, enum addressing_methods *args_address_methods, wordNode **instructions_table, int *IC)
+{
+    int arg1_register_value, arg2_register_value;
+
+    /* Get the register numbers from the arguments */
+    arg1_register_value = get_register_number(args[0], args_address_methods[0]);
+    arg2_register_value = get_register_number(args[1], args_address_methods[1]);
+
+    /* Set the bits for the first and second registers */ 
+    set_decimal_in_bits(arg_word, arg1_register_value, 6, 8);
+    set_decimal_in_bits(arg_word, arg2_register_value, 3, 5);
+
+    /* Turn on the 'A' field */
+    turn_on_a(arg_word);
+
+    /* Add the encoded word to the instructions table */
+    add_node_to_list_word(instructions_table, *arg_word, *IC, args[0]);
+    (*IC)++;
+
+    return SUCCESS;
+}
+
 int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
     enum addressing_methods curr_addressing_method, *args_address_methods;
@@ -190,20 +212,10 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
 
-    if (is_common_word) /* TODO extract to another function `encode_two_registers` (או כדומה) */
+    /* Encode two registers if applicable */
+    if (is_common_word)
     {
-        arg1_register_value = get_register_number(args[0], args_address_methods[0]);
-        arg2_register_value = get_register_number(args[1], args_address_methods[1]);
-
-        set_decimal_in_bits(&arg_words[0], arg1_register_value, 6, 8);
-        set_decimal_in_bits(&arg_words[0], arg2_register_value, 3, 5);
-
-        turn_on_a(&arg_words[0]);
-
-        add_node_to_list_word(instructions_table, arg_words[0], *IC, args[0]);
-        (*IC)++;
-
-        return SUCCESS;
+        return encode_two_registers(args, &arg_words[0], args_address_methods, instructions_table, IC);
     }
 
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */

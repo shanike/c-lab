@@ -144,46 +144,47 @@ void *allocate_memory_with_check(long size)
     return ptr;
 }
 
-/* todo - go through this function */
 void remove_extra_spaces_in_line(char line[])
 {
-    /* i for original string, j for modified string */
-    int i, j;
+    /* i = Position to read from the original line, j = Position to write to in the modified line */
+    int i = 0, j = 0;
     char temp_line[MAX_LINE_LENGTH];
-    i = j = 0;
-    /* eliminating white-spaces in the beginning of the line */
+    /* Skip leading white spaces and tabs */
     while (is_white_space_or_tab(*(line + i)))
     {
         i++;
     }
     while (*(line + i) != '\0')
     {
-        /* copying character */
+        /* Copy non-space characters to the modified line */
         while (!is_white_space_or_tab(*(line + i)) && *(line + i) != '\0')
         {
             *(temp_line + j) = *(line + i);
             i++;
             j++;
         }
-        /* if loop stopped because end of line char */
+        
+        /* Reached end of line, break the loop */
         if (*(line + i) == '\0')
         {
             break;
         }
-        /* if loop stopped because of a white-space skipping them until another character is encountered*/
+        /* Skip consecutive white spaces or tabs */
         while (is_white_space_or_tab(*(line + i)))
         {
             i++;
         }
-        /* if stopped not because of end of line char then copy one space for all the others that were skipped */
+        /* Add a single space to the modified line if not at the end */
         if (!(*(line + i) == '\n' || *(line + i) == '\0'))
         {
             *(temp_line + j) = ' ';
             j++;
         }
     }
+
     *(temp_line + j) = *(line + i);
     *(temp_line + j + 1) = '\0';
+
     remove_spaces_next_to_comma(temp_line);
     strcpy(line, temp_line);
 }

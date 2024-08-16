@@ -234,7 +234,7 @@ int first_pass(
                 }
             }
         }
-        else if (get_opcode(word, NULL))
+        else if (get_operation(word, NULL))
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's an operation!\n");
@@ -256,7 +256,7 @@ int first_pass(
             {
                 return FAILURE;
             }
-            if (!get_opcode(word, operation))
+            if (!get_operation(word, operation))
             {
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
                 continue;
