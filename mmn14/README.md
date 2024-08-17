@@ -2,8 +2,6 @@
 
 ## TODO (core):
 
-- Check whether the malloc in create_new_file_name is valid also in ubuntu 16. (Reason to worry: returning a pointer to a local `malloc`ed variable)
-
 ## TODO (chore):
 
 ## Tests
