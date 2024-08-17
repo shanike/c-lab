@@ -6,6 +6,7 @@
 #include "labels_table.h"
 #include "memory_table.h"
 #include "validations.h"
+#include "generic_memory_allocation_functions.h"
 
 /**
  * Executes the second pass of the assembler.

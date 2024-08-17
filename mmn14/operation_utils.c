@@ -29,9 +29,7 @@ int get_operation(char *str, operation *op)
             {
                 op->name = allocate_memory_with_check(strlen(OPERATIONS[i].name) + 1);
                 if (!op->name)
-                {
                     return 0;
-                }
                 strcpy(op->name, OPERATIONS[i].name);
                 op->arg_number = OPERATIONS[i].arg_number;
                 op->code = OPERATIONS[i].code;
@@ -47,8 +45,7 @@ void soft_free_operation(operation *op)
     if (op)
     {
         soft_free_mem(op->name);
-        soft_free_mem(op);
         op->name = NULL;
-        op = NULL;
+        soft_free_mem(op);
     }
 }

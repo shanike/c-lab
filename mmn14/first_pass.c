@@ -70,6 +70,7 @@ int first_pass(
     char *current_label = NULL;
     int was_label_malloced = 0;
     operation *curr_op = NULL;
+    int encode_result = 0;
 
     int is_error = 0;
 
@@ -101,7 +102,6 @@ int first_pass(
             soft_free_mem(current_label);
         current_label = NULL;
         was_label_malloced = 0;
-        soft_free_operation(curr_op);
 
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
@@ -269,9 +269,9 @@ int first_pass(
                     }
                 }
                 /* Calc instruction length */
-                if (encode_instruction(
-                        curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) ==
-                    FAILURE)
+                encode_result = encode_instruction(curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list);
+                soft_free_operation(curr_op);
+                if (encode_result == FAILURE)
                 {
                     handle_error_flag(&is_error);
                     continue;
@@ -294,7 +294,6 @@ int first_pass(
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
 
-    soft_free_operation(curr_op);
     fclose(fp);
 
     return is_error ? FAILURE : SUCCESS;

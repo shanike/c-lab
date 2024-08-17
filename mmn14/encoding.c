@@ -168,7 +168,7 @@ int encode_two_registers(char **args, word *arg_word, enum addressing_methods *a
     arg1_register_value = get_register_number(args[0], args_address_methods[0]);
     arg2_register_value = get_register_number(args[1], args_address_methods[1]);
 
-    /* Set the bits for the first and second registers */ 
+    /* Set the bits for the first and second registers */
     set_decimal_in_bits(arg_word, arg1_register_value, 6, 8);
     set_decimal_in_bits(arg_word, arg2_register_value, 3, 5);
 
@@ -258,7 +258,7 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 {
     word op_word = 0;
 
-    char **args;
+    char **args = NULL;
     int args_number = op->arg_number;
     int is_error = 0;
 
@@ -273,6 +273,7 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 
     if (split_args(args_str, args, args_number, file_location) == FAILURE)
     {
+        free(args);
         return FAILURE;
     }
 
