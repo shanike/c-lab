@@ -58,7 +58,12 @@ int get_operation(char *str, operation *op)
         {
             if (op != NULL)
             {
-                op->name = OPERATIONS[i].name;
+                op->name = allocate_memory_with_check(strlen(OPERATIONS[i].name) + 1);
+                if (!op->name)
+                {
+                    return 0;
+                }
+                strcpy(op->name, OPERATIONS[i].name);
                 op->arg_number = OPERATIONS[i].arg_number;
                 op->code = OPERATIONS[i].code;
             }

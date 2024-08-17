@@ -68,7 +68,7 @@ int first_pass(
     location_in_file curr_location;
 
     char *current_label = NULL;
-    operation *operation = NULL;
+    operation *curr_op = NULL;
 
     int is_error = 0;
 
@@ -234,11 +234,18 @@ int first_pass(
                 }
             }
         }
-        else if (get_operation(word, NULL))
+        else if (get_operation(word, curr_op))
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's an operation!\n");
-            if (current_label) /* If label exists: add to the labels list */
+
+            if (!curr_op)
+            {
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+                continue;
+            }
+            /* If label exists: add to the labels list */
+            if (current_label)
             {
                 if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
                 {
@@ -246,22 +253,9 @@ int first_pass(
                 }
             }
             /* Calc instruction length */
-            if (operation != NULL)
-            {
-                /* Free the prev operation */
-                free(operation);
-            }
-            operation = allocate_memory_with_check(sizeof(operation));
-            if (!operation)
-            {
-                return FAILURE;
-            }
-            if (!get_operation(word, operation))
-            {
-                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
-                continue;
-            }
-            if (encode_instruction(operation, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) == FAILURE)
+            if (encode_instruction(
+                    curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) ==
+                FAILURE)
             {
                 handle_error_flag(&is_error);
                 continue;
@@ -283,7 +277,7 @@ int first_pass(
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
 
-    free(operation);
+    soft_free_mem(curr_op);
     fclose(fp);
 
     return is_error ? FAILURE : SUCCESS;

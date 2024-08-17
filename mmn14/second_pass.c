@@ -123,13 +123,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         else /* is an instruction line! */
         {
             /* Calc instruction length */
-
-            if (curr_operation != NULL)
-            {
-                /* Free the prev operation */
-                free(curr_operation);
-            }
-            curr_operation = allocate_memory_with_check(sizeof(curr_operation));
+            curr_operation = allocate_memory_with_check(sizeof(operation));
             if (!curr_operation)
             {
                 return FAILURE;
