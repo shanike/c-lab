@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "global_variables.h"
 #include "encoding.h"
 #include "error_handling.h"

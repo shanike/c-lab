@@ -6,7 +6,7 @@
 
 #include "first_pass.h"
 #include "global_variables.h"
-#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "validations.h"
 #include "text_functions.h"
 #include "error_handling.h"

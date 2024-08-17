@@ -36,14 +36,6 @@ int copy_file(const char *destination_file_name, const char *source_file_name);
  */
 void cleanup_file(char *file_path);
 
-/**
- * Allocates memory and checks if the allocation was successful.
- *
- * @param size The size of the memory to allocate.
- * @return Pointer to the allocated memory if successful, or NULL if the allocation fails.
- */
-void *allocate_memory_with_check(long size);
-
 /* Function to remove extra spaces in a given line */
 void remove_extra_spaces_in_line(char line[]);
 

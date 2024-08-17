@@ -56,7 +56,7 @@ int get_operation(char *str, operation *op)
     {
         if (strcmp(OPERATIONS[i].name, str) == 0)
         {
-            if (op)
+            if (op != NULL)
             {
                 op->name = OPERATIONS[i].name;
                 op->arg_number = OPERATIONS[i].arg_number;

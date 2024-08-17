@@ -3,6 +3,7 @@
 #include "second_pass.h"
 #include "error_handling.h"
 #include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "global_variables.h"
 #include "entries_output.h"
 #include "encoding.h"

@@ -4,6 +4,7 @@
 
 #include "memory_table.h"
 #include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "error_handling.h"
 #include "bitwise_functions.h"
 
