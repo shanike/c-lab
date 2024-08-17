@@ -61,6 +61,11 @@ void print_list_word_binary(char *name, wordNode *head);
 void print_list_word_octal(char *name, wordNode *head);
 
 /**
+ * Returns the lower 15 bits of a word.
+ */
+int get_word_15bits(word word);
+
+/**
  * Frees the memory allocated for a node.
  *
  * @param node1 Pointer to the node to free.
