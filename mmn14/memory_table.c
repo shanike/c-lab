@@ -28,7 +28,7 @@ int add_node_to_list_word(wordNode **head, word value, int address, char *temp_n
     wordNode *new_node, *current;
 
     if (IS_DEBUG_FIRST_PASS)
-        printf("Adding word node\n");
+        printf("Adding word node to list: %s\n", temp_name);
 
     new_node = create_new_word_node(value, address, temp_name);
 
