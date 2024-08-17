@@ -2,7 +2,7 @@
 
 /* TODO exit() program */
 /* Allocates memory and checks if the allocation was successful */
-void *allocate_memory_with_check(long size)
+void *allocate_memory_with_check(size_t size)
 {
     void *ptr = malloc(size);
     if (ptr == NULL)
