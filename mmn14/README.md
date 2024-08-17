@@ -1,6 +1,8 @@
 - Documentation of functions is in the corresponding function prototype in the header file.
 
 ## TODO (core):
+- Check .ext!
+- Find all places that can use `soft_free_mem` and use it.
 
 ## TODO (chore):
 
