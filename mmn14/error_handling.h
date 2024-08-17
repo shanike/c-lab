@@ -54,9 +54,6 @@ void print_system_error(int error_code);
 /**
  * Print a system warning message to the standard output.
  *
- * TODO: add support for location_in_file file
- * TODO: add support for additional arguments
- *
  * @param error_code The error code for which the message should be printed.
  */
 void print_file_warning(int error_code);

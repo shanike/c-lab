@@ -4,7 +4,7 @@
 
 #include "validations.h"
 
-char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
+char *REGISTERS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
 char *DIRECTIVES[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
 
