@@ -69,7 +69,7 @@ int set_value_by_address(wordNode *head, int address, word newValue)
     return FAILURE;
 }
 
-/* TODO temp..? */
+/* Used for debugging */
 /* Prints the bits of a number, left to right. */
 void print_bits(word num)
 {
@@ -91,7 +91,7 @@ int get_word_15bits(word num)
     return num & 0x7FFF;
 }
 
-/* TODO temp */
+/* Used for debugging */
 void print_list_word_binary(char *name, wordNode *head)
 {
     wordNode *current = head;
@@ -112,7 +112,7 @@ void print_list_word_binary(char *name, wordNode *head)
     printf("\n");
 }
 
-/* TODO temp */
+/* Used for debugging */
 void print_list_word_octal(char *name, wordNode *head)
 {
     wordNode *current = head;

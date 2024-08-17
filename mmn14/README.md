@@ -1,10 +1,10 @@
+Shani Kehati (ID: 322866823) & Reut Avital (ID: 211763164)
+
 - Documentation of functions is in the corresponding function prototype in the header file.
 
-## TODO (core):
+## TODO:
 - Check .ext!
 - Find all places that can use `soft_free_mem` and use it.
-
-## TODO (chore):
 
 ## Tests
 
