@@ -54,6 +54,9 @@ int main(int argc, char *argv[])
             continue;
         }
 
+        if (IS_DEBUG)
+            printf("\n\nFIRST PASS FINISHED ------------------------------------\n\n\n");
+
         result = exec_second_pass(
             am_filename,
             &labels_list,
