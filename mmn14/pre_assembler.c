@@ -6,6 +6,7 @@
 #include "error_handling.h"
 #include "validations.h"
 #include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 
 #define SUCCESS 1
 #define FAILURE 0

@@ -4,6 +4,7 @@
 #include <stdarg.h>
 
 #include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "text_functions.h"
 #include "error_handling.h"
 
@@ -130,19 +131,6 @@ void cleanup_file(char *file_path)
     }
 }
 
-/* TODO exit() program */
-/* Allocates memory and checks if the allocation was successful */
-void *allocate_memory_with_check(long size)
-{
-    void *ptr = malloc(size);
-    if (ptr == NULL)
-    {
-        /* Report the memory allocation failure */
-        print_system_error(ERROR_STATUS_CODE_100);
-    }
-    return ptr;
-}
-
 void remove_extra_spaces_in_line(char line[])
 {
     /* i = Position to read from the original line, j = Position to write to in the modified line */
@@ -162,7 +150,7 @@ void remove_extra_spaces_in_line(char line[])
             i++;
             j++;
         }
-        
+
         /* Reached end of line, break the loop */
         if (*(line + i) == '\0')
         {

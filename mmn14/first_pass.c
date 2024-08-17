@@ -6,7 +6,7 @@
 
 #include "first_pass.h"
 #include "global_variables.h"
-#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "validations.h"
 #include "text_functions.h"
 #include "error_handling.h"
@@ -68,7 +68,8 @@ int first_pass(
     location_in_file curr_location;
 
     char *current_label = NULL;
-    operation *operation = NULL;
+    int was_label_malloced = 0;
+    operation *curr_op = NULL;
 
     int is_error = 0;
 
@@ -95,8 +96,14 @@ int first_pass(
             printf("\n----line %d----\n", curr_location.line_number);
 
         /* Reset */
-        current_label = NULL;
         word_len = 0;
+        if (was_label_malloced)
+            soft_free_mem(current_label);
+        current_label = NULL;
+        soft_free_mem(curr_op);
+        if (curr_op)
+            soft_free_mem(curr_op->name);
+        curr_op = allocate_memory_with_check(sizeof(operation));
 
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
@@ -122,7 +129,12 @@ int first_pass(
             /* Remove the ':' from the label */
             word[--word_len] = '\0';
             /* Update current_label */
-            current_label = malloc(word_len + 1);
+            current_label = allocate_memory_with_check(word_len + 1);
+            if (!current_label)
+            {
+                return FAILURE;
+            }
+            was_label_malloced = 1;
             strcpy(current_label, word);
             current_label[word_len] = '\0';
             /* Set word to the next word for further processing */
@@ -209,6 +221,7 @@ int first_pass(
                 }
 
                 current_label = strtok(NULL, INLINE_WHITESPACE);
+                was_label_malloced = 0;
                 if (!current_label)
                 {
                     handle_error_log(ERROR_STATUS_CODE_115, curr_location, &is_error);
@@ -234,11 +247,18 @@ int first_pass(
                 }
             }
         }
-        else if (get_operation(word, NULL))
+        else if (get_operation(word, curr_op))
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's an operation!\n");
-            if (current_label) /* If label exists: add to the labels list */
+
+            if (!curr_op)
+            {
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+                continue;
+            }
+            /* If label exists: add to the labels list */
+            if (current_label)
             {
                 if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
                 {
@@ -246,22 +266,9 @@ int first_pass(
                 }
             }
             /* Calc instruction length */
-            if (operation != NULL)
-            {
-                /* Free the prev operation */
-                free(operation);
-            }
-            operation = allocate_memory_with_check(sizeof(operation));
-            if (!operation)
-            {
-                return FAILURE;
-            }
-            if (!get_operation(word, operation))
-            {
-                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
-                continue;
-            }
-            if (encode_instruction(operation, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) == FAILURE)
+            if (encode_instruction(
+                    curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) ==
+                FAILURE)
             {
                 handle_error_flag(&is_error);
                 continue;
@@ -283,7 +290,7 @@ int first_pass(
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
 
-    free(operation);
+    soft_free_mem(curr_op);
     fclose(fp);
 
     return is_error ? FAILURE : SUCCESS;

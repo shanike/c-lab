@@ -5,6 +5,7 @@
 #include "second_pass.h"
 #include "error_handling.h"
 #include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "global_variables.h"
 #include "entries_output.h"
 #include "ob_output.h"
@@ -44,6 +45,14 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
     {
+
+        /* Reset */
+        curr_location.line_number++;
+        curr_label_name = NULL;
+        soft_free_mem(curr_operation);
+        if (curr_operation)
+            soft_free_mem(curr_operation->name);
+
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
         {
@@ -67,6 +76,8 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         /* Update .entry labels to have a feature_type of ENTRY */
         if (strcmp(word, DIRECTIVE_ENTRY) == 0) /* An entry directive */
         {
+            if (IS_DEBUG_SECOND_PASS)
+                printf("it's .entry!\n");
             curr_label_name = strtok(NULL, INLINE_WHITESPACE);
             set_label_as_entry(labels_table, curr_label_name);
         }
@@ -79,13 +90,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         else /* Is an instruction line! */
         {
             /* Calc instruction length */
-
-            if (curr_operation != NULL)
-            {
-                /* Free the prev operation */
-                free(curr_operation);
-            }
-            curr_operation = allocate_memory_with_check(sizeof(curr_operation));
+            curr_operation = allocate_memory_with_check(sizeof(operation));
             if (!curr_operation)
             {
                 return FAILURE;
@@ -93,7 +98,9 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
             get_operation(word, curr_operation);
 
-            if (encode_labels(curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) == FAILURE)
+            if (encode_labels(
+                    curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) ==
+                FAILURE)
             {
                 is_error = 1;
                 continue;
@@ -114,7 +121,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     fclose(fp);
 
     free(ext_file_name);
-    free(curr_operation);
+    soft_free_mem(curr_operation);
 
     return SUCCESS;
 }

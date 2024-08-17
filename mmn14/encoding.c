@@ -1,6 +1,6 @@
 #include <stdio.h>
 
-#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "global_variables.h"
 #include "encoding.h"
 #include "error_handling.h"
@@ -290,9 +290,6 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
             is_error = 1;
         }
     }
-
-    if (IS_DEBUG_ENCODING)
-        print_list_word_octal("instructions_table: ", *instructions_table);
 
     free(args);
     return is_error ? FAILURE : SUCCESS;

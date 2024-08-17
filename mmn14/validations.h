@@ -2,6 +2,7 @@
 #define VALIDATIONS_H
 
 #include "global_variables.h"
+#include "generic_memory_allocation_functions.h"
 
 /* An operation code with its associated name, arguments number and code. */
 typedef struct operation
@@ -18,7 +19,6 @@ int is_one_of(char *str_input, char *array[], int array_length);
 
 /* Function to check if a string is an instruction */
 int is_directive(char *str);
-
 
 /*
 Function to get the operation code of a given string.

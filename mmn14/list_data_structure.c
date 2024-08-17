@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include "list_data_structure.h"
-#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 #include "error_handling.h"
 
 node *create_new_node(char *name, char *content, int line_number)
