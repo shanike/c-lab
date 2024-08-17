@@ -188,6 +188,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 
     int i;
     int is_common_word;
+    int result;
 
     word arg_words[2] = {0, 0};
 
@@ -212,13 +213,15 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     /* Encode two registers if applicable */
     if (is_common_word)
     {
-        return encode_two_registers(args, &arg_words[0], args_address_methods, instructions_table, IC);
+        result = encode_two_registers(args, &arg_words[0], args_address_methods, instructions_table, IC);
+        free(args_address_methods);
+        return result;
     }
 
     /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
     for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
     {
-        curr_addressing_method = find_addressing_method(args[i], file_location);
+        curr_addressing_method = args_address_methods[i];
 
         if (curr_addressing_method == INVALID)
         {
@@ -248,12 +251,10 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         (*IC)++;
     }
 
+    free(args_address_methods);
     return SUCCESS;
 }
 
-/*
-Returns the number of cells in memory the operation takes.
-*/
 int encode_instruction(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
 {
     word op_word = 0;
@@ -340,6 +341,7 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
     if (!args_number)
     {
         free(args);
+        free(args_address_methods);
         return SUCCESS;
     }
 
@@ -375,6 +377,8 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
                 {
                     if (!soft_open_file_for_writing(ext_filename, &ext_fp))
                     {
+                        free(args);
+                        free(args_address_methods);
                         return FAILURE;
                     }
                     fprintf(ext_fp, "%s %04d\n", label->name, *IC);
@@ -387,6 +391,7 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
     soft_fclose(&ext_fp);
 
     free(args);
+    free(args_address_methods);
 
     return SUCCESS;
 }
