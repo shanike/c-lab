@@ -8,7 +8,7 @@
 #include "bitwise_functions.h"
 #include "a_r_e_fields.h"
 
-/* TODO temp */
+/* Used for debugging */
 void print_opcode(operation *op)
 {
     printf("{ \n  name: %s,\n", op->name);
@@ -17,7 +17,7 @@ void print_opcode(operation *op)
     printf("}\n");
 }
 
-/* TODO temp */
+/* Used for debugging */
 void print_array(char *name, char **array, int array_len)
 {
     int i;
@@ -32,7 +32,7 @@ void print_array(char *name, char **array, int array_len)
     }
     printf("\n");
 }
-/* TODO temp */
+/* Used for debugging */
 void print_array_ints(char *name, int array[], int array_len)
 {
     int i;
@@ -48,7 +48,7 @@ void print_array_ints(char *name, int array[], int array_len)
     printf("\n");
 }
 
-/* TODO temp */
+/* Used for debugging */
 void print_encoding(word encoding)
 {
     printf("encoding: ");

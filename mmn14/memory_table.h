@@ -10,7 +10,7 @@ struct wordNode
 {
     word value;
     int address;
-    char temp_name[4]; /* TODO temp */
+    char temp_name[4]; /* Used for debugging */
     struct wordNode *next;
 };
 typedef struct wordNode wordNode;
