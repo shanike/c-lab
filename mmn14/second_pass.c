@@ -44,7 +44,7 @@ int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name
         }
 
         /* Print address in 4-digit decimal format and content in 5-digit octal format */
-        fprintf(ob_fp, "%04d %05o\n", address, word_content);
+        fprintf(ob_fp, "%04d %05o\n", address, get_word_15bits(word_content));
     }
 
     free(ob_file_name);

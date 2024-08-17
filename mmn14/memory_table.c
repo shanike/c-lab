@@ -28,7 +28,7 @@ int add_node_to_list_word(wordNode **head, word value, int address, char *temp_n
     wordNode *new_node, *current;
 
     if (IS_DEBUG_FIRST_PASS)
-        printf("Adding word node\n");
+        printf("Adding word node to list: %s\n", temp_name);
 
     new_node = create_new_word_node(value, address, temp_name);
 
@@ -84,6 +84,13 @@ void print_bits(word num)
     }
 }
 
+/* Returns the lower 15 bits of a word */
+int get_word_15bits(word num)
+{
+    return num & 0x7FFF;
+}
+
+/* TODO temp */
 void print_list_word_binary(char *name, wordNode *head)
 {
     wordNode *current = head;
@@ -104,7 +111,7 @@ void print_list_word_binary(char *name, wordNode *head)
     printf("\n");
 }
 
-/* TODO fix octal printing when data is negative. notice that only words that are "data" (and not part of instruction) need to be "read" using two's complement to negatives. */
+/* TODO temp */
 void print_list_word_octal(char *name, wordNode *head)
 {
     wordNode *current = head;
@@ -116,7 +123,7 @@ void print_list_word_octal(char *name, wordNode *head)
         {
             printf(" -> ");
         }
-        printf("\n\t[(temp_name:%s, address: %d, value: %05o)]", current->temp_name, current->address, current->value);
+        printf("\n\t[(temp_name:%s, address: %d, value: %05o)]", current->temp_name, current->address, get_word_15bits(current->value)); 
         current = current->next;
         i++;
     }

@@ -170,7 +170,7 @@ int first_pass(
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
                     if (IS_DEBUG_FIRST_PASS)
-                        printf("it's .string! ");
+                        printf("it's .string!\n");
                     /* TODO: maybe store the result of extract_data_string in a diff variable. */
                     if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
                     {
