@@ -23,9 +23,6 @@ $(BUILD_DIR)/%.c.o: %.c
 	mkdir -p $(dir $@)
 	$(CC) $(CFLAGS) -c $< -o $@
 
-.PHONY: run
-run:
-	$(BUILD_DIR)/$(TARGET_EXEC)
 
 # About .PHONY see https://stackoverflow.com/a/2145605/12056841
 .PHONY: clean
