@@ -20,6 +20,6 @@ int get_operation(char *str, operation *op);
 /*
 Function to free the memory of an operation.
 */
-void free_operation(operation *op);
+void soft_free_operation(operation *op);
 
 #endif /* OPERATION_UTILS_H */

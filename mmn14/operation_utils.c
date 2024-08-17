@@ -42,7 +42,7 @@ int get_operation(char *str, operation *op)
     return 0;
 }
 
-void free_operation(operation *op)
+void soft_free_operation(operation *op)
 {
     if (op)
     {
