@@ -87,6 +87,14 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
     {
+
+        /* Reset */
+        curr_location.line_number++;
+        curr_label_name = NULL;
+        soft_free_mem(curr_operation);
+        if (curr_operation)
+            soft_free_mem(curr_operation->name);
+
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
         {
@@ -158,7 +166,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     fclose(fp);
 
     free(ext_file_name);
-    free(curr_operation);
+    soft_free_mem(curr_operation);
 
     return SUCCESS;
 }
