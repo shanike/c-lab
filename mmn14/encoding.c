@@ -291,9 +291,6 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
         }
     }
 
-    if (IS_DEBUG_ENCODING)
-        print_list_word_octal("instructions_table: ", *instructions_table);
-
     free(args);
     return is_error ? FAILURE : SUCCESS;
 }
