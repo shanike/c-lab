@@ -118,6 +118,8 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         /* Update .entry labels to have a feature_type of ENTRY */
         if (strcmp(word, DIRECTIVE_ENTRY) == 0) /* An entry directive */
         {
+            if (IS_DEBUG_SECOND_PASS)
+                printf("it's .entry!\n");
             curr_label_name = strtok(NULL, INLINE_WHITESPACE);
             set_label_as_entry(labels_table, curr_label_name);
         }
@@ -139,7 +141,9 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
             get_operation(word, curr_operation);
 
-            if (encode_labels(curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) == FAILURE)
+            if (encode_labels(
+                    curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) ==
+                FAILURE)
             {
                 is_error = 1;
                 continue;
