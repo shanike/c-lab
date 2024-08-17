@@ -21,7 +21,7 @@ operation OPERATIONS[] = {
     {"jsr", 1, 13},
     {"rts", 0, 14},
     {"stop", 0, 15}};
-char *REGISTERS[] = {"@r0", "@r1", "@r2", "@r3", "@r4", "@r5", "@r6", "@r7"};
+char *REGISTERS[] = {"r0", "r1", "r2", "r3", "r4", "r5", "r6", "r7"};
 
 char *DIRECTIVES[] = {DIRECTIVE_DATA, DIRECTIVE_STRING, DIRECTIVE_EXTERN, DIRECTIVE_ENTRY};
 
