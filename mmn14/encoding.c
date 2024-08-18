@@ -112,7 +112,7 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
 
     for (i = 0; i < args_number; i++)
     {
-        curr_addressing_method = find_addressing_method(args[i], file_location);
+        curr_addressing_method = find_addressing_method(args[i], file_location, 0);
         if (IS_DEBUG_ENCODING)
             printf("addressing_method of arg[i] %s: %d\n", args[i], curr_addressing_method);
         if (curr_addressing_method == INVALID)
@@ -205,7 +205,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     }
     for (i = 0; i < args_number; i++)
     {
-        *(args_address_methods + i) = find_addressing_method(args[i], file_location);
+        *(args_address_methods + i) = find_addressing_method(args[i], file_location, 1);
     }
 
     is_common_word = args_number == 2 && is_args_single_word(args_address_methods);
@@ -346,7 +346,7 @@ int encode_labels(
     }
     for (i = 0; i < args_number; i++)
     {
-        *(args_address_methods + i) = find_addressing_method(args[i], file_location);
+        *(args_address_methods + i) = find_addressing_method(args[i], file_location, 1);
     }
 
     (*IC)++; /* For operation word */

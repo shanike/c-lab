@@ -1,12 +1,13 @@
 #include "addressing_methods.h"
 
-AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location)
+AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location, int log_error)
 {
     if (arg[0] == '#')
     {
         if (!is_whole_number(arg + 1))
         {
-            print_file_error(ERROR_STATUS_CODE_120, file_location, arg);
+            if (log_error)
+                print_file_error(ERROR_STATUS_CODE_120, file_location, arg);
             return INVALID;
         }
         if (!validate_immediate_number(arg + 1, file_location))
@@ -19,7 +20,8 @@ AddressingMethods_t find_addressing_method(char arg[], location_in_file file_loc
     {
         if (!is_register(arg + 1))
         {
-            print_file_error(ERROR_STATUS_CODE_121, file_location, arg);
+            if (log_error)
+                print_file_error(ERROR_STATUS_CODE_121, file_location, arg);
             return INVALID;
         }
         return INDIRECT_REGISTER;
@@ -32,6 +34,7 @@ AddressingMethods_t find_addressing_method(char arg[], location_in_file file_loc
     {
         return DIRECT;
     }
-    print_file_error(ERROR_STATUS_CODE_122, file_location, arg);
+    if (log_error)
+        print_file_error(ERROR_STATUS_CODE_122, file_location, arg);
     return INVALID;
 }
