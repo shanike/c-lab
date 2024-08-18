@@ -17,7 +17,6 @@ labelNode *create_new_label_node(char *name, FeatureType feature_type, int value
 
     node->feature_type = feature_type;
     node->value = value;
-
     node->next = NULL;
 
     return node;

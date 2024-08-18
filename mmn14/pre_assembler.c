@@ -21,7 +21,7 @@
  * @return 1 if a label with the same name as a macro was found, 0 otherwise.
  */
 
-int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, node *macro_list_head)
+int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, macroNode *macro_list_head)
 {
     char *label_name, *word, *line_copy;
     location_in_file as_file;
@@ -39,7 +39,7 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
         label_name = strtok(word, ":");
 
         /* Check if the label name exists in the macro list */
-        if (find_node_in_list(macro_list_head, label_name) != NULL)
+        if (find_node_in_macro_list(macro_list_head, label_name) != NULL)
         {
             /* Found a label with the same name as one of the macros */
             as_file.file_name = file_name;
@@ -150,7 +150,7 @@ int validate_macro_declaration(char *str, char **p_macro_name, int line_counter,
  * @param file_name Name of the file containing the macro declaration.
  * @return SUCCESS if the macro was processed successfully, FAILURE otherwise.
  */
-int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_head, char *file_name)
+int process_macro_declaration(FILE *fp, int *line_counter, macroNode **macro_list_head, char *file_name)
 {
     char *name, *content;
     fpos_t file_position;
@@ -176,7 +176,7 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
     fsetpos(fp, &file_position);
 
     /* Add the new macro to the macro list */
-    add_node_to_list(macro_list_head, name, content, macro_line);
+    add_node_to_macro_list(macro_list_head, name, content, macro_line);
     return SUCCESS;
 }
 
@@ -188,7 +188,7 @@ int process_macro_declaration(FILE *fp, int *line_counter, node **macro_list_hea
  * @param macro_list_head Pointer to the head of the linked list of macros.
  * @return SUCCESS if macros were collected successfully, FAILURE otherwise.
  */
-int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
+int collect_macros_to_linked_list(char *file_name, macroNode **macro_list_head)
 {
     int line_counter = 0;
     int is_successful = SUCCESS;
@@ -228,7 +228,7 @@ int collect_macros_to_linked_list(char *file_name, node **macro_list_head)
  * @param file_name Name of the file to filter macros from.
  * @return Name of the new file without the macros, or NULL on failure.
  */
-int filter_macro_declarations(char file_name[], node *macro_list_head)
+int filter_macro_declarations(char file_name[], macroNode *macro_list_head)
 {
     char *line_token, *filtered_file_name;
     char line[MAX_LINE_LENGTH];
@@ -336,7 +336,7 @@ void extract_line_parts(const char *line, const char *macro_name, char *start_pa
  * @param macro Pointer to the macro node.
  * @return Dynamically allocated string with the macro content replaced, or NULL on failure.
  */
-char *replace_macro_in_line(char *line, node *macro)
+char *replace_macro_in_line(char *line, macroNode *macro)
 {
     char start_part[MAX_LINE_LENGTH];
     char end_part[MAX_LINE_LENGTH];
@@ -369,7 +369,7 @@ char *replace_macro_in_line(char *line, node *macro)
  * @param macro Pointer to the macro node.
  * @return 1 if macros were processed successfully, 0 otherwise.
  */
-int process_macros_in_file(FILE *input_file, FILE *output_file, node *macro)
+int process_macros_in_file(FILE *input_file, FILE *output_file, macroNode *macro)
 {
     char line[MAX_LINE_LENGTH];
     char *modified_line;
@@ -408,9 +408,9 @@ int process_macros_in_file(FILE *input_file, FILE *output_file, node *macro)
  * @param head Pointer to the head of the linked list of macros.
  * @return Name of the new file with macros replaced, or NULL on failure.
  */
-char *replace_all_macros_in_file(char file_name[], node *head)
+char *replace_all_macros_in_file(char file_name[], macroNode *head)
 {
-    node *current_macro = head;
+    macroNode *current_macro = head;
     char *temp_file_name, *final_file_name;
     FILE *input_temp_file, *output_file;
 
@@ -486,7 +486,7 @@ char *replace_all_macros_in_file(char file_name[], node *head)
 
 int pre_assembler(char file_name[])
 {
-    node *macro_list_head = NULL; /* A linked list of macros */
+    macroNode *macro_list_head = NULL; /* A linked list of macros */
     char *temp_file, *final_file, *temp_file_name;
 
     /* Remove unnecessary white spaces in the file and save the result in a new temp file */
@@ -500,7 +500,7 @@ int pre_assembler(char file_name[])
     if (!collect_macros_to_linked_list(temp_file, &macro_list_head))
     {
         /* If something went wrong or one of the macros is not valid -> return 0 */
-        free_list(macro_list_head);
+        free_macro_list(macro_list_head);
 
         cleanup_file(temp_file);
         return FAILURE;
@@ -510,7 +510,7 @@ int pre_assembler(char file_name[])
 
     if (!filter_macro_declarations(temp_file, macro_list_head))
     {
-        free_list(macro_list_head);
+        free_macro_list(macro_list_head);
 
         cleanup_file(temp_file);
 
@@ -522,7 +522,7 @@ int pre_assembler(char file_name[])
     final_file = replace_all_macros_in_file(temp_file, macro_list_head);
     if (final_file == NULL)
     {
-        free_list(macro_list_head);
+        free_macro_list(macro_list_head);
 
         cleanup_file(temp_file);
 
@@ -537,7 +537,7 @@ int pre_assembler(char file_name[])
     /* Free allocated memory */
     free(temp_file);
     free(final_file);
-    free_list(macro_list_head);
+    free_macro_list(macro_list_head);
 
     /* Successfully processed the macros in the given file*/
     return SUCCESS;
