@@ -160,6 +160,7 @@ int is_args_single_word(AddressingMethods_t *args_address_methods)
            is_register_addressing_method(args_address_methods[1]);
 }
 
+/* Handles the encoding for when both arguments are registers */
 int encode_two_registers(char **args, word *arg_word, AddressingMethods_t *args_address_methods, wordNode **instructions_table, int *IC)
 {
     int arg1_register_value, arg2_register_value;
@@ -182,6 +183,7 @@ int encode_two_registers(char **args, word *arg_word, AddressingMethods_t *args_
     return SUCCESS;
 }
 
+/* Handles the encoding of the arguments of an instruction */
 int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
     AddressingMethods_t curr_addressing_method, *args_address_methods;
