@@ -95,7 +95,7 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
 void add_node_to_list_externals(labelNode **head, char *name, int value)
 {
     if (IS_DEBUG_SECOND_PASS)
-        printf("Adding node external: %s of %d\n", name);
+        printf("Adding node external: %s\n", name);
 
     internal_add_node_to_list(head, name, -1, value);
 }
@@ -136,8 +136,8 @@ void print_list_label(labelNode *head)
 void free_node_label(labelNode *node1)
 {
     /* Free memory allocated for the name, content and node */
-    free(node1->name);
-    free(node1);
+    soft_free_mem(node1->name);
+    soft_free_mem(node1);
 }
 
 void free_list_label(labelNode *head)
