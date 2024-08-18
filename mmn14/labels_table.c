@@ -133,6 +133,53 @@ void print_list_label(labelNode *head)
     printf("\n");
 }
 
+void create_labels_output_file(char *base_filename,
+                               char *file_extension,
+                               labelNode *list,
+                               char *format,
+                               filter_f filter)
+{
+    labelNode *current = list;
+    char *output_filename = NULL;
+    FILE *fp = NULL;
+
+    int found_items = 0;
+
+    if (current == NULL)
+        /* No items to write. Break before mallocs */
+        return;
+
+    output_filename = create_new_file_name(base_filename, file_extension);
+    if (output_filename == NULL)
+    {
+        return;
+    }
+
+    if (!open_file_for_writing(output_filename, &fp))
+    {
+        free(output_filename);
+        return;
+    }
+
+    while (current != NULL)
+    {
+        if (filter == NULL || filter(current))
+        {
+            found_items = 1;
+            fprintf(fp, format, current->name, current->value);
+        }
+        current = current->next;
+    }
+
+    if (!found_items)
+    {
+        remove(output_filename);
+    }
+
+    free(output_filename);
+    fclose(fp);
+}
+
 /* Free memory allocated for the name, content and node */
 void free_node_label(labelNode *node1)
 {

@@ -3,7 +3,14 @@
 #define GENERIC_FILE_FUNCTIONS_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <stdarg.h>
+
 #include "global_variables.h"
+#include "generic_memory_allocation_functions.h"
+#include "text_functions.h"
+#include "error_handling.h"
 
 /* Function prototypes */
 

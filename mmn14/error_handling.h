@@ -4,6 +4,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <stdarg.h>
+
 #include "global_variables.h"
 #include "generic_file_functions.h"
 
@@ -30,7 +32,7 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_111, /* Macro has more than one definition */
     ERROR_STATUS_CODE_112, /* Label is already used */
     ERROR_STATUS_CODE_113, /* Op code %s not found */
-    ERROR_STATUS_CODE_114, /* Received too many arguments */
+    ERROR_STATUS_CODE_114, /* Received too many arguments, expected just 1 */
     ERROR_STATUS_CODE_115, /* Missing label name */
     ERROR_STATUS_CODE_116, /* Ignoring label */
     ERROR_STATUS_CODE_117, /* Argument must be a number but got: %s */
