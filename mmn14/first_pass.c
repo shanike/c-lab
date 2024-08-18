@@ -59,6 +59,32 @@ void clean_and_save_label(char *word, char **current_label, int *was_label_mallo
     (*current_label)[word_len] = '\0';
 }
 
+/* Validates a data argument and adds it to the data table */
+void add_data_argument(char *data_arg, location_in_file curr_location, int *is_error, int *DC, wordNode **data_table)
+{
+    /* Data arg must be a number */
+    if (!is_whole_number(data_arg))
+    {
+        handle_error_log(ERROR_STATUS_CODE_117, curr_location, is_error, data_arg);
+        return;
+    }
+
+    /* Number must be in range */
+    if (!validate_immediate_number(data_arg, curr_location))
+    {
+        handle_error_flag(is_error);
+        return;
+    }
+
+    /* Add the number to `data_table` */
+    if (add_node_to_list_word(data_table, atoi(data_arg), *DC, data_arg) == FAILURE)
+    {
+        handle_error_flag(is_error);
+    }
+    /* Update the data counter */
+    (*DC)++;
+}
+
 int first_pass(
     char filename[],
     labelNode **labels_list,
@@ -152,27 +178,8 @@ int first_pass(
                         printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        if (!is_whole_number(word)) /* Word must be a number */
-                        {
-                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &is_error, word);
-                        }
-                        else if (!validate_immediate_number(word, curr_location)) /* Number must be in range */
-                        {
-                            handle_error_flag(&is_error);
-                        }
-                        else
-                        {
-                            /* Add the number to `data_table` */
-                            if (add_node_to_list_word(data_table, atoi(word), *DC, word) == FAILURE)
-                            {
-                                handle_error_flag(&is_error);
-                            }
-                            /* Update the data counter */
-                            (*DC)++;
-                        }
+                        add_data_argument(word, curr_location, &is_error, DC, data_table);
                     }
-                    if (IS_DEBUG_FIRST_PASS)
-                        printf("setting DC to %d\n", *DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
