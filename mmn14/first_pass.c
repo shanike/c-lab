@@ -70,6 +70,7 @@ int first_pass(
     char *current_label = NULL;
     int was_label_malloced = 0;
     operation *curr_op = NULL;
+    int encode_result = 0;
 
     int is_error = 0;
 
@@ -100,10 +101,7 @@ int first_pass(
         if (was_label_malloced)
             soft_free_mem(current_label);
         current_label = NULL;
-        soft_free_mem(curr_op);
-        if (curr_op)
-            soft_free_mem(curr_op->name);
-        curr_op = allocate_memory_with_check(sizeof(operation));
+        was_label_malloced = 0;
 
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
@@ -118,6 +116,8 @@ int first_pass(
         if (!word || word[0] == ';')
         {
             /* Skip empty lines and comments */
+            if (IS_DEBUG_FIRST_PASS)
+                printf("skipping empty line or comment\n");
             continue;
         }
 
@@ -247,36 +247,40 @@ int first_pass(
                 }
             }
         }
-        else if (get_operation(word, curr_op))
-        {
-            if (IS_DEBUG_FIRST_PASS)
-                printf("it's an operation!\n");
-
-            if (!curr_op)
-            {
-                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
-                continue;
-            }
-            /* If label exists: add to the labels list */
-            if (current_label)
-            {
-                if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
-                {
-                    handle_error_flag(&is_error);
-                }
-            }
-            /* Calc instruction length */
-            if (encode_instruction(
-                    curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list) ==
-                FAILURE)
-            {
-                handle_error_flag(&is_error);
-                continue;
-            }
-        }
         else
         {
-            handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+            curr_op = allocate_memory_with_check(sizeof(operation));
+            if (get_operation(word, curr_op))
+            {
+                if (IS_DEBUG_FIRST_PASS)
+                    printf("it's an operation!\n");
+
+                if (!curr_op)
+                {
+                    handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+                    continue;
+                }
+                /* If label exists: add to the labels list */
+                if (current_label)
+                {
+                    if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
+                    {
+                        handle_error_flag(&is_error);
+                    }
+                }
+                /* Calc instruction length */
+                encode_result = encode_instruction(curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list);
+                soft_free_operation(curr_op);
+                if (encode_result == FAILURE)
+                {
+                    handle_error_flag(&is_error);
+                    continue;
+                }
+            }
+            else
+            {
+                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
+            }
         }
 
     } /* End of while */
@@ -290,7 +294,6 @@ int first_pass(
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
 
-    soft_free_mem(curr_op);
     fclose(fp);
 
     return is_error ? FAILURE : SUCCESS;

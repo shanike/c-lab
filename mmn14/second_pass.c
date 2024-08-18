@@ -11,7 +11,6 @@
 #include "ob_output.h"
 #include "encoding.h"
 
-
 int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
     FILE *fp, *ext_fp;
@@ -23,6 +22,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
     char *curr_label_name = NULL;
     operation *curr_operation = NULL;
+    int encode_result = 0;
 
     if (!open_file_for_reading(input_file_name, &fp))
     {
@@ -41,6 +41,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         fclose(ext_fp);
         is_error = 1;
     }
+    free(ext_file_name);
 
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
@@ -49,9 +50,6 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
         /* Reset */
         curr_location.line_number++;
         curr_label_name = NULL;
-        soft_free_mem(curr_operation);
-        if (curr_operation)
-            soft_free_mem(curr_operation->name);
 
         /* Remove the newline character, if exists */
         if (line[strlen(line) - 1] == '\n')
@@ -97,16 +95,17 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
             }
 
             get_operation(word, curr_operation);
-
-            if (encode_labels(
-                    curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table) ==
-                FAILURE)
+            encode_result = encode_labels(
+                curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table);
+            soft_free_operation(curr_operation);
+            if (encode_result == FAILURE)
             {
                 is_error = 1;
                 continue;
             }
         }
     }
+    fclose(fp);
 
     if (is_error == 1)
     {
@@ -117,11 +116,6 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     create_ob_file(*instructions, *data, input_file_name, IC, DC);
 
     create_entries_output(*labels_table, input_file_name);
-
-    fclose(fp);
-
-    free(ext_file_name);
-    soft_free_mem(curr_operation);
 
     return SUCCESS;
 }

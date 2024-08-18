@@ -2,7 +2,7 @@
 #define ENCODING_H
 
 #include "memory_table.h"
-#include "validations.h"
+#include "operation_utils.h"
 #include "labels_table.h"
 
 /* Function to encode an operation */

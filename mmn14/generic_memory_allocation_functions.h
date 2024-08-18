@@ -6,7 +6,7 @@
  * @param size The size of the memory to allocate.
  * @return Pointer to the allocated memory if successful, or NULL if the allocation fails.
  */
-void *allocate_memory_with_check(long size);
+void *allocate_memory_with_check(size_t size);
 
 /**
  * Frees memory only if the pointer is not NULL.

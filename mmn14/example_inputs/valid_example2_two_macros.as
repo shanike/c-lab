@@ -1,14 +1,14 @@
 .extern XYZ
     .entry MAIN
 
-KINITIALVALUE: sub @r4   ,    @r3
+KINITIALVALUE: sub r4   ,    r3
 
-MAIN:   mov @r3, LENGTH
+MAIN:   mov r3, LENGTH
 
 LOOP:   jmp L1
 
     macr M1
-sub @r1, @r4
+sub r1, r4
     bne END
     endmacr
 
@@ -35,7 +35,7 @@ add reg2, reg1
     endmacr
 
 M2
-ABC: mov XYZ, @r3
+ABC: mov XYZ, r3
 reg1: .data 6,5,-555,66
 reg2: .data 6,5,-555,66
 val: .string "asfas   %%dfjk"
