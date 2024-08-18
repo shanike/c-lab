@@ -205,7 +205,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         *(args_address_methods + i) = find_addressing_method(args[i], file_location);
     }
 
-    is_common_word = is_args_single_word(args_address_methods);
+    is_common_word = args_number == 2 && is_args_single_word(args_address_methods);
 
     if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
