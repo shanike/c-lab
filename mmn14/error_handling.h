@@ -14,7 +14,7 @@ typedef struct Error
 {
     int error_code;  /* Unique code for the error */
     char *error_msg; /* Error message associated with the error */
-} Error;
+} Error_t;
 
 typedef enum ERROR_STATUS_CODES
 {

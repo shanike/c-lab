@@ -1,7 +1,7 @@
 #include "error_handling.h"
 
 /* The Following array specifies the error status code numbers and the corresponding error message. */
-Error errors[] = {
+Error_t errors[] = {
     {ERROR_STATUS_CODE_100, "Failed to dynamically allocate memory"},
     {ERROR_STATUS_CODE_101, "Failed to open new file for writing"},
     {ERROR_STATUS_CODE_102, "Failed to open file for reading"},
