@@ -40,9 +40,25 @@ void inc_data_labels_addresses(labelNode *labels_list, int IC)
     }
 }
 
-/*
-Returns the number of errors that occurred during the first pass.
-*/
+/* Removes the ':' from the label and saves it in current_label. */
+void clean_and_save_label(char *word, char **current_label, int *was_label_malloced)
+{
+    int word_len = strlen(word);
+
+    /* Remove the ':' from the label */
+    word[--word_len] = '\0';
+
+    /* Update current_label */
+    *current_label = allocate_memory_with_check(word_len + 1);
+    if (!(*current_label))
+    {
+        return;
+    }
+    *was_label_malloced = 1;
+    strcpy(*current_label, word);
+    (*current_label)[word_len] = '\0';
+}
+
 int first_pass(
     char filename[],
     labelNode **labels_list,
@@ -53,7 +69,6 @@ int first_pass(
 {
     char line[MAX_LINE_LENGTH], *word, *c;
     FILE *fp;
-    int word_len = 0;
     location_in_file curr_location;
 
     char *current_label = NULL;
@@ -78,7 +93,6 @@ int first_pass(
 
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
-    /* TODO divide this huge loop into functions(!) */
     {
         curr_location.line_number++;
 
@@ -86,7 +100,6 @@ int first_pass(
             printf("\n----line %d----\n", curr_location.line_number);
 
         /* Reset */
-        word_len = 0;
         if (was_label_malloced)
             soft_free_mem(current_label);
         current_label = NULL;
@@ -114,18 +127,7 @@ int first_pass(
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's a label! saving name.\n");
-            word_len = strlen(word);
-            /* Remove the ':' from the label */
-            word[--word_len] = '\0';
-            /* Update current_label */
-            current_label = allocate_memory_with_check(word_len + 1);
-            if (!current_label)
-            {
-                return FAILURE;
-            }
-            was_label_malloced = 1;
-            strcpy(current_label, word);
-            current_label[word_len] = '\0';
+            clean_and_save_label(word, &current_label, &was_label_malloced);
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
         }
