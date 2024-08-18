@@ -67,7 +67,11 @@ int extract_data_string(char *input, char **result, location_in_file curr_locati
     result_len = second_quote_index - 1;
 
     /* Copy the input without the quotes */
-    *result = malloc(result_len + 1);
+    *result = allocate_memory_with_check(result_len + 1);
+    if (!(*result))
+    {
+        return FAILURE;
+    }
     strncpy(*result, input + 1, result_len);
     (*result)[result_len] = '\0';
 
