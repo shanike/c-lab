@@ -1,3 +1,5 @@
+#include <stdlib.h>
+
 #include "error_handling.h"
 
 /**

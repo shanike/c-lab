@@ -165,6 +165,10 @@ int first_pass(
                         {
                             handle_error_log(ERROR_STATUS_CODE_117, curr_location, &is_error, word);
                         }
+                        else if (!validate_immediate_number(word, curr_location)) /* Number must be in range */
+                        {
+                            handle_error_flag(&is_error);
+                        }
                         else
                         {
                             /* Add the number to `data_table` */
@@ -255,10 +259,12 @@ int first_pass(
                 if (IS_DEBUG_FIRST_PASS)
                     printf("it's an operation!\n");
 
-                if (!curr_op)
+                if (!curr_op) /* Due to malloc failure */
                 {
-                    handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
-                    continue;
+                    if (was_label_malloced)
+                        soft_free_mem(current_label);
+                    soft_free_operation(curr_op);
+                    return FAILURE;
                 }
                 /* If label exists: add to the labels list */
                 if (current_label)
@@ -279,6 +285,7 @@ int first_pass(
             }
             else
             {
+                printf("Error: unknown operation: %s\n", word);
                 handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
             }
         }
@@ -293,6 +300,9 @@ int first_pass(
     inc_data_table_addresses(*data_table, *IC);
     /* Update addresses of data labels themselves too to +instructions_length+INSTRUCTIONS_MEMORY_ADDRESS_START */
     inc_data_labels_addresses(*labels_list, *IC);
+
+    if (was_label_malloced)
+        soft_free_mem(current_label);
 
     fclose(fp);
 

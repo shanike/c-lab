@@ -43,21 +43,12 @@ labelNode *find_node_in_list_label(labelNode *head, char *name)
     return NULL;
 }
 
-int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location)
+/*
+Internal utility function to add a node to the linked list.
+*/
+void internal_add_node_to_list(labelNode **head, char *name, FeatureType feature_type, int value)
 {
-    labelNode *new_node, *current, *node_exists;
-
-    if (IS_DEBUG_FIRST_PASS)
-        printf("Adding node: %s of %d\n", name, feature_type);
-    node_exists = find_node_in_list_label(*head, name);
-    if (IS_DEBUG_FIRST_PASS)
-        printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
-    if (node_exists != NULL)
-    {
-        print_file_error(ERROR_STATUS_CODE_112, location);
-        free(name);
-        return FAILURE;
-    }
+    labelNode *new_node, *current;
 
     new_node = create_new_label_node(name, feature_type, value);
 
@@ -79,7 +70,34 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
         /* Append the new node at the end of the list */
         current->next = new_node;
     }
+}
+
+int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location)
+{
+    labelNode *node_exists;
+
+    if (IS_DEBUG_FIRST_PASS)
+        printf("Adding node label: %s of %d\n", name, feature_type);
+    node_exists = find_node_in_list_label(*head, name);
+    if (IS_DEBUG_FIRST_PASS)
+        printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
+    if (node_exists != NULL)
+    {
+        print_file_error(ERROR_STATUS_CODE_112, location);
+        free(name);
+        return FAILURE;
+    }
+
+    internal_add_node_to_list(head, name, feature_type, value);
     return SUCCESS;
+}
+
+void add_node_to_list_externals(labelNode **head, char *name, int value)
+{
+    if (IS_DEBUG_SECOND_PASS)
+        printf("Adding node external: %s\n", name);
+
+    internal_add_node_to_list(head, name, -1, value);
 }
 
 int set_label_as_entry(labelNode **head, char *name)
@@ -115,11 +133,10 @@ void print_list_label(labelNode *head)
     printf("\n");
 }
 
+/* Free memory allocated for the name, content and node */
 void free_node_label(labelNode *node1)
 {
-    /* Free memory allocated for the name, content and node */
-    free(node1->name);
-    free(node1);
+    soft_free_mem(node1);
 }
 
 void free_list_label(labelNode *head)

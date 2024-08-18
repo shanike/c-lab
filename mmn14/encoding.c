@@ -84,7 +84,7 @@ int split_args(char *args_str, char *args[], int args_number, location_in_file f
 }
 
 /* Returns the addressing method's index in the word encoding. */
-int get_arg_encoding_index(enum arg_index arg_index)
+int get_arg_encoding_index(ArgIndex_t arg_index)
 {
     if (arg_index == FIRST_ARG)
     {
@@ -102,12 +102,12 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     int args_number = op->arg_number;
     int arg_encoding_index;
     int i;
-    enum addressing_methods curr_addressing_method;
+    AddressingMethods_t curr_addressing_method;
 
     if (IS_DEBUG_ENCODING)
         printf("encoding operation %s\n", op->name);
 
-    set_decimal_in_bits(op_word, op->code, 11, 14);
+    set_bits_from_int(op_word, op->code, 11, 14);
 
     for (i = 0; i < args_number; i++)
     {
@@ -134,12 +134,12 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     return SUCCESS;
 }
 
-int is_register_addressing_method(enum addressing_methods addressing_method)
+int is_register_addressing_method(AddressingMethods_t addressing_method)
 {
     return addressing_method == DIRECT_REGISTER || addressing_method == INDIRECT_REGISTER;
 }
 
-int get_register_number(char *register_str, enum addressing_methods addressing_method)
+int get_register_number(char *register_str, AddressingMethods_t addressing_method)
 {
     int i = 0;
     while (register_str[i] != 'r') /* Skip to the first digit */
@@ -154,13 +154,14 @@ int get_register_number(char *register_str, enum addressing_methods addressing_m
 Returns whether the both arguments share a single word in memory.
 Notice that the function assumes there are two arguments! Therefore args_address_methods must be of length 2.
 */
-int is_args_single_word(enum addressing_methods *args_address_methods)
+int is_args_single_word(AddressingMethods_t *args_address_methods)
 {
     return is_register_addressing_method(args_address_methods[0]) &&
            is_register_addressing_method(args_address_methods[1]);
 }
 
-int encode_two_registers(char **args, word *arg_word, enum addressing_methods *args_address_methods, wordNode **instructions_table, int *IC)
+/* Handles the encoding for when both arguments are registers */
+int encode_two_registers(char **args, word *arg_word, AddressingMethods_t *args_address_methods, wordNode **instructions_table, int *IC)
 {
     int arg1_register_value, arg2_register_value;
 
@@ -169,8 +170,8 @@ int encode_two_registers(char **args, word *arg_word, enum addressing_methods *a
     arg2_register_value = get_register_number(args[1], args_address_methods[1]);
 
     /* Set the bits for the first and second registers */
-    set_decimal_in_bits(arg_word, arg1_register_value, 6, 8);
-    set_decimal_in_bits(arg_word, arg2_register_value, 3, 5);
+    set_bits_from_int(arg_word, arg1_register_value, 6, 8);
+    set_bits_from_int(arg_word, arg2_register_value, 3, 5);
 
     /* Turn on the 'A' field */
     turn_on_a(arg_word);
@@ -182,9 +183,10 @@ int encode_two_registers(char **args, word *arg_word, enum addressing_methods *a
     return SUCCESS;
 }
 
+/* Handles the encoding of the arguments of an instruction */
 int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
-    enum addressing_methods curr_addressing_method, *args_address_methods;
+    AddressingMethods_t curr_addressing_method, *args_address_methods;
 
     int i;
     int is_common_word;
@@ -195,7 +197,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     if (IS_DEBUG_ENCODING)
         print_array("encoding args: ", args, args_number);
 
-    args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
+    args_address_methods = allocate_memory_with_check(args_number * sizeof(AddressingMethods_t));
     if (args_address_methods == NULL)
     {
         return FAILURE;
@@ -205,7 +207,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         *(args_address_methods + i) = find_addressing_method(args[i], file_location);
     }
 
-    is_common_word = is_args_single_word(args_address_methods);
+    is_common_word = args_number == 2 && is_args_single_word(args_address_methods);
 
     if (IS_DEBUG_ENCODING)
         printf("is_common_word: %d\n", is_common_word);
@@ -229,7 +231,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         }
         else if (curr_addressing_method == IMMEDIATE)
         {
-            set_decimal_in_bits(&arg_words[i], atoi(args[i] + 1), 3, 14);
+            set_bits_from_int(&arg_words[i], atoi(args[i] + 1), 3, 14);
 
             turn_on_a(&arg_words[i]);
         }
@@ -238,11 +240,11 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
             int register_number = get_register_number(args[i], curr_addressing_method);
             if (i == SECOND_ARG || args_number == 1)
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 3, 5);
+                set_bits_from_int(&arg_words[i], register_number, 3, 5);
             }
             else
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 6, 8);
+                set_bits_from_int(&arg_words[i], register_number, 6, 8);
             }
             turn_on_a(&arg_words[i]);
         }
@@ -299,21 +301,31 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 
 /*
 Encodes the labels of an instruction line and adds external labels to the external file.
+And fully updates the IC.
 Important to notice that if the instruction line got to this function, most validations on it have already been done.
 */
-int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
+int encode_labels(
+    operation *op,
+    char *args_str,
+    location_in_file file_location,
+    int *IC,
+    wordNode **instructions_table,
+    labelNode *labels_list,
+    labelNode **externals)
 {
     char **args;
     int args_number = op->arg_number;
     int i;
 
-    enum addressing_methods *args_address_methods;
+    AddressingMethods_t *args_address_methods;
 
     word labelWord = 0;
     labelNode *label;
 
-    FILE *ext_fp = NULL;
-    char *ext_filename = create_new_file_name(file_location.file_name, EXTERN_FILE_EXT);
+    if (!args_number)
+    {
+        return SUCCESS;
+    }
 
     /* Set & init args */
     args = allocate_memory_with_check(args_number * sizeof(char *));
@@ -325,7 +337,7 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
     split_args(args_str, args, args_number, file_location);
 
     /* Set & init args_address_methods */
-    args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
+    args_address_methods = allocate_memory_with_check(args_number * sizeof(AddressingMethods_t));
     if (args_address_methods == NULL)
     {
         free(args);
@@ -337,13 +349,6 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
     }
 
     (*IC)++; /* For operation word */
-
-    if (!args_number)
-    {
-        free(args);
-        free(args_address_methods);
-        return SUCCESS;
-    }
 
     if (args_number == 2 && is_args_single_word(args_address_methods))
     {
@@ -357,9 +362,16 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
             if (args_address_methods[i] == DIRECT)
             {
                 label = find_node_in_list_label(labels_list, args[i]);
+                if (label == NULL)
+                {
+                    print_file_error(ERROR_STATUS_CODE_124, file_location, args[i]);
+                    free(args);
+                    free(args_address_methods);
+                    return FAILURE;
+                }
 
                 /* Encode label */
-                set_decimal_in_bits(&labelWord, label->value, 3, 14);
+                set_bits_from_int(&labelWord, label->value, 3, 14);
                 if (label->feature_type == EXTERNAL)
                 {
                     turn_on_e(&labelWord);
@@ -375,20 +387,12 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
                 /* Handle external labels */
                 if (label->feature_type == EXTERNAL)
                 {
-                    if (!soft_open_file_for_writing(ext_filename, &ext_fp))
-                    {
-                        free(args);
-                        free(args_address_methods);
-                        return FAILURE;
-                    }
-                    fprintf(ext_fp, "%s %04d\n", label->name, *IC);
+                    add_node_to_list_externals(externals, args[i], *IC);
                 }
             }
             (*IC)++;
         }
     }
-
-    soft_fclose(&ext_fp);
 
     free(args);
     free(args_address_methods);

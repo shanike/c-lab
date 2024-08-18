@@ -30,7 +30,9 @@ Error errors[] = {
     {ERROR_STATUS_CODE_120, "An immediate addressing method must be a number, but got %s"},
     {ERROR_STATUS_CODE_121, "Invalid register name: %s"},
     {ERROR_STATUS_CODE_122, "Invalid label name: %s"},
-    {ERROR_STATUS_CODE_123, "Found label with the same name as one of the macros" }
+    {ERROR_STATUS_CODE_123, "Found label with the same name as one of the macros"},
+    {ERROR_STATUS_CODE_124, "Undefined label %s"},
+    {ERROR_STATUS_CODE_125, "Number value %d is out of range, should be between %d and %d"}
 };
 
 /*
@@ -60,7 +62,7 @@ void print_file_error(int error_code, location_in_file file, ...)
     va_list args;
     va_start(args, file);
 
-    printf("FILE ERROR: CODE:%d in %s at line:%d | there is an error: ", error_code, file.file_name, file.line_number);
+    printf("FILE ERROR (code %d) in %s at line %d | there is an error: ", error_code, file.file_name, file.line_number);
     vprintf(get_error_message(error_code), args);
     printf("\n");
 

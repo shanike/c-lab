@@ -2,8 +2,10 @@
 #define ADDRESSING_METHODS_H
 
 #include "memory_table.h"
+#include "validations.h"
+#include "error_handling.h"
 
-enum addressing_methods
+enum AddressingMethods
 {
     IMMEDIATE = 0,
     DIRECT = 1,
@@ -12,17 +14,19 @@ enum addressing_methods
     INVALID = -1
     /* UNSET = -2 */
 };
+typedef enum AddressingMethods AddressingMethods_t;
 
-enum arg_index
+enum ArgIndex
 {
     FIRST_ARG = 0,
     SECOND_ARG = 1
 };
+typedef enum ArgIndex ArgIndex_t;
 
 /*
 Returns the addressing method of the given argument.
 If the argument is invalid, prints an error message and returns INVALID.
 */
-int find_addressing_method(char arg[], location_in_file file_location);
+AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location);
 
 #endif

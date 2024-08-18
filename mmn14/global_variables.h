@@ -19,9 +19,9 @@
 #define SUCCESS 1
 #define FAILURE 0
 
-#define DIRECTIVES_NUMBER 4
-#define OPERATIONS_NUMBER 16
-#define REGISTERS_NUMBER 8
+#define DIRECTIVES_NUMBER 4  /* Number of directives */
+#define OPERATIONS_NUMBER 16 /* Number of operations */
+#define REGISTERS_NUMBER 8   /* Number of registers */
 
 #define DIRECTIVE_DATA ".data"
 #define DIRECTIVE_STRING ".string"
@@ -39,6 +39,9 @@
 #define BITS_IN_WORD 15
 
 #define MAX_ARGS_NUMBER 2
+
+#define MAX_IMMEDIATE_VALUE 2047
+#define MIN_IMMEDIATE_VALUE -2048
 
 #define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
 
