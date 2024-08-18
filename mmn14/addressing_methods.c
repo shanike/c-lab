@@ -1,6 +1,4 @@
 #include "addressing_methods.h"
-#include "validations.h"
-#include "error_handling.h"
 
 enum addressing_methods find_addressing_method(char arg[], location_in_file file_location)
 {
@@ -9,6 +7,10 @@ enum addressing_methods find_addressing_method(char arg[], location_in_file file
         if (!is_whole_number(arg + 1))
         {
             print_file_error(ERROR_STATUS_CODE_120, file_location, arg);
+            return INVALID;
+        }
+        if (!validate_immediate_number(arg + 1, file_location))
+        {
             return INVALID;
         }
         return IMMEDIATE;

@@ -83,3 +83,14 @@ int is_whole_number(char *str)
     }
     return 1;
 }
+
+int validate_immediate_number(char *str, location_in_file file_location)
+{
+    int num = atoi(str);
+    if (num > (MAX_IMMEDIATE_VALUE) || num < (MIN_IMMEDIATE_VALUE))
+    {
+        print_file_error(ERROR_STATUS_CODE_125, file_location, num, MIN_IMMEDIATE_VALUE, MAX_IMMEDIATE_VALUE);
+        return 0;
+    }
+    return 1;
+}

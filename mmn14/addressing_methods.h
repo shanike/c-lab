@@ -2,6 +2,8 @@
 #define ADDRESSING_METHODS_H
 
 #include "memory_table.h"
+#include "validations.h"
+#include "error_handling.h"
 
 enum addressing_methods
 {

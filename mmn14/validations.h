@@ -26,4 +26,10 @@ int is_label(char *str, int is_colon_trimmed);
 /* Function to check if a string is a number, for .data directive */
 int is_whole_number(char *str);
 
+/*
+Returns 1 if the given string is a valid immediate number, 0 otherwise.
+An immediate addressing method value goes into 13 bits, so it must be between -2048 and 2047.
+*/
+int validate_immediate_number(char *str, location_in_file file_location);
+
 #endif /* VALIDATIONS_H */

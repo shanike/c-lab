@@ -40,6 +40,9 @@
 
 #define MAX_ARGS_NUMBER 2
 
+#define MAX_IMMEDIATE_VALUE 2047
+#define MIN_IMMEDIATE_VALUE -2048
+
 #define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
 
 typedef struct location_in_file
