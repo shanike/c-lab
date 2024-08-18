@@ -23,6 +23,6 @@ enum arg_index
 Returns the addressing method of the given argument.
 If the argument is invalid, prints an error message and returns INVALID.
 */
-int find_addressing_method(char arg[], location_in_file file_location);
+enum addressing_methods find_addressing_method(char arg[], location_in_file file_location);
 
 #endif

@@ -2,7 +2,7 @@
 #include "validations.h"
 #include "error_handling.h"
 
-int find_addressing_method(char arg[], location_in_file file_location)
+enum addressing_methods find_addressing_method(char arg[], location_in_file file_location)
 {
     if (arg[0] == '#')
     {
