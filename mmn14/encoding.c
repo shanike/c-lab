@@ -1,12 +1,10 @@
 #include <stdio.h>
 
-#include "generic_memory_allocation_functions.h"
-#include "global_variables.h"
 #include "encoding.h"
-#include "error_handling.h"
-#include "addressing_methods.h"
-#include "bitwise_functions.h"
-#include "a_r_e_fields.h"
+
+/* ******************************************* */
+/* *********** DEBUGGING FUNCTIONS *********** */
+/* ******************************************* */
 
 /* Used for debugging */
 void print_opcode(operation *op)
@@ -53,8 +51,12 @@ void print_encoding(word encoding)
 {
     printf("encoding: ");
     print_bits(encoding);
-    printf("\nencoding in hex: %04X\n", encoding);
+    printf("\nencoding in octal: %05o\n", get_word_15bits(encoding));
 }
+
+/* ************************************** */
+/* *********** CORE FUNCTIONS *********** */
+/* ************************************** */
 
 /*
 Splits a string into an array of strings, using the delimiters ", \t".
@@ -63,8 +65,7 @@ Otherwise, returns FAILURE.
 */
 int split_args(char *args_str, char *args[], int args_number, location_in_file file_location)
 {
-    char delim[] = ", \t";
-    char *token = strtok(args_str, delim);
+    char *token = strtok(args_str, ARGS_DELIM);
     int i;
     for (i = 0; i < args_number; i++)
     {
@@ -73,7 +74,7 @@ int split_args(char *args_str, char *args[], int args_number, location_in_file f
             break; /* `i` stays less than `args_number` */
         }
         args[i] = token;
-        token = strtok(NULL, delim);
+        token = strtok(NULL, ARGS_DELIM);
     }
     if (i < args_number || token != NULL) /* Found more or less args than args_number */
     {
@@ -188,9 +189,9 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
 {
     AddressingMethods_t curr_addressing_method, *args_address_methods;
 
-    int i;
-    int is_common_word;
-    int result;
+    int i,
+        is_common_word,
+        result;
 
     word arg_words[2] = {0, 0};
 
@@ -220,8 +221,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         return result;
     }
 
-    /* If the instruction has a single argument, it is considered as the "second" argument. That's why the loop iterates in reverse order. */
-    for (i = 0; i < args_number; i++) /* TODO split to functions, so loop is not so long */
+    for (i = 0; i < args_number; i++)
     {
         curr_addressing_method = args_address_methods[i];
 
@@ -239,6 +239,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         {
             int register_number = get_register_number(args[i], curr_addressing_method);
             if (i == SECOND_ARG || args_number == 1)
+            /* If the instruction has a single register argument, it is considered as the "second" argument */
             {
                 set_bits_from_int(&arg_words[i], register_number, 3, 5);
             }
@@ -257,7 +258,12 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     return SUCCESS;
 }
 
-int encode_instruction(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
+int encode_instruction(operation *op,
+                       char *args_str,
+                       location_in_file file_location,
+                       int *IC,
+                       wordNode **instructions_table,
+                       labelNode *labels_list)
 {
     word op_word = 0;
 
@@ -299,11 +305,6 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
     return is_error ? FAILURE : SUCCESS;
 }
 
-/*
-Encodes the labels of an instruction line and adds external labels to the external file.
-And fully updates the IC.
-Important to notice that if the instruction line got to this function, most validations on it have already been done.
-*/
 int encode_labels(
     operation *op,
     char *args_str,

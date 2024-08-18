@@ -1,12 +1,10 @@
 #include "bitwise_functions.h"
-#include "memory_table.h"
 
 int is_bit_set(word num, int bit_index)
 {
     return num & (1 << bit_index);
 }
 
-/* Sets the i-th bit of num to value. */
 void set_bit(word *num, int bit_index, int value)
 {
     if (value)
@@ -28,4 +26,9 @@ void set_bits_from_int(word *num, int int_val, int start_index_in_num, int end_i
 
         int_val >>= 1;
     }
+}
+
+int get_word_15bits(word num)
+{
+    return num & 0x7FFF;
 }

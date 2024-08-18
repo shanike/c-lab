@@ -85,12 +85,6 @@ void print_bits(word num)
     }
 }
 
-/* Returns the lower 15 bits of a word */
-int get_word_15bits(word num)
-{
-    return num & 0x7FFF;
-}
-
 /* Used for debugging */
 void print_list_word_binary(char *name, wordNode *head)
 {
