@@ -66,18 +66,19 @@ int add_node_to_labels_list(labelNode **head, char *name, FeatureType feature_ty
 
     if (IS_DEBUG_FIRST_PASS)
         printf("Adding node label: %s of %d\n", name, feature_type);
+
     node_exists = find_node_in_label_list(*head, name);
     if (IS_DEBUG_FIRST_PASS)
         printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
-    if (node_exists != NULL)
+
+    if (node_exists == NULL)
     {
-        print_file_error(ERROR_STATUS_CODE_112, location);
-        free(name);
-        return FAILURE;
+        internal_add_node_to_list(head, name, feature_type, value);
+        return SUCCESS;
     }
 
-    internal_add_node_to_list(head, name, feature_type, value);
-    return SUCCESS;
+    print_file_error(ERROR_STATUS_CODE_112, location);
+    return FAILURE;
 }
 
 /*

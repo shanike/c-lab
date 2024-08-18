@@ -92,6 +92,12 @@ int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int 
 {
     char *c;
 
+    /* If no value ignore */
+    if (!word_arg)
+    {
+        return SUCCESS;
+    }
+
     /* Extract the string argument (=remove quotes) */
     if (extract_data_string(word_arg, word, curr_location) == FAILURE)
     {
@@ -164,6 +170,16 @@ void handle_instruction(char *word, location_in_file curr_location, int *is_erro
     }
 }
 
+int ensure_memory_space(int IC, int DC, location_in_file location, int *is_error)
+{
+    if (IC + DC >= MEMORY_SIZE)
+    {
+        handle_error_log(ERROR_STATUS_CODE_126, location, is_error);
+        return FAILURE;
+    }
+    return SUCCESS;
+}
+
 int first_pass(
     char filename[],
     labelNode **labels_list,
@@ -198,6 +214,11 @@ int first_pass(
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
     {
+        if (ensure_memory_space(*IC, *DC, curr_location, &is_error) == FAILURE)
+        {
+            break;
+        }
+
         curr_location.line_number++;
 
         if (IS_DEBUG_FIRST_PASS)

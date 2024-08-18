@@ -41,26 +41,33 @@ int is_white_space_or_tab(char c)
 
 int extract_data_string(char *input, char **result, location_in_file curr_location)
 {
-    int second_quote_index, result_len;
+    int last_quote_index, result_len;
 
-    /* Find second quote */
+    char *last_quote = NULL;
 
-    char *second_quote = strchr(input + 1, '\"');
-    if (input[0] != '\"' || !second_quote)
+    if (!input) /* If no value ignore */
+    {
+        return SUCCESS;
+    }
+
+    /* Find last quote */
+    last_quote = strrchr(input, '\"');
+
+    if (input[0] != '\"' || !last_quote)
     {
         print_file_error(ERROR_STATUS_CODE_118, curr_location, input);
         return FAILURE;
     }
 
-    second_quote_index = second_quote - input;
+    last_quote_index = last_quote - input;
 
-    if (second_quote_index != strlen(input) - 1)
+    if (last_quote_index != strlen(input) - 1)
     {
         print_file_error(ERROR_STATUS_CODE_114, curr_location, input);
         return FAILURE;
     }
 
-    result_len = second_quote_index - 1;
+    result_len = last_quote_index - 1;
 
     /* Copy the input without the quotes */
     *result = allocate_memory_with_check(result_len + 1);

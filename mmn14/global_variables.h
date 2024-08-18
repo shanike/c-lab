@@ -11,7 +11,7 @@
 #define MACRO_DECLARATION "macr"
 #define MACRO_END "endmacr"
 
-#define MAX_LINE_LENGTH 80  /* Maximum length of a single command line */
+#define MAX_LINE_LENGTH 81  /* Maximum length of a single command line */
 #define MAX_LABEL_LENGTH 31 /* Maximum length of a label */
 
 /* Success and failure codes */
@@ -44,7 +44,9 @@
 #define MAX_IMMEDIATE_VALUE 2047
 #define MIN_IMMEDIATE_VALUE -2048
 
+/* Memory */
 #define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
+#define MEMORY_SIZE 4096                      /* The maximum memory size */
 
 typedef struct location_in_file
 {
