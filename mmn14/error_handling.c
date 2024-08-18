@@ -61,7 +61,7 @@ void print_file_error(int error_code, location_in_file file, ...)
     va_list args;
     va_start(args, file);
 
-    printf("FILE ERROR: CODE:%d in %s at line:%d | there is an error: ", error_code, file.file_name, file.line_number);
+    printf("FILE ERROR (code %d) in %s at line %d | there is an error: ", error_code, file.file_name, file.line_number);
     vprintf(get_error_message(error_code), args);
     printf("\n");
 
