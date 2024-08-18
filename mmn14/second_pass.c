@@ -57,7 +57,11 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
             if (IS_DEBUG_SECOND_PASS)
                 printf("it's .entry!\n");
             curr_label_name = strtok(NULL, INLINE_WHITESPACE);
-            set_label_as_entry(labels_table, curr_label_name);
+            if (set_label_as_entry(labels_table, curr_label_name) == FAILURE)
+            {
+                print_file_error(ERROR_STATUS_CODE_124, curr_location);
+                is_error = 1;
+            }
         }
         else if (is_directive(word))
         {

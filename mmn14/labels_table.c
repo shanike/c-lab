@@ -99,7 +99,6 @@ int set_label_as_entry(labelNode **head, char *name)
         printf("Setting label as entry: %s\n", label ? label->name : "NULL");
     if (!label)
     {
-        /* TODO what if label is not defined? */
         return FAILURE;
     }
 
