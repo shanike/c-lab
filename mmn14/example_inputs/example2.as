@@ -5,5 +5,5 @@ bne          END
 endmacr
 prn NAME
 NAME:         .string		 "my name is a secret"
-cmp @r1 #4
+cmp r1 #4
 my_fav_macro
