@@ -1,18 +1,6 @@
 Shani Kehati (ID: 322866823) & Reut Avital (ID: 211763164)
 
 - Documentation of functions is in the corresponding function prototype in the header file.
+- Header files contain all necessary prototypes, constants and includes.
 
-## Tests
-
-- [ ] Negative .data values
-- [ ] Weird .string values
-- [ ] Quotes in .string values
-- [ ] .data with no values
-- [ ] .string with no values
-- [ ] Multi commas
-- [ ] Label with no content
-- [ ] Using a label that was not defined in operation
-- [ ] Using a label that was not defined in .entry/.extern
-
-- [ ] What should happen if calling the assembler with a file "file.as"?
-- [ ] Check max length of line
+- .string and .data directives with no values are valid and ignored.
