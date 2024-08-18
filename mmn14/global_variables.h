@@ -11,7 +11,7 @@
 #define MACRO_DECLARATION "macr"
 #define MACRO_END "endmacr"
 
-#define MAX_LINE_LENGTH 80  /* Maximum length of a single command line */
+#define MAX_LINE_LENGTH 81  /* Maximum length of a single command line */
 #define MAX_LABEL_LENGTH 31 /* Maximum length of a label */
 
 /* Success and failure codes */
