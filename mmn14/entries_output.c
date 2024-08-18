@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include "entries_output.h"
 
-int create_entries_output(labelNode *labels_table, char *filename)
+int create_entries_file(labelNode *labels_table, char *filename)
 {
     labelNode *current_label = labels_table;
     char *entries_filename = NULL;

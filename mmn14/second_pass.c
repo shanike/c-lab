@@ -115,7 +115,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     /* Create the outputs files ".ob" and ".ent" and write their data */
     create_ob_file(*instructions, *data, input_file_name, IC, DC);
 
-    create_entries_output(*labels_table, input_file_name);
+    create_entries_file(*labels_table, input_file_name);
 
     return SUCCESS;
 }
