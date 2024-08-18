@@ -1,0 +1,14 @@
+
+prn NAME
+NAME: stop
+
+.data 1,1,1,1,1,1,
+.string "some string"
+.string
+cmp r1 #4
+cmpLabel: cmp r3,#-6
+bne END
+END: stop
+.entry NAME
+.extern BLAH
+.extern HHHI
