@@ -299,9 +299,10 @@ int encode_instruction(operation *op, char *args_str, location_in_file file_loca
 
 /*
 Encodes the labels of an instruction line and adds external labels to the external file.
+And fully updates the IC.
 Important to notice that if the instruction line got to this function, most validations on it have already been done.
 */
-int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list)
+int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list, wordNode **externals)
 {
     char **args;
     int args_number = op->arg_number;
@@ -314,6 +315,11 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
 
     FILE *ext_fp = NULL;
     char *ext_filename = create_new_file_name(file_location.file_name, EXTERN_FILE_EXT);
+
+    if (!args_number)
+    {
+        return SUCCESS;
+    }
 
     /* Set & init args */
     args = allocate_memory_with_check(args_number * sizeof(char *));
@@ -338,13 +344,6 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
 
     (*IC)++; /* For operation word */
 
-    if (!args_number)
-    {
-        free(args);
-        free(args_address_methods);
-        return SUCCESS;
-    }
-
     if (args_number == 2 && is_args_single_word(args_address_methods))
     {
         (*IC)++;
@@ -357,6 +356,13 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
             if (args_address_methods[i] == DIRECT)
             {
                 label = find_node_in_list_label(labels_list, args[i]);
+                if (label == NULL)
+                {
+                    print_file_error(ERROR_STATUS_CODE_124, file_location, args[i]);
+                    free(args);
+                    free(args_address_methods);
+                    return FAILURE;
+                }
 
                 /* Encode label */
                 set_decimal_in_bits(&labelWord, label->value, 3, 14);
@@ -387,7 +393,6 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
             (*IC)++;
         }
     }
-
     soft_fclose(&ext_fp);
 
     free(args);
