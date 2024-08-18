@@ -85,7 +85,10 @@ void add_data_argument(char *data_arg, location_in_file curr_location, int *is_e
     (*DC)++;
 }
 
-/* Validates a string argument and adds it to the data table */
+/*
+Validates a string argument and adds it to the data table
+Returns SUCCESS if the string was added successfully, FAILURE if it's invalid.
+*/
 int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int *is_error, location_in_file curr_location)
 {
     char *c;
@@ -119,7 +122,10 @@ int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int 
     return SUCCESS;
 }
 
-/* Validates an instruction, encodes it and adds it to the instructions table */
+/*
+Validates an instruction, encodes it and adds it to the instructions table
+Returns SUCCESS if the instruction was added successfully, FAILURE if an error occurred or the instruction is invalid.
+*/
 int handle_instruction(char *word, location_in_file curr_location, int *is_error, int *was_label_malloced, char *current_label, labelNode **labels_list, wordNode **instructions_table, int *IC)
 {
     int encode_result;
@@ -312,6 +318,8 @@ int first_pass(
         }
         else
         {
+            if (IS_DEBUG_FIRST_PASS)
+                printf("it's an instruction!\n");
             handle_instruction(word, curr_location, &is_error, &was_label_malloced, current_label, labels_list, instructions_table, IC);
         }
 

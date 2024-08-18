@@ -27,6 +27,7 @@ int is_white_space_or_tab(char c);
  *
  * This function extracts a string, which is enclosed in double quotes. 
  * The extracted string is stored in the result parameter.
+ * The function assumes the result param has enough memory allocated to store the string.
  * 
  * If the input string is not enclosed in double quotes, an error message is printed.
  *
