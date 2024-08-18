@@ -27,6 +27,6 @@ typedef enum ArgIndex ArgIndex_t;
 Returns the addressing method of the given argument.
 If the argument is invalid, prints an error message and returns INVALID.
 */
-AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location);
+AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location, int log_error);
 
 #endif
