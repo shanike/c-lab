@@ -89,6 +89,7 @@ void add_data_argument(char *data_arg, location_in_file curr_location, int *is_e
 
 /*
 Returns 1 if the string has consecutive commas, while ignoring spaces and tabs.
+Also returns 1 if the string starts or ends with a comma.
 Returns 0 otherwise.
 */
 int has_consecutive_commas(char *str)
@@ -113,7 +114,7 @@ int has_consecutive_commas(char *str)
             searching_for_comma = 1;
         }
     }
-    return 0;
+    return !searching_for_comma;
 }
 
 /*
