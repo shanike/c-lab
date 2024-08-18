@@ -107,7 +107,7 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     if (IS_DEBUG_ENCODING)
         printf("encoding operation %s\n", op->name);
 
-    set_decimal_in_bits(op_word, op->code, 11, 14);
+    set_bits_from_int(op_word, op->code, 11, 14);
 
     for (i = 0; i < args_number; i++)
     {
@@ -169,8 +169,8 @@ int encode_two_registers(char **args, word *arg_word, enum addressing_methods *a
     arg2_register_value = get_register_number(args[1], args_address_methods[1]);
 
     /* Set the bits for the first and second registers */
-    set_decimal_in_bits(arg_word, arg1_register_value, 6, 8);
-    set_decimal_in_bits(arg_word, arg2_register_value, 3, 5);
+    set_bits_from_int(arg_word, arg1_register_value, 6, 8);
+    set_bits_from_int(arg_word, arg2_register_value, 3, 5);
 
     /* Turn on the 'A' field */
     turn_on_a(arg_word);
@@ -229,7 +229,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
         }
         else if (curr_addressing_method == IMMEDIATE)
         {
-            set_decimal_in_bits(&arg_words[i], atoi(args[i] + 1), 3, 14);
+            set_bits_from_int(&arg_words[i], atoi(args[i] + 1), 3, 14);
 
             turn_on_a(&arg_words[i]);
         }
@@ -238,11 +238,11 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
             int register_number = get_register_number(args[i], curr_addressing_method);
             if (i == SECOND_ARG || args_number == 1)
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 3, 5);
+                set_bits_from_int(&arg_words[i], register_number, 3, 5);
             }
             else
             {
-                set_decimal_in_bits(&arg_words[i], register_number, 6, 8);
+                set_bits_from_int(&arg_words[i], register_number, 6, 8);
             }
             turn_on_a(&arg_words[i]);
         }
@@ -369,7 +369,7 @@ int encode_labels(
                 }
 
                 /* Encode label */
-                set_decimal_in_bits(&labelWord, label->value, 3, 14);
+                set_bits_from_int(&labelWord, label->value, 3, 14);
                 if (label->feature_type == EXTERNAL)
                 {
                     turn_on_e(&labelWord);

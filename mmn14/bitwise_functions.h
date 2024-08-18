@@ -10,9 +10,9 @@ int is_bit_set(word num, int bit_index);
 void set_bit(word *num, int bit_index, int value);
 
 /*
-Sets the bits of num from start_index_in_num to end_index_in_num to decimal.
+Sets the bits of num from start_index_in_num to end_index_in_num according to int.
 start and end are inclusive.
 */
-void set_decimal_in_bits(word *num, int decimal, int start_index_in_num, int end_index_in_num);
+void set_bits_from_int(word *num, int decimal, int start_index_in_num, int end_index_in_num);
 
 #endif

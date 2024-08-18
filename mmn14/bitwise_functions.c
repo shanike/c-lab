@@ -19,17 +19,13 @@ void set_bit(word *num, int bit_index, int value)
     }
 }
 
-/*
-Sets the bits of num from start_index_in_num to end_index_in_num to decimal.
-start and end are inclusive.
-*/
-void set_decimal_in_bits(word *num, int decimal, int start_index_in_num, int end_index_in_num)
+void set_bits_from_int(word *num, int int_val, int start_index_in_num, int end_index_in_num)
 {
     int i;
     for (i = start_index_in_num; i <= end_index_in_num; i++)
     {
-        set_bit(num, i, decimal & 1);
+        set_bit(num, i, int_val & 1);
 
-        decimal >>= 1;
+        int_val >>= 1;
     }
 }
