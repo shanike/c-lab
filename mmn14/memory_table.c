@@ -17,8 +17,8 @@ wordNode *create_new_word_node(word value, int address, char *debug_name)
     node->value = value;
     node->address = address;
     if (debug_name)
-        /* TODO check whether allocation is needed */
-        strcpy(node->debug_name, debug_name);
+        node->debug_name = allocate_memory_with_check(strlen(debug_name) + 1);
+    strcpy(node->debug_name, debug_name);
     node->next = NULL;
 
     return node;
@@ -133,7 +133,9 @@ void print_list_word_octal(char *name, wordNode *head)
 
 void free_node_word(wordNode *node1)
 {
-    free(node1);
+    if (node1->debug_name)
+        soft_free_mem(node1->debug_name);
+    soft_free_mem(node1);
 }
 
 void free_list_word(wordNode *head)
