@@ -82,7 +82,7 @@ void print_list_word_binary(char *name, wordNode *head)
 {
     wordNode *current = head;
     int i = 0;
-    printf("List: ");
+    printf("%s\n", name);
     while (current != NULL)
     {
         if (i)
