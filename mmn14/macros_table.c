@@ -29,7 +29,7 @@ macroNode *find_node_in_macro_list(macroNode *head, char *name)
     return NULL;
 }
 
-void add_node_to_macro_list(macroNode **head, char *name, char *content, int line_number)
+int add_node_to_macro_list(macroNode **head, char *name, char *content, int line_number)
 {
     macroNode *new_node, *current, *macro_with_same_name;
 
@@ -41,7 +41,7 @@ void add_node_to_macro_list(macroNode **head, char *name, char *content, int lin
         print_system_error(ERROR_STATUS_CODE_111);
         free(name);
         free(content);
-        return;
+        return FAILURE;
     }
 
     new_node = create_new_macro_node(name, content, line_number);
@@ -64,6 +64,8 @@ void add_node_to_macro_list(macroNode **head, char *name, char *content, int lin
         /* Append the new node at the end of the list */
         current->next = new_node;
     }
+
+    return SUCCESS;
 }
 
 void free_node(macroNode *node)

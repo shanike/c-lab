@@ -45,8 +45,9 @@ macroNode *find_node_in_macro_list(macroNode *head, char *name);
  * @param name The name to store in the new macro node.
  * @param content The content to store in the new macro node.
  * @param line_number The line number associated with the content.
+ * @return SUCCESS if the node was added successfully and FAILURE if not.
  */
-void add_node_to_macro_list(macroNode **head, char *name, char *content, int line_number);
+int add_node_to_macro_list(macroNode **head, char *name, char *content, int line_number);
 
 /**
  * Frees the memory allocated for a node.

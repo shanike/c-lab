@@ -35,7 +35,7 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
             return FAILURE;
         }
     }
-    
+
     free(line_copy);
 
     /* There are no labels with the same name as the macro names */
@@ -165,7 +165,10 @@ int process_macro_declaration(FILE *fp, int *line_counter, macroNode **macro_lis
     fsetpos(fp, &file_position);
 
     /* Add the new macro to the macro list */
-    add_node_to_macro_list(macro_list_head, name, content, macro_line);
+    if (add_node_to_macro_list(macro_list_head, name, content, macro_line) == FAILURE)
+    {
+        return FAILURE;
+    }
     return SUCCESS;
 }
 
