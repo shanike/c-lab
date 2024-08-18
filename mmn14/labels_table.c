@@ -114,6 +114,7 @@ int set_label_as_entry(labelNode **head, char *name)
     return SUCCESS;
 }
 
+/* Used for debugging */
 void print_list_label(labelNode *head)
 {
     labelNode *current = head;
@@ -132,6 +133,7 @@ void print_list_label(labelNode *head)
     printf("\n");
 }
 
+/* Generic function to creates a new file with the labels (or some of them) and their memory addresses */
 void create_labels_output_file(char *base_filename,
                                char *file_extension,
                                labelNode *list,

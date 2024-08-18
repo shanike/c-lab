@@ -4,6 +4,7 @@
 
 /**
  * Allocates memory and checks if the allocation was successful.
+ * If the allocation fails, the function prints an error message and exits the program
  *
  * @param size The size of the memory to allocate.
  * @return Pointer to the allocated memory if successful, or NULL if the allocation fails.
