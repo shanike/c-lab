@@ -1,6 +1,13 @@
 #ifndef MACROS_TABLE_H
 #define MACROS_TABLE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "generic_memory_allocation_functions.h"
+#include "error_handling.h"
+
 /* A node in a macro linked list */
 typedef struct macroNode
 {

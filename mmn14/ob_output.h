@@ -1,7 +1,13 @@
 #ifndef OB_OUTPUT_H
 #define OB_OUTPUT_H
 
-#include "encoding.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "ob_output.h"
+#include "global_variables.h"
+#include "generic_file_functions.h"
+#include "memory_table.h"
 
 /**
  * @brief Creates an output file with a .ob extension containing the assembled code's instructions and data.

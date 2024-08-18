@@ -1,7 +1,13 @@
 #ifndef LABELS_TABLE_H
 #define LABELS_TABLE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "global_variables.h"
+#include "generic_memory_allocation_functions.h"
+#include "error_handling.h"
 
 enum FEATURE_TYPE
 {
