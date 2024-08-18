@@ -51,6 +51,8 @@
 /* Chars */
 #define COMMA ','
 #define COLON ':'
+#define SPACE ' '
+#define TAB '\t'
 
 typedef struct location_in_file
 {
