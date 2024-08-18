@@ -1,6 +1,7 @@
 #ifndef GLOBAL_VARIABLES_H
 #define GLOBAL_VARIABLES_H
 
+/* Debug flags */
 #define IS_DEBUG 0
 #define IS_DEBUG_FIRST_PASS 0
 #define IS_DEBUG_ENCODING 0
@@ -10,10 +11,8 @@
 #define MACRO_DECLARATION "macr"
 #define MACRO_END "endmacr"
 
-/* Maximum length of a single command line */
-#define MAX_LINE_LENGTH 80
-/* Maximum length of a label */
-#define MAX_LABEL_LENGTH 31
+#define MAX_LINE_LENGTH 80  /* Maximum length of a single command line */
+#define MAX_LABEL_LENGTH 31 /* Maximum length of a label */
 
 /* Success and failure codes */
 #define SUCCESS 1
@@ -23,6 +22,7 @@
 #define OPERATIONS_NUMBER 16 /* Number of operations */
 #define REGISTERS_NUMBER 8   /* Number of registers */
 
+/* Directives */
 #define DIRECTIVE_DATA ".data"
 #define DIRECTIVE_STRING ".string"
 #define DIRECTIVE_ENTRY ".entry"
@@ -30,6 +30,7 @@
 
 #define INLINE_WHITESPACE " \t"
 
+/* File extensions */
 #define OBJECT_FILE_EXT ".ob"
 #define ASSEMBLY_FILE_EXT ".as"
 #define AFTER_MACRO_FILE_EXT ".am"
@@ -50,5 +51,7 @@ typedef struct location_in_file
     char *file_name;
     int line_number;
 } location_in_file;
+
+typedef unsigned short int word;
 
 #endif /* GLOBAL_VARIABLES_H */

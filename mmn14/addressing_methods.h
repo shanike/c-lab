@@ -1,7 +1,7 @@
 #ifndef ADDRESSING_METHODS_H
 #define ADDRESSING_METHODS_H
 
-#include "memory_table.h"
+#include "global_variables.h"
 #include "validations.h"
 #include "error_handling.h"
 

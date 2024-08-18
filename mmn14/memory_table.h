@@ -3,7 +3,6 @@
 
 #include "global_variables.h"
 
-typedef unsigned short int word;
 
 /* A node in a linked list */
 struct wordNode

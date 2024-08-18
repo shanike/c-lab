@@ -1,7 +1,7 @@
 #ifndef BITWISE_FUNCTIONS_H
 #define BITWISE_FUNCTIONS_H
 
-#include "memory_table.h"
+#include "global_variables.h"
 
 /* Returns 1 if the i-th bit of num is 1, and 0 otherwise. */
 int is_bit_set(word num, int bit_index);
