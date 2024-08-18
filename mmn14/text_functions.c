@@ -1,7 +1,3 @@
-#include <stdio.h>
-#include <ctype.h>
-#include <string.h>
-
 #include "error_handling.h"
 
 void remove_spaces_next_to_comma(char *str)

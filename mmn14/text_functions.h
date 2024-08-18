@@ -1,6 +1,10 @@
 #ifndef TEXT_FUNCTIONS_H
 #define TEXT_FUNCTIONS_H
 
+#include <stdio.h>
+#include <ctype.h>
+#include <string.h>
+
 /**
  * Removes spaces adjacent to commas in a string.
  *
@@ -25,10 +29,10 @@ int is_white_space_or_tab(char c);
 /**
  * Extracts the string value from a given .string directive.
  *
- * This function extracts a string, which is enclosed in double quotes. 
+ * This function extracts a string, which is enclosed in double quotes.
  * The extracted string is stored in the result parameter.
  * The function assumes the result param has enough memory allocated to store the string.
- * 
+ *
  * If the input string is not enclosed in double quotes, an error message is printed.
  *
  * @param input The .string directive.
