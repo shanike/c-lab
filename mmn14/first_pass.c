@@ -127,18 +127,22 @@ Validates an instruction, encodes it and adds it to the instructions table
 */
 void handle_instruction(char *word, location_in_file curr_location, int *is_error, int *was_label_malloced, char *current_label, labelNode **labels_list, wordNode **instructions_table, int *IC)
 {
-    int encode_result;
+    int encode_result,
+        is_operation;
 
-    operation *op = allocate_memory_with_check(sizeof(operation));
+    operation *op = NULL;
 
-    int is_operation = get_operation(word, op);
+    op = allocate_memory_with_check(sizeof(operation));
+    op->name = NULL;
+
+    is_operation = get_operation(word, op);
 
     if (is_operation == FAILURE || !op)
     {
         soft_free_operation(op);
-
         if (is_operation == FAILURE)
             handle_error_log(ERROR_STATUS_CODE_113, curr_location, is_error, word);
+        return;
     }
 
     /* If label exists: add to the labels list */

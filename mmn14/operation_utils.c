@@ -42,7 +42,7 @@ int get_operation(char *str, operation *op)
 
 void soft_free_operation(operation *op)
 {
-    if (op)
+    if (op != NULL)
     {
         soft_free_mem(op->name);
         op->name = NULL;
