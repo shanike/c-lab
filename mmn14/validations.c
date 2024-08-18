@@ -38,7 +38,7 @@ int is_label(char *str, int is_colon_trimmed)
     int i;
 
     /* A label's last character must be a colon */
-    if (!is_colon_trimmed && str[strlen(str) - 1] != ':')
+    if (!is_colon_trimmed && str[strlen(str) - 1] != COLON)
     {
         return 0;
     }
