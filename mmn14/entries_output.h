@@ -6,8 +6,8 @@
 
 #include "labels_table.h"
 #include "global_variables.h"
-#include "generic_file_functions.h"
 
+/* Writes the entries into the correct output file, according to the provided labels table */
 void create_entries_file(labelNode *labels_table, char *filename);
 
 #endif

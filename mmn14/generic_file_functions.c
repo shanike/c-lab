@@ -1,12 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include <stdarg.h>
-
 #include "generic_file_functions.h"
-#include "generic_memory_allocation_functions.h"
-#include "text_functions.h"
-#include "error_handling.h"
 
 /*
 Function to open the file for reading and handle errors.
@@ -33,26 +25,6 @@ int open_file_for_writing(const char *file_name, FILE **fp_out)
         return FAILURE;
     }
     return SUCCESS;
-}
-
-/* Open file for writing only if file is not yet open */
-int soft_open_file_for_writing(const char *file_name, FILE **fp_out)
-{
-    if (*fp_out == NULL)
-    {
-        return open_file_for_writing(file_name, fp_out);
-    }
-    return SUCCESS;
-}
-
-/* Close file only if file is open */
-void soft_fclose(FILE **fp)
-{
-    if (*fp != NULL)
-    {
-        fclose(*fp);
-        *fp = NULL;
-    }
 }
 
 char *create_new_file_name(const char *base_file_name, const char *extension)

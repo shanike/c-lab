@@ -22,6 +22,9 @@ struct labelNode
 };
 typedef struct labelNode labelNode;
 
+/* Function pointer type for filtering labels */
+typedef int (*filter_f)(labelNode *);
+
 /* Function prototypes */
 
 /**
@@ -66,9 +69,15 @@ void add_node_to_list_externals(labelNode **head, char *name, int value);
 int set_label_as_entry(labelNode **head, char *name);
 
 /**
- * Prints the linked list.
+ * Creates a new file with the labels and their memory addresses.
+ *
+ * @param base_filename The base filename to use for the new file.
+ * @param file_extension The file extension to use for the new file.
+ * @param list Pointer to the head of the linked list.
+ * @param format The format string to use for the output.
+ * @param filter A pointer to a function which filters the labels to include in the output. (NULL for no filter).
  */
-void print_list_label(labelNode *head);
+void create_labels_output_file(char *base_filename, char *file_extension, labelNode *list, char *format, filter_f filter);
 
 /**
  * Frees the memory allocated for a node.
