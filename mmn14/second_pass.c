@@ -5,7 +5,6 @@
 #include "second_pass.h"
 #include "error_handling.h"
 #include "generic_file_functions.h"
-#include "generic_memory_allocation_functions.h"
 #include "global_variables.h"
 #include "entries_output.h"
 #include "ob_output.h"
@@ -13,10 +12,10 @@
 
 int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
-    FILE *fp, *ext_fp;
+    FILE *input_fp;
     int is_error = 0;
     location_in_file curr_location;
-    char line[MAX_LINE_LENGTH], *ext_file_name, *word;
+    char line[MAX_LINE_LENGTH], *word;
 
     int second_pass_IC = INSTRUCTIONS_MEMORY_ADDRESS_START;
 
@@ -24,7 +23,9 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     operation *curr_operation = NULL;
     int encode_result = 0;
 
-    if (!open_file_for_reading(input_file_name, &fp))
+    labelNode *externals = NULL;
+
+    if (!open_file_for_reading(input_file_name, &input_fp))
     {
         is_error = 1;
     }
@@ -32,19 +33,8 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
     curr_location.line_number = 0;
     curr_location.file_name = input_file_name;
 
-    /* Create the output file name with an '.ext' extension */
-    ext_file_name = create_new_file_name(input_file_name, EXTERN_FILE_EXT);
-
-    /* Open the new '.ext' file for writing */
-    if (!open_file_for_writing(ext_file_name, &ext_fp))
-    {
-        fclose(ext_fp);
-        is_error = 1;
-    }
-    free(ext_file_name);
-
     /* Read each line of the given file */
-    while (fgets(line, MAX_LINE_LENGTH, fp) != NULL)
+    while (fgets(line, MAX_LINE_LENGTH, input_fp) != NULL)
     {
 
         /* Reset */
@@ -96,7 +86,7 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
 
             get_operation(word, curr_operation);
             encode_result = encode_labels(
-                curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table);
+                curr_operation, strtok(NULL, ""), curr_location, &second_pass_IC, instructions, *labels_table, &externals);
             soft_free_operation(curr_operation);
             if (encode_result == FAILURE)
             {
@@ -105,17 +95,20 @@ int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode *
             }
         }
     }
-    fclose(fp);
+    fclose(input_fp);
 
     if (is_error == 1)
     {
         return FAILURE;
     }
 
-    /* Create the outputs files ".ob" and ".ent" and write their data */
+    /* Create the output files and write their data */
+
     create_ob_file(*instructions, *data, input_file_name, IC, DC);
 
     create_entries_file(*labels_table, input_file_name);
+
+    create_externals_file(externals, input_file_name);
 
     return SUCCESS;
 }

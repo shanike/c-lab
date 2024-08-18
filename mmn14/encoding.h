@@ -13,6 +13,6 @@ Encodes the labels of an instruction line and adds external labels to the extern
 And fully updates the IC.
 Important to notice that if the instruction line got to this function, most validations on it have already been done.
 */
-int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list);
+int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list, labelNode **externals_table);
 
 #endif

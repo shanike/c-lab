@@ -302,7 +302,14 @@ Encodes the labels of an instruction line and adds external labels to the extern
 And fully updates the IC.
 Important to notice that if the instruction line got to this function, most validations on it have already been done.
 */
-int encode_labels(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list, wordNode **externals)
+int encode_labels(
+    operation *op,
+    char *args_str,
+    location_in_file file_location,
+    int *IC,
+    wordNode **instructions_table,
+    labelNode *labels_list,
+    labelNode **externals)
 {
     char **args;
     int args_number = op->arg_number;
@@ -312,9 +319,6 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
 
     word labelWord = 0;
     labelNode *label;
-
-    FILE *ext_fp = NULL;
-    char *ext_filename = create_new_file_name(file_location.file_name, EXTERN_FILE_EXT);
 
     if (!args_number)
     {
@@ -381,19 +385,12 @@ int encode_labels(operation *op, char *args_str, location_in_file file_location,
                 /* Handle external labels */
                 if (label->feature_type == EXTERNAL)
                 {
-                    if (!soft_open_file_for_writing(ext_filename, &ext_fp))
-                    {
-                        free(args);
-                        free(args_address_methods);
-                        return FAILURE;
-                    }
-                    fprintf(ext_fp, "%s %04d\n", label->name, *IC);
+                    add_node_to_list_externals(externals, args[i], *IC);
                 }
             }
             (*IC)++;
         }
     }
-    soft_fclose(&ext_fp);
 
     free(args);
     free(args_address_methods);
