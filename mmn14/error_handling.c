@@ -1,8 +1,3 @@
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
-#include <stdarg.h>
-
 #include "error_handling.h"
 
 /* The Following array specifies the error status code numbers and the corresponding error message. */
@@ -32,8 +27,7 @@ Error errors[] = {
     {ERROR_STATUS_CODE_122, "Invalid label name: %s"},
     {ERROR_STATUS_CODE_123, "Found label with the same name as one of the macros"},
     {ERROR_STATUS_CODE_124, "Undefined label %s"},
-    {ERROR_STATUS_CODE_125, "Number value %d is out of range, should be between %d and %d"}
-};
+    {ERROR_STATUS_CODE_125, "Number value %d is out of range, should be between %d and %d"}};
 
 /*
 * Internal to this file's functions
