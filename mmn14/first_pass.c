@@ -61,6 +61,9 @@ void clean_and_save_label(char *word, char **current_label, int *was_label_mallo
 /* Validates a data argument and adds it to the data table */
 void add_data_argument(char *data_arg, location_in_file curr_location, int *is_error, int *DC, wordNode **data_table)
 {
+    if (IS_DEBUG_FIRST_PASS)
+        printf("Adding data arg %s\n", data_arg);
+
     /* Data arg must be a number */
     if (!is_whole_number(data_arg))
     {
@@ -82,6 +85,35 @@ void add_data_argument(char *data_arg, location_in_file curr_location, int *is_e
     }
     /* Update the data counter */
     (*DC)++;
+}
+
+/*
+Returns 1 if the string has consecutive commas, while ignoring spaces and tabs.
+Returns 0 otherwise.
+*/
+int has_consecutive_commas(char *str)
+{
+    int i, searching_for_comma = 0;
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (str[i] == SPACE || str[i] == TAB)
+        {
+            continue;
+        }
+        if (str[i] == COMMA && !searching_for_comma)
+        {
+            return 1;
+        }
+        if (str[i] == COMMA) /* && searching_for_comma */
+        {
+            searching_for_comma = 0;
+        }
+        else
+        {
+            searching_for_comma = 1;
+        }
+    }
+    return 0;
 }
 
 /*
@@ -189,6 +221,7 @@ int first_pass(
     int *DC)
 {
     char line[MAX_LINE_LENGTH],
+        data_args[MAX_LINE_LENGTH],
         *word;
     FILE *fp;
     location_in_file curr_location;
@@ -275,9 +308,17 @@ int first_pass(
                 {
                     if (IS_DEBUG_FIRST_PASS)
                         printf("it's .data! ");
-                    while ((word = strtok(NULL, " ,\t")))
+                    strcpy(data_args, strtok(NULL, ""));
+                    if (has_consecutive_commas(data_args))
+                    {
+                        handle_error_log(ERROR_STATUS_CODE_127, curr_location, &is_error);
+                        continue;
+                    }
+                    word = strtok(data_args, " ,\t");
+                    while (word)
                     {
                         add_data_argument(word, curr_location, &is_error, DC, data_table);
+                        word = strtok(NULL, " ,\t");
                     }
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)

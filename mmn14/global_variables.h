@@ -48,6 +48,9 @@
 #define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
 #define MEMORY_SIZE 4096                      /* The maximum memory size */
 
+/* Chars */
+#define COMMA ','
+
 typedef struct location_in_file
 {
     char *file_name;
