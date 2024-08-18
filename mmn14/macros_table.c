@@ -1,16 +1,14 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "list_data_structure.h"
+
+#include "macros_table.h"
 #include "generic_memory_allocation_functions.h"
 #include "error_handling.h"
 
-node *create_new_node(char *name, char *content, int line_number)
+macroNode *create_new_macro_node(char *name, char *content, int line_number)
 {
-    node *temp;
-
-    /* Check if memory allocation for the node succeeded */
-    temp = allocate_memory_with_check(sizeof(node));
+    macroNode *temp = allocate_memory_with_check(sizeof(macroNode));
 
     temp->name = name;
     temp->content = content;
@@ -20,17 +18,16 @@ node *create_new_node(char *name, char *content, int line_number)
     return temp;
 }
 
-node *find_node_in_list(node *head, char *name)
+macroNode *find_node_in_macro_list(macroNode *head, char *name)
 {
-    node *current = head;
+    macroNode *current = head;
 
     while (current != NULL)
     {
         /* If the node exists already */
         if (strcmp(name, current->name) == 0)
         {
-            printf("Node %s already exists in the list\n", name);
-            return head;
+            return current;
         }
         current = current->next;
     }
@@ -38,11 +35,11 @@ node *find_node_in_list(node *head, char *name)
     return NULL;
 }
 
-void add_node_to_list(node **head, char *name, char *content, int line_number)
+void add_node_to_macro_list(macroNode **head, char *name, char *content, int line_number)
 {
-    node *new_node, *current, *macro_with_same_name;
+    macroNode *new_node, *current, *macro_with_same_name;
 
-    macro_with_same_name = find_node_in_list(*head, name);
+    macro_with_same_name = find_node_in_macro_list(*head, name);
 
     /* If we found another macro declaration with the same name but not with the same content, throw error */
     if (macro_with_same_name != NULL && strcmp(macro_with_same_name->content, content) != 0)
@@ -53,7 +50,7 @@ void add_node_to_list(node **head, char *name, char *content, int line_number)
         return;
     }
 
-    new_node = create_new_node(name, content, line_number);
+    new_node = create_new_macro_node(name, content, line_number);
 
     /* If the list is empty, add the new node to the head of the list */
     if (*head == NULL)
@@ -75,20 +72,20 @@ void add_node_to_list(node **head, char *name, char *content, int line_number)
     }
 }
 
-void free_node(node *node1)
+void free_node(macroNode *node)
 {
     /* Free memory allocated for the name, content and node */
-    free(node1->name);
-    free(node1->content);
-    free(node1);
+    free(node->name);
+    free(node->content);
+    free(node);
 }
 
-void free_list(node *head)
+void free_macro_list(macroNode *head)
 {
     /* Go through the linked list and free memory allocated fot each node in the list */
     while (head != NULL)
     {
-        node *temp = head;
+        macroNode *temp = head;
         head = head->next;
         free_node(temp);
     }

@@ -2,7 +2,7 @@
 #define PRE_ASSEMBLER_H
 
 #include <stdio.h>
-#include "list_data_structure.h"
+#include "macros_table.h"
 
 /**
  * Processes macros in a file with ".am" extention.
