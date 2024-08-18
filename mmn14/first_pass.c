@@ -92,6 +92,12 @@ int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int 
 {
     char *c;
 
+    /* If no value ignore */
+    if (!word_arg)
+    {
+        return SUCCESS;
+    }
+
     /* Extract the string argument (=remove quotes) */
     if (extract_data_string(word_arg, word, curr_location) == FAILURE)
     {

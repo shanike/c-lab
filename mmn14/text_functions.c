@@ -43,8 +43,15 @@ int extract_data_string(char *input, char **result, location_in_file curr_locati
 {
     int last_quote_index, result_len;
 
+    char *last_quote = NULL;
+
+    if (!input) /* If no value ignore */
+    {
+        return SUCCESS;
+    }
+
     /* Find last quote */
-    char *last_quote = strrchr(input + 1, '\"');
+    last_quote = strrchr(input, '\"');
 
     if (input[0] != '\"' || !last_quote)
     {
