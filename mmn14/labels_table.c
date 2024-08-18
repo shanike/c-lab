@@ -133,10 +133,9 @@ void print_list_label(labelNode *head)
     printf("\n");
 }
 
+/* Free memory allocated for the name, content and node */
 void free_node_label(labelNode *node1)
 {
-    /* Free memory allocated for the name, content and node */
-    soft_free_mem(node1->name);
     soft_free_mem(node1);
 }
 

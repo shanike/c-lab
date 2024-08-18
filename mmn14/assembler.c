@@ -4,12 +4,13 @@
 #include "pre_assembler.h"
 #include "first_pass.h"
 #include "second_pass.h"
+
 #include "generic_file_functions.h"
 
 int main(int argc, char *argv[])
 {
     int i, result;
-    char *input_filename, *am_filename;
+    char *input_filename, *as_filename, *am_filename;
 
     labelNode *labels_list = NULL;
     wordNode *instructions_table = NULL;
@@ -29,16 +30,16 @@ int main(int argc, char *argv[])
 
         printf("Processing file: %s\n", input_filename);
 
-        result = pre_assembler(create_new_file_name(input_filename, ASSEMBLY_FILE_EXT));
+        as_filename = create_new_file_name(input_filename, ASSEMBLY_FILE_EXT);
+        result = pre_assembler(as_filename);
 
         if (result == FAILURE)
         {
-            fprintf(stderr, "Pre-assembly failed for file: %s\n", input_filename);
+            printf("Pre-assembly failed for file: %s\n", input_filename);
             continue;
         }
 
         am_filename = create_new_file_name(input_filename, AFTER_MACRO_FILE_EXT);
-        printf("AM file: %s\n", am_filename);
 
         result = first_pass(
             am_filename,
@@ -50,7 +51,7 @@ int main(int argc, char *argv[])
 
         if (result == FAILURE)
         {
-            fprintf(stderr, "First pass failed for file: %s\n", input_filename);
+            printf("First pass failed for file: %s\n", input_filename);
             continue;
         }
 
@@ -67,9 +68,24 @@ int main(int argc, char *argv[])
 
         if (result == FAILURE)
         {
-            fprintf(stderr, "Second pass failed for file: %s\n", input_filename);
+            printf("Second pass failed for file: %s\n", input_filename);
             continue;
         }
+
+        printf("File %s was successfully assembled\n", input_filename);
+
+        /* Clear and reset */
+        free_list_label(labels_list);
+        labels_list = NULL;
+
+        free_list_word(instructions_table);
+        instructions_table = NULL;
+
+        free_list_word(data_table);
+        data_table = NULL;
+
+        free(as_filename);
+        free(am_filename);
     }
 
     return 0;
