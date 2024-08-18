@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "memory_table.h"
-#include "generic_file_functions.h"
-#include "generic_memory_allocation_functions.h"
-#include "error_handling.h"
-#include "bitwise_functions.h"
-
-/* TODO merge with list_data_structure.c and labels_table.c */
 
 wordNode *create_new_word_node(word value, int address, char *debug_name)
 {
@@ -16,9 +6,11 @@ wordNode *create_new_word_node(word value, int address, char *debug_name)
 
     node->value = value;
     node->address = address;
+    
     if (debug_name)
         node->debug_name = allocate_memory_with_check(strlen(debug_name) + 1);
     strcpy(node->debug_name, debug_name);
+
     node->next = NULL;
 
     return node;

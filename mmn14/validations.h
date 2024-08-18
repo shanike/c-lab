@@ -1,6 +1,10 @@
 #ifndef VALIDATIONS_H
 #define VALIDATIONS_H
 
+#include <stdio.h>
+#include <string.h>
+#include <ctype.h>
+
 #include "global_variables.h"
 #include "generic_memory_allocation_functions.h"
 #include "operation_utils.h"

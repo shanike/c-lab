@@ -1,15 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "global_variables.h"
 #include "pre_assembler.h"
-#include "error_handling.h"
-#include "validations.h"
-#include "generic_file_functions.h"
-#include "generic_memory_allocation_functions.h"
-
-#define SUCCESS 1
-#define FAILURE 0
 
 /**
  * Checks if a label with the same name as a macro exists in the file.
@@ -20,7 +9,6 @@
  * @param macro_list_head Pointer to the head of the linked list of macros.
  * @return 1 if a label with the same name as a macro was found, 0 otherwise.
  */
-
 int check_for_label_with_same_name_as_macros(char file_name[], char *line, int line_counter, macroNode *macro_list_head)
 {
     char *label_name, *word, *line_copy;

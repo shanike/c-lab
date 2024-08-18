@@ -1,12 +1,20 @@
 #ifndef MACROS_TABLE_H
 #define MACROS_TABLE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+#include "generic_memory_allocation_functions.h"
+#include "error_handling.h"
+
 /* A node in a macro linked list */
-typedef struct macroNode {
-    char *name;         /* Name associated with the macro */
-    char *content;      /* Macro content stored in the node */
-    int line_number;           /* Line number associated with the content */
-    struct macroNode *next;  /* Pointer to the next macro in the linked list */
+typedef struct macroNode
+{
+    char *name;             /* Name associated with the macro */
+    char *content;          /* Macro content stored in the node */
+    int line_number;        /* Line number associated with the content */
+    struct macroNode *next; /* Pointer to the next macro in the linked list */
 } macroNode;
 
 /* Function prototypes */

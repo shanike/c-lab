@@ -2,12 +2,20 @@
 #define SECOND_PASS_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 #include "labels_table.h"
 #include "memory_table.h"
 #include "validations.h"
 #include "generic_memory_allocation_functions.h"
 #include "externals_output.h"
+#include "error_handling.h"
+#include "generic_file_functions.h"
+#include "global_variables.h"
+#include "entries_output.h"
+#include "ob_output.h"
+#include "encoding.h"
 
 /**
  * Executes the second pass of the assembler.

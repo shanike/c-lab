@@ -1,7 +1,7 @@
 #include "error_handling.h"
 
 /* The Following array specifies the error status code numbers and the corresponding error message. */
-Error errors[] = {
+Error_t errors[] = {
     {ERROR_STATUS_CODE_100, "Failed to dynamically allocate memory"},
     {ERROR_STATUS_CODE_101, "Failed to open new file for writing"},
     {ERROR_STATUS_CODE_102, "Failed to open file for reading"},
@@ -48,7 +48,20 @@ char *get_error_message(int error_code)
 
 void print_system_error(int error_code)
 {
-    printf("SYSTEM ERROR: CODE:%d | %s\n", error_code, get_error_message(error_code));
+    printf(SYSTEM_ERROR, error_code, get_error_message(error_code));
+}
+
+/* Internal function to print the constant start of a file error */
+void print_file_error_start(int error_code, location_in_file file)
+{
+    printf(FILE_ERROR_OPENING, error_code, file.file_name, file.line_number);
+}
+
+void print_file_error_args(int error_code, location_in_file file, va_list args)
+{
+    print_file_error_start(error_code, file);
+    vprintf(get_error_message(error_code), args);
+    printf("\n");
 }
 
 void print_file_error(int error_code, location_in_file file, ...)
@@ -56,8 +69,7 @@ void print_file_error(int error_code, location_in_file file, ...)
     va_list args;
     va_start(args, file);
 
-    printf("FILE ERROR (code %d) in %s at line %d | there is an error: ", error_code, file.file_name, file.line_number);
-    vprintf(get_error_message(error_code), args);
+    print_file_error_args(error_code, file, args);
     printf("\n");
 
     va_end(args);
@@ -65,5 +77,5 @@ void print_file_error(int error_code, location_in_file file, ...)
 
 void print_file_warning(int error_code)
 {
-    printf("SYSTEM WARNING: CODE:%d | %s\n", error_code, get_error_message(error_code));
+    printf(FILE_WARNING, error_code, get_error_message(error_code));
 }

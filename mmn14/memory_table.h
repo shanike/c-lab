@@ -1,9 +1,16 @@
 #ifndef MEMORY_TABLE_H
 #define MEMORY_TABLE_H
 
-#include "global_variables.h"
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
-typedef unsigned short int word;
+#include "global_variables.h"
+#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
+#include "error_handling.h"
+#include "bitwise_functions.h"
+
 
 /* A node in a linked list */
 struct wordNode

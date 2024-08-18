@@ -13,7 +13,12 @@
 
 #define ARGS_DELIM ", \t" /* Delimiters for the arguments of an instruction */
 
-/* Function to encode an operation */
+/* 
+Function to encode an instruction line: its operation and non-label arguments.
+The function will encode the instruction and update the instructions table and IC accordingly.
+
+Returns SUCCESS if the instruction was encoded successfully, FAILURE if an error occurred or if validation failed.
+*/
 int encode_instruction(operation *op,
                        char *args_str,
                        location_in_file file_location,

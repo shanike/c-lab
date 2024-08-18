@@ -1,7 +1,7 @@
 #ifndef A_R_E_FIELDS_H
 #define A_R_E_FIELDS_H
 
-#include "memory_table.h"
+#include "global_variables.h"
 
 #define FIELD_A_INDEX 2
 #define FIELD_R_INDEX 1

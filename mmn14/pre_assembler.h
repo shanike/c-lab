@@ -2,12 +2,20 @@
 #define PRE_ASSEMBLER_H
 
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "macros_table.h"
+#include "global_variables.h"
+#include "error_handling.h"
+#include "validations.h"
+#include "generic_file_functions.h"
+#include "generic_memory_allocation_functions.h"
 
 /**
  * Processes macros in a file with ".am" extention.
  * This function processes the input assembly source file in preparation for the main assembly process.
- * The pre-assembler typically handles tasks such as:
+ * The pre-assembler handles tasks such as:
  * - Expanding macros: Replacing macro calls with their corresponding macro definitions.
  * - Removing comments: Stripping out comments to clean the source code.
  *

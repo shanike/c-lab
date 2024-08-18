@@ -1,10 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "macros_table.h"
-#include "generic_memory_allocation_functions.h"
-#include "error_handling.h"
 
 macroNode *create_new_macro_node(char *name, char *content, int line_number)
 {

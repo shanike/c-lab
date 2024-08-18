@@ -1,16 +1,4 @@
-/* *BTW I got the phrase "first pass" from google translate and chatgpt */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-
 #include "first_pass.h"
-#include "global_variables.h"
-#include "generic_memory_allocation_functions.h"
-#include "validations.h"
-#include "text_functions.h"
-#include "error_handling.h"
-#include "encoding.h"
 
 void handle_error_flag(int *is_error)
 {
@@ -23,7 +11,7 @@ void handle_error_log(int error_code, location_in_file file_location, int *error
     va_start(args, errors_cnt);
 
     handle_error_flag(errors_cnt);
-    print_file_error(error_code, file_location, args);
+    print_file_error_args(error_code, file_location, args);
 
     va_end(args);
 }
@@ -51,9 +39,131 @@ void inc_data_labels_addresses(labelNode *labels_list, int IC)
     }
 }
 
+/* Removes the ':' from the label and saves it in current_label. */
+void clean_and_save_label(char *word, char **current_label, int *was_label_malloced)
+{
+    int word_len = strlen(word);
+
+    /* Remove the ':' from the label */
+    word[--word_len] = '\0';
+
+    /* Update current_label */
+    *current_label = allocate_memory_with_check(word_len + 1);
+    if (!(*current_label))
+    {
+        return;
+    }
+    *was_label_malloced = 1;
+    strcpy(*current_label, word);
+    (*current_label)[word_len] = '\0';
+}
+
+/* Validates a data argument and adds it to the data table */
+void add_data_argument(char *data_arg, location_in_file curr_location, int *is_error, int *DC, wordNode **data_table)
+{
+    /* Data arg must be a number */
+    if (!is_whole_number(data_arg))
+    {
+        handle_error_log(ERROR_STATUS_CODE_117, curr_location, is_error, data_arg);
+        return;
+    }
+
+    /* Number must be in range */
+    if (!validate_immediate_number(data_arg, curr_location))
+    {
+        handle_error_flag(is_error);
+        return;
+    }
+
+    /* Add the number to `data_table` */
+    if (add_node_to_list_word(data_table, atoi(data_arg), *DC, data_arg) == FAILURE)
+    {
+        handle_error_flag(is_error);
+    }
+    /* Update the data counter */
+    (*DC)++;
+}
+
 /*
-Returns the number of errors that occurred during the first pass.
+Validates a string argument and adds it to the data table
+Returns SUCCESS if the string was added successfully, FAILURE if it's invalid.
 */
+int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int *is_error, location_in_file curr_location)
+{
+    char *c;
+
+    /* Extract the string argument (=remove quotes) */
+    if (extract_data_string(word_arg, word, curr_location) == FAILURE)
+    {
+        handle_error_flag(is_error);
+        return FAILURE;
+    }
+
+    /* Add each char of .string argument to `data_table` in ascii form */
+    c = *word;
+    while (*c)
+    {
+        if (add_node_to_list_word(data_table, *c, *DC, c) == FAILURE)
+        {
+            handle_error_flag(is_error);
+        }
+        c++;
+        (*DC)++;
+    }
+
+    /* And add a \0 at the end */
+    if (add_node_to_list_word(data_table, '\0', *DC, "\\0") == FAILURE)
+    {
+        handle_error_flag(is_error);
+    }
+    (*DC)++;
+
+    return SUCCESS;
+}
+
+/*
+Validates an instruction, encodes it and adds it to the instructions table
+*/
+void handle_instruction(char *word, location_in_file curr_location, int *is_error, int *was_label_malloced, char *current_label, labelNode **labels_list, wordNode **instructions_table, int *IC)
+{
+    int encode_result,
+        is_operation;
+
+    operation *op = NULL;
+
+    op = allocate_memory_with_check(sizeof(operation));
+    op->name = NULL;
+
+    is_operation = get_operation(word, op);
+
+    if (is_operation == FAILURE || !op)
+    {
+        soft_free_operation(op);
+        if (is_operation == FAILURE)
+            handle_error_log(ERROR_STATUS_CODE_113, curr_location, is_error, word);
+        return;
+    }
+
+    /* If label exists: add to the labels list */
+    if (current_label)
+    {
+        if (add_node_to_labels_list(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
+        {
+            handle_error_flag(is_error);
+        }
+    }
+
+    /* Encode and calc instruction length */
+    encode_result = encode_instruction(op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list);
+
+    soft_free_operation(op);
+
+    if (encode_result == FAILURE)
+    {
+        handle_error_flag(is_error);
+    }
+}
+
 int first_pass(
     char filename[],
     labelNode **labels_list,
@@ -62,15 +172,13 @@ int first_pass(
     int *IC,
     int *DC)
 {
-    char line[MAX_LINE_LENGTH], *word, *c;
+    char line[MAX_LINE_LENGTH],
+        *word;
     FILE *fp;
-    int word_len = 0;
     location_in_file curr_location;
 
     char *current_label = NULL;
     int was_label_malloced = 0;
-    operation *curr_op = NULL;
-    int encode_result = 0;
 
     int is_error = 0;
 
@@ -89,7 +197,6 @@ int first_pass(
 
     /* Read each line of the given file */
     while (fgets(line, MAX_LINE_LENGTH, fp) != NULL) /* Iteration per line */
-    /* TODO divide this huge loop into functions(!) */
     {
         curr_location.line_number++;
 
@@ -97,7 +204,6 @@ int first_pass(
             printf("\n----line %d----\n", curr_location.line_number);
 
         /* Reset */
-        word_len = 0;
         if (was_label_malloced)
             soft_free_mem(current_label);
         current_label = NULL;
@@ -125,18 +231,7 @@ int first_pass(
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's a label! saving name.\n");
-            word_len = strlen(word);
-            /* Remove the ':' from the label */
-            word[--word_len] = '\0';
-            /* Update current_label */
-            current_label = allocate_memory_with_check(word_len + 1);
-            if (!current_label)
-            {
-                return FAILURE;
-            }
-            was_label_malloced = 1;
-            strcpy(current_label, word);
-            current_label[word_len] = '\0';
+            clean_and_save_label(word, &current_label, &was_label_malloced);
             /* Set word to the next word for further processing */
             word = strtok(NULL, " ");
         }
@@ -149,7 +244,7 @@ int first_pass(
             {
                 if (current_label) /* If label exists: add to the labels list */
                 {
-                    if (add_node_to_list_label(labels_list, current_label, DATA, *DC, curr_location) == FAILURE)
+                    if (add_node_to_labels_list(labels_list, current_label, DATA, *DC, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                     }
@@ -161,55 +256,18 @@ int first_pass(
                         printf("it's .data! ");
                     while ((word = strtok(NULL, " ,\t")))
                     {
-                        if (!is_whole_number(word)) /* Word must be a number */
-                        {
-                            handle_error_log(ERROR_STATUS_CODE_117, curr_location, &is_error, word);
-                        }
-                        else if (!validate_immediate_number(word, curr_location)) /* Number must be in range */
-                        {
-                            handle_error_flag(&is_error);
-                        }
-                        else
-                        {
-                            /* Add the number to `data_table` */
-                            if (add_node_to_list_word(data_table, atoi(word), *DC, word) == FAILURE)
-                            {
-                                handle_error_flag(&is_error);
-                            }
-                            /* Update the data counter */
-                            (*DC)++;
-                        }
+                        add_data_argument(word, curr_location, &is_error, DC, data_table);
                     }
-                    if (IS_DEBUG_FIRST_PASS)
-                        printf("setting DC to %d\n", *DC);
                 }
                 else if (strcmp(word, DIRECTIVE_STRING) == 0)
                 {
                     if (IS_DEBUG_FIRST_PASS)
                         printf("it's .string!\n");
-                    /* TODO: maybe store the result of extract_data_string in a diff variable. */
-                    if (extract_data_string(strtok(NULL, ""), &word, curr_location) == FAILURE)
+
+                    if (add_string(&word, strtok(NULL, ""), DC, data_table, &is_error, curr_location) == FAILURE)
                     {
-                        handle_error_flag(&is_error);
                         continue;
                     }
-                    /* Add each char of .string value to `data_table` in ascii form */
-                    c = word;
-                    while (*c)
-                    {
-                        if (add_node_to_list_word(data_table, *c, *DC, c) == FAILURE)
-                        {
-                            handle_error_flag(&is_error);
-                        }
-                        c++;
-                        (*DC)++;
-                    }
-                    /* And add a \0 at the end */
-                    if (add_node_to_list_word(data_table, '\0', *DC, "\\0") == FAILURE)
-                    {
-                        handle_error_flag(&is_error);
-                    }
-                    (*DC)++;
 
                     if (IS_DEBUG_FIRST_PASS)
                         printf("setting DC to %d\n", *DC);
@@ -238,7 +296,7 @@ int first_pass(
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
                         continue;
                     }
-                    if (add_node_to_list_label(labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
+                    if (add_node_to_labels_list(labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                         continue;
@@ -253,41 +311,10 @@ int first_pass(
         }
         else
         {
-            curr_op = allocate_memory_with_check(sizeof(operation));
-            if (get_operation(word, curr_op))
-            {
-                if (IS_DEBUG_FIRST_PASS)
-                    printf("it's an operation!\n");
+            if (IS_DEBUG_FIRST_PASS)
+                printf("it's an instruction!\n");
 
-                if (!curr_op) /* Due to malloc failure */
-                {
-                    if (was_label_malloced)
-                        soft_free_mem(current_label);
-                    soft_free_operation(curr_op);
-                    return FAILURE;
-                }
-                /* If label exists: add to the labels list */
-                if (current_label)
-                {
-                    if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
-                    {
-                        handle_error_flag(&is_error);
-                    }
-                }
-                /* Calc instruction length */
-                encode_result = encode_instruction(curr_op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list);
-                soft_free_operation(curr_op);
-                if (encode_result == FAILURE)
-                {
-                    handle_error_flag(&is_error);
-                    continue;
-                }
-            }
-            else
-            {
-                printf("Error: unknown operation: %s\n", word);
-                handle_error_log(ERROR_STATUS_CODE_113, curr_location, &is_error, word);
-            }
+            handle_instruction(word, curr_location, &is_error, &was_label_malloced, current_label, labels_list, instructions_table, IC);
         }
 
     } /* End of while */

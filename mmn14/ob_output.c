@@ -1,9 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h> 
 #include "ob_output.h"
-#include "global_variables.h"
-#include "generic_file_functions.h"
-#include "memory_table.h"
 
 int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name, int IC, int DC)
 {

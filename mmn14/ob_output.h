@@ -1,7 +1,13 @@
 #ifndef OB_OUTPUT_H
 #define OB_OUTPUT_H
 
-#include "encoding.h"
+#include <stdio.h>
+#include <stdlib.h>
+
+#include "ob_output.h"
+#include "global_variables.h"
+#include "generic_file_functions.h"
+#include "memory_table.h"
 
 /**
  * @brief Creates an output file with a .ob extension containing the assembled code's instructions and data.
@@ -16,7 +22,7 @@
  * @param input_file_name The name of the input file (without extension) used to create the output file name.
  * @param IC The instruction count, representing the number of instructions.
  * @param DC The data count, representing the number of data entries.
- * @return int Returns SUCCESS (typically 0) if the file is created successfully; otherwise, returns FAILURE (typically -1).
+ * @return int Returns SUCCESS if the file is created successfully; otherwise, returns FAILURE.
  */
 int create_ob_file(wordNode *instructions, wordNode *data, char *input_file_name, int IC, int DC);
 

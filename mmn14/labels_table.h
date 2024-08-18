@@ -1,7 +1,13 @@
 #ifndef LABELS_TABLE_H
 #define LABELS_TABLE_H
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
 #include "global_variables.h"
+#include "generic_memory_allocation_functions.h"
+#include "error_handling.h"
 
 enum FEATURE_TYPE
 {
@@ -42,7 +48,7 @@ labelNode *create_new_label_node(char *name, FeatureType feature_type, int value
  * @param name The name to search for.
  * @return Pointer to the node if found, NULL otherwise.
  */
-labelNode *find_node_in_list_label(labelNode *head, char *name);
+labelNode *find_node_in_label_list(labelNode *head, char *name);
 
 /**
  * Adds a new node to the linked list.
@@ -52,12 +58,13 @@ labelNode *find_node_in_list_label(labelNode *head, char *name);
  * @param head Pointer to the head pointer of the list.
  * @param name The name to store in the new node.
  */
-int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location);
+int add_node_to_labels_list(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location);
 
 /**
- * Adds a new node to the linked list, without checking if the node already exists.
+ * Adds a new node to the linked list,
+ * without checking if the node already exists.
  */
-void add_node_to_list_externals(labelNode **head, char *name, int value);
+void add_node_to_externals_list(labelNode **head, char *name, int value);
 
 /**
  * Sets the feature type of an existing label in the linked list to ENTRY.

@@ -1,14 +1,4 @@
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-
 #include "second_pass.h"
-#include "error_handling.h"
-#include "generic_file_functions.h"
-#include "global_variables.h"
-#include "entries_output.h"
-#include "ob_output.h"
-#include "encoding.h"
 
 int exec_second_pass(char *input_file_name, labelNode **labels_table, wordNode **instructions, wordNode **data, int IC, int DC)
 {
