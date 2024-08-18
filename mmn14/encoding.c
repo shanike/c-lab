@@ -1,12 +1,10 @@
 #include <stdio.h>
 
-#include "generic_memory_allocation_functions.h"
-#include "global_variables.h"
 #include "encoding.h"
-#include "error_handling.h"
-#include "addressing_methods.h"
-#include "bitwise_functions.h"
-#include "a_r_e_fields.h"
+
+/* ******************************************* */
+/* *********** DEBUGGING FUNCTIONS *********** */
+/* ******************************************* */
 
 /* Used for debugging */
 void print_opcode(operation *op)
@@ -53,8 +51,12 @@ void print_encoding(word encoding)
 {
     printf("encoding: ");
     print_bits(encoding);
-    printf("\nencoding in hex: %04X\n", encoding);
+    printf("\nencoding in octal: %05o\n", get_word_15bits(encoding));
 }
+
+/* ************************************** */
+/* *********** CORE FUNCTIONS *********** */
+/* ************************************** */
 
 /*
 Splits a string into an array of strings, using the delimiters ", \t".

@@ -15,4 +15,7 @@ start and end are inclusive.
 */
 void set_bits_from_int(word *num, int decimal, int start_index_in_num, int end_index_in_num);
 
+/* Returns the lower 15 bits of an int */
+int get_word_15bits(word num);
+
 #endif
