@@ -165,6 +165,10 @@ int first_pass(
                         {
                             handle_error_log(ERROR_STATUS_CODE_117, curr_location, &is_error, word);
                         }
+                        else if (!validate_immediate_number(word, curr_location)) /* Number must be in range */
+                        {
+                            handle_error_flag(&is_error);
+                        }
                         else
                         {
                             /* Add the number to `data_table` */
