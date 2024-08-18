@@ -102,7 +102,7 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     int args_number = op->arg_number;
     int arg_encoding_index;
     int i;
-    enum addressing_methods curr_addressing_method;
+    AddressingMethods_t curr_addressing_method;
 
     if (IS_DEBUG_ENCODING)
         printf("encoding operation %s\n", op->name);
@@ -134,12 +134,12 @@ int encode_op(word *op_word, operation *op, char **args, location_in_file file_l
     return SUCCESS;
 }
 
-int is_register_addressing_method(enum addressing_methods addressing_method)
+int is_register_addressing_method(AddressingMethods_t addressing_method)
 {
     return addressing_method == DIRECT_REGISTER || addressing_method == INDIRECT_REGISTER;
 }
 
-int get_register_number(char *register_str, enum addressing_methods addressing_method)
+int get_register_number(char *register_str, AddressingMethods_t addressing_method)
 {
     int i = 0;
     while (register_str[i] != 'r') /* Skip to the first digit */
@@ -154,13 +154,13 @@ int get_register_number(char *register_str, enum addressing_methods addressing_m
 Returns whether the both arguments share a single word in memory.
 Notice that the function assumes there are two arguments! Therefore args_address_methods must be of length 2.
 */
-int is_args_single_word(enum addressing_methods *args_address_methods)
+int is_args_single_word(AddressingMethods_t *args_address_methods)
 {
     return is_register_addressing_method(args_address_methods[0]) &&
            is_register_addressing_method(args_address_methods[1]);
 }
 
-int encode_two_registers(char **args, word *arg_word, enum addressing_methods *args_address_methods, wordNode **instructions_table, int *IC)
+int encode_two_registers(char **args, word *arg_word, AddressingMethods_t *args_address_methods, wordNode **instructions_table, int *IC)
 {
     int arg1_register_value, arg2_register_value;
 
@@ -184,7 +184,7 @@ int encode_two_registers(char **args, word *arg_word, enum addressing_methods *a
 
 int encode_args(char **args, int args_number, labelNode *labels_list, wordNode **instructions_table, int *IC, location_in_file file_location)
 {
-    enum addressing_methods curr_addressing_method, *args_address_methods;
+    AddressingMethods_t curr_addressing_method, *args_address_methods;
 
     int i;
     int is_common_word;
@@ -195,7 +195,7 @@ int encode_args(char **args, int args_number, labelNode *labels_list, wordNode *
     if (IS_DEBUG_ENCODING)
         print_array("encoding args: ", args, args_number);
 
-    args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
+    args_address_methods = allocate_memory_with_check(args_number * sizeof(AddressingMethods_t));
     if (args_address_methods == NULL)
     {
         return FAILURE;
@@ -315,7 +315,7 @@ int encode_labels(
     int args_number = op->arg_number;
     int i;
 
-    enum addressing_methods *args_address_methods;
+    AddressingMethods_t *args_address_methods;
 
     word labelWord = 0;
     labelNode *label;
@@ -335,7 +335,7 @@ int encode_labels(
     split_args(args_str, args, args_number, file_location);
 
     /* Set & init args_address_methods */
-    args_address_methods = allocate_memory_with_check(args_number * sizeof(enum addressing_methods));
+    args_address_methods = allocate_memory_with_check(args_number * sizeof(AddressingMethods_t));
     if (args_address_methods == NULL)
     {
         free(args);

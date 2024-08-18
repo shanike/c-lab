@@ -1,6 +1,6 @@
 #include "addressing_methods.h"
 
-enum addressing_methods find_addressing_method(char arg[], location_in_file file_location)
+AddressingMethods_t find_addressing_method(char arg[], location_in_file file_location)
 {
     if (arg[0] == '#')
     {
