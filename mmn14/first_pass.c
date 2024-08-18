@@ -5,14 +5,13 @@ void handle_error_flag(int *is_error)
     *is_error = 1;
 }
 
-/* TODO check! does this work for strings? for ints? */
 void handle_error_log(int error_code, location_in_file file_location, int *errors_cnt, ...)
 {
     va_list args;
     va_start(args, errors_cnt);
 
     handle_error_flag(errors_cnt);
-    print_file_error(error_code, file_location, args);
+    print_file_error_args(error_code, file_location, args);
 
     va_end(args);
 }

@@ -9,6 +9,10 @@
 #include "global_variables.h"
 #include "generic_file_functions.h"
 
+#define SYSTEM_ERROR "SYSTEM ERROR (code %d) | %s\n"
+#define FILE_ERROR_OPENING "FILE ERROR (code %d) in %s at line %d | there is an error: "
+#define FILE_WARNING "FILE WARNING (code %d) | %s\n"
+
 /* An error with an associated error code and error message */
 typedef struct Error
 {
@@ -38,12 +42,12 @@ typedef enum ERROR_STATUS_CODES
     ERROR_STATUS_CODE_117, /* Argument must be a number but got: %s */
     ERROR_STATUS_CODE_118, /* Invalid string, no closing and/or opening quote: %s */
     ERROR_STATUS_CODE_119, /* Incorrect number of arguments, expected %d */
-    ERROR_STATUS_CODE_120,  /* An immediate addressing method must be a number, but got %s */
-    ERROR_STATUS_CODE_121,  /* Invalid register name: %s */
-    ERROR_STATUS_CODE_122,  /* Invalid label name: %s */
+    ERROR_STATUS_CODE_120, /* An immediate addressing method must be a number, but got %s */
+    ERROR_STATUS_CODE_121, /* Invalid register name: %s */
+    ERROR_STATUS_CODE_122, /* Invalid label name: %s */
     ERROR_STATUS_CODE_123, /* Found label with the same name as one of the macros */
     ERROR_STATUS_CODE_124, /* Undefined label %s */
-    ERROR_STATUS_CODE_125 /* Number value is out of range: %d. Should be between %d and %d */
+    ERROR_STATUS_CODE_125  /* Number value is out of range: %d. Should be between %d and %d */
 } ERROR_STATUS_CODES;
 
 /* Function declarations */
@@ -68,7 +72,18 @@ void print_file_warning(int error_code);
  *
  * @param error_code The error code for which the message should be printed.
  * @param file       The file location where the error occurred.
+ * @param ...        Additional arguments to be printed in the error message.
  */
 void print_file_error(int error_code, location_in_file file, ...);
+
+/**
+ * Print a file-related error message to the standard output.
+ * The error message may contain additional arguments, as specified in the errors array.
+ *
+ * @param error_code The error code for which the message should be printed.
+ * @param file       The file location where the error occurred.
+ * @param args       Additional arguments to be printed in the error message, as a va_list.
+ */
+void print_file_error_args(int error_code, location_in_file file, va_list args);
 
 #endif /* ERROR_HANDLING_H */
