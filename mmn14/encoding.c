@@ -362,7 +362,7 @@ int encode_labels(
         {
             if (args_address_methods[i] == DIRECT)
             {
-                label = find_node_in_list_label(labels_list, args[i]);
+                label = find_node_in_label_list(labels_list, args[i]);
                 if (label == NULL)
                 {
                     print_file_error(ERROR_STATUS_CODE_124, file_location, args[i]);
@@ -388,7 +388,7 @@ int encode_labels(
                 /* Handle external labels */
                 if (label->feature_type == EXTERNAL)
                 {
-                    add_node_to_list_externals(externals, args[i], *IC);
+                    add_node_to_externals_list(externals, args[i], *IC);
                 }
             }
             (*IC)++;

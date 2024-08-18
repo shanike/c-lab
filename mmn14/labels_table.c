@@ -22,7 +22,7 @@ labelNode *create_new_label_node(char *name, FeatureType feature_type, int value
     return node;
 }
 
-labelNode *find_node_in_list_label(labelNode *head, char *name)
+labelNode *find_node_in_label_list(labelNode *head, char *name)
 {
     labelNode *current = head;
 
@@ -68,13 +68,13 @@ void internal_add_node_to_list(labelNode **head, char *name, FeatureType feature
     }
 }
 
-int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location)
+int add_node_to_labels_list(labelNode **head, char *name, FeatureType feature_type, int value, location_in_file location)
 {
     labelNode *node_exists;
 
     if (IS_DEBUG_FIRST_PASS)
         printf("Adding node label: %s of %d\n", name, feature_type);
-    node_exists = find_node_in_list_label(*head, name);
+    node_exists = find_node_in_label_list(*head, name);
     if (IS_DEBUG_FIRST_PASS)
         printf("Node exists: %s\n", !node_exists ? "~Nope~" : node_exists->name);
     if (node_exists != NULL)
@@ -88,7 +88,10 @@ int add_node_to_list_label(labelNode **head, char *name, FeatureType feature_typ
     return SUCCESS;
 }
 
-void add_node_to_list_externals(labelNode **head, char *name, int value)
+/*
+Different from add_node_to_labels_list in that it doesn't check if the node already exists.
+*/
+void add_node_to_externals_list(labelNode **head, char *name, int value)
 {
     if (IS_DEBUG_SECOND_PASS)
         printf("Adding node external: %s\n", name);
@@ -98,7 +101,7 @@ void add_node_to_list_externals(labelNode **head, char *name, int value)
 
 int set_label_as_entry(labelNode **head, char *name)
 {
-    labelNode *label = find_node_in_list_label(*head, name);
+    labelNode *label = find_node_in_label_list(*head, name);
     if (IS_DEBUG_SECOND_PASS)
         printf("Setting label as entry: %s\n", label ? label->name : "NULL");
     if (!label)

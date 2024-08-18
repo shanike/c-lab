@@ -144,7 +144,7 @@ void handle_instruction(char *word, location_in_file curr_location, int *is_erro
     /* If label exists: add to the labels list */
     if (current_label)
     {
-        if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
+        if (add_node_to_labels_list(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
         {
             handle_error_flag(is_error);
         }
@@ -241,7 +241,7 @@ int first_pass(
             {
                 if (current_label) /* If label exists: add to the labels list */
                 {
-                    if (add_node_to_list_label(labels_list, current_label, DATA, *DC, curr_location) == FAILURE)
+                    if (add_node_to_labels_list(labels_list, current_label, DATA, *DC, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                     }
@@ -293,7 +293,7 @@ int first_pass(
                         handle_error_log(ERROR_STATUS_CODE_122, curr_location, &is_error, current_label);
                         continue;
                     }
-                    if (add_node_to_list_label(labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
+                    if (add_node_to_labels_list(labels_list, current_label, EXTERNAL, 0, curr_location) == FAILURE)
                     {
                         handle_error_flag(&is_error);
                         continue;
