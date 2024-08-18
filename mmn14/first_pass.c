@@ -124,40 +124,33 @@ int add_string(char **word, char *word_arg, int *DC, wordNode **data_table, int 
 
 /*
 Validates an instruction, encodes it and adds it to the instructions table
-Returns SUCCESS if the instruction was added successfully, FAILURE if an error occurred or the instruction is invalid.
 */
-int handle_instruction(char *word, location_in_file curr_location, int *is_error, int *was_label_malloced, char *current_label, labelNode **labels_list, wordNode **instructions_table, int *IC)
+void handle_instruction(char *word, location_in_file curr_location, int *is_error, int *was_label_malloced, char *current_label, labelNode **labels_list, wordNode **instructions_table, int *IC)
 {
     int encode_result;
 
     operation *op = allocate_memory_with_check(sizeof(operation));
 
     int is_operation = get_operation(word, op);
-    if (!op) /* Due to malloc failure */
+
+    if (is_operation == FAILURE || !op)
     {
         soft_free_operation(op);
-        return FAILURE;
-    }
 
-    if (is_operation == FAILURE)
-    {
-        handle_error_log(ERROR_STATUS_CODE_113, curr_location, is_error, word);
-        return FAILURE;
+        if (is_operation == FAILURE)
+            handle_error_log(ERROR_STATUS_CODE_113, curr_location, is_error, word);
     }
-
-    if (IS_DEBUG_FIRST_PASS)
-        printf("it's an operation!\n");
 
     /* If label exists: add to the labels list */
     if (current_label)
     {
-    if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
+        if (add_node_to_list_label(labels_list, current_label, CODE, *IC, curr_location) == FAILURE)
         {
             handle_error_flag(is_error);
         }
     }
 
-    /* Calc instruction length */
+    /* Encode and calc instruction length */
     encode_result = encode_instruction(op, strtok(NULL, ""), curr_location, IC, instructions_table, *labels_list);
 
     soft_free_operation(op);
@@ -165,10 +158,7 @@ int handle_instruction(char *word, location_in_file curr_location, int *is_error
     if (encode_result == FAILURE)
     {
         handle_error_flag(is_error);
-        return FAILURE;
     }
-
-    return SUCCESS;
 }
 
 int first_pass(
@@ -320,6 +310,7 @@ int first_pass(
         {
             if (IS_DEBUG_FIRST_PASS)
                 printf("it's an instruction!\n");
+
             handle_instruction(word, curr_location, &is_error, &was_label_malloced, current_label, labels_list, instructions_table, IC);
         }
 
