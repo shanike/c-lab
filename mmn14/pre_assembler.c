@@ -35,6 +35,8 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
             return FAILURE;
         }
     }
+    
+    free(line_copy);
 
     /* There are no labels with the same name as the macro names */
     return SUCCESS;
