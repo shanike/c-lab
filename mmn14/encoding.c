@@ -65,8 +65,7 @@ Otherwise, returns FAILURE.
 */
 int split_args(char *args_str, char *args[], int args_number, location_in_file file_location)
 {
-    char delim[] = ", \t";
-    char *token = strtok(args_str, delim);
+    char *token = strtok(args_str, ARGS_DELIM);
     int i;
     for (i = 0; i < args_number; i++)
     {
@@ -75,7 +74,7 @@ int split_args(char *args_str, char *args[], int args_number, location_in_file f
             break; /* `i` stays less than `args_number` */
         }
         args[i] = token;
-        token = strtok(NULL, delim);
+        token = strtok(NULL, ARGS_DELIM);
     }
     if (i < args_number || token != NULL) /* Found more or less args than args_number */
     {

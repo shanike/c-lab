@@ -11,6 +11,8 @@
 #include "bitwise_functions.h"
 #include "a_r_e_fields.h"
 
+#define ARGS_DELIM ", \t" /* Delimiters for the arguments of an instruction */
+
 /* Function to encode an operation */
 int encode_instruction(operation *op, char *args_str, location_in_file file_location, int *IC, wordNode **instructions_table, labelNode *labels_list);
 
