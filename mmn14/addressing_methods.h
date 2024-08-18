@@ -16,11 +16,12 @@ enum AddressingMethods
 };
 typedef enum AddressingMethods AddressingMethods_t;
 
-enum arg_index
+enum ArgIndex
 {
     FIRST_ARG = 0,
     SECOND_ARG = 1
 };
+typedef enum ArgIndex ArgIndex_t;
 
 /*
 Returns the addressing method of the given argument.

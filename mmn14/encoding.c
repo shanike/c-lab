@@ -84,7 +84,7 @@ int split_args(char *args_str, char *args[], int args_number, location_in_file f
 }
 
 /* Returns the addressing method's index in the word encoding. */
-int get_arg_encoding_index(enum arg_index arg_index)
+int get_arg_encoding_index(ArgIndex_t arg_index)
 {
     if (arg_index == FIRST_ARG)
     {
