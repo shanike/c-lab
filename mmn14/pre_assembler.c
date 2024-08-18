@@ -16,9 +16,8 @@ int check_for_label_with_same_name_as_macros(char file_name[], char *line, int l
 
     line_copy = allocate_memory_with_check((strlen(line) + 1) * sizeof(char));
     strcpy(line_copy, line);
-    
-    word = strtok(line_copy, " ");
 
+    word = strtok(line_copy, " ");
 
     /* Check if the line starts with a label */
     if (is_label(word, 0))
@@ -481,7 +480,7 @@ int pre_assembler(char file_name[])
     temp_file = remove_extra_spaces_in_file(file_name);
 
     /* If file is empty -> return 0 */
-    if (temp_file == NULL)
+    if (!temp_file)
         return FAILURE;
 
     /* Scan and save all the macros in the temp_file in a linked list of macros */

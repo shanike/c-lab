@@ -151,18 +151,18 @@ void remove_extra_spaces_in_line(char line[])
 char *remove_extra_spaces_in_file(char file_name[])
 {
     char *new_file_name;
-    char line[MAX_LINE_LENGTH];
+    char line[MAX_LINE_LENGTH + 2]; /* To catch line longer than MAX_LINE_LENGTH */
     int line_number = 0;
     FILE *fp, *fp_temp;
 
     if (!open_file_for_reading(file_name, &fp))
-        return NULL;
+        return FAILURE;
 
     new_file_name = create_new_file_name(file_name, ".temp1");
     if (new_file_name == NULL)
     {
         fclose(fp);
-        return NULL;
+        return FAILURE;
     }
 
     if (!open_file_for_writing(new_file_name, &fp_temp))
@@ -170,7 +170,7 @@ char *remove_extra_spaces_in_file(char file_name[])
         fclose(fp);
         remove(new_file_name);
         free(new_file_name);
-        return NULL;
+        return FAILURE;
     }
 
     /* Read each line of the input file and remove extra spaces */
@@ -185,7 +185,7 @@ char *remove_extra_spaces_in_file(char file_name[])
             print_file_error(ERROR_STATUS_CODE_110, as_file);
             fclose(fp);
             fclose(fp_temp);
-            return NULL;
+            return FAILURE;
         }
         /* Replace a comment line with newline character */
         else if (*line == ';')
