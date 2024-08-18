@@ -44,7 +44,9 @@
 #define MAX_IMMEDIATE_VALUE 2047
 #define MIN_IMMEDIATE_VALUE -2048
 
+/* Memory */
 #define INSTRUCTIONS_MEMORY_ADDRESS_START 100 /* The memory address where the instructions start */
+#define MEMORY_SIZE 4096                      /* The maximum memory size */
 
 typedef struct location_in_file
 {

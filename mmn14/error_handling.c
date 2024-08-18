@@ -27,7 +27,9 @@ Error_t errors[] = {
     {ERROR_STATUS_CODE_122, "Invalid label name: %s"},
     {ERROR_STATUS_CODE_123, "Found label with the same name as one of the macros"},
     {ERROR_STATUS_CODE_124, "Undefined label %s"},
-    {ERROR_STATUS_CODE_125, "Number value %d is out of range, should be between %d and %d"}};
+    {ERROR_STATUS_CODE_125, "Number value %d is out of range, should be between %d and %d"},
+    {ERROR_STATUS_CODE_126, "Memory reached its maximum capacity"}
+};
 
 /*
 * Internal to this file's functions
