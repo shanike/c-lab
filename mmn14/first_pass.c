@@ -1,22 +1,11 @@
-/* *BTW I got the phrase "first pass" from google translate and chatgpt */
-#include <stdio.h>
-#include <string.h>
-#include <stdlib.h>
-#include <stdarg.h>
-
 #include "first_pass.h"
-#include "global_variables.h"
-#include "generic_memory_allocation_functions.h"
-#include "validations.h"
-#include "text_functions.h"
-#include "error_handling.h"
-#include "encoding.h"
 
 void handle_error_flag(int *is_error)
 {
     *is_error = 1;
 }
 
+/* TODO check! does this work for strings? for ints? */
 void handle_error_log(int error_code, location_in_file file_location, int *errors_cnt, ...)
 {
     va_list args;
